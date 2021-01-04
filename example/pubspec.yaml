@@ -2,7 +2,6 @@ name: popover
 description: iOS style popover.
 version: 0.0.1
 author: Sasha Prokhorenko
-homepage: https://github.com/minikin/popover
 
 environment:
   sdk: ">=2.9.0 <3.0.0"
