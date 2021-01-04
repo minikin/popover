@@ -1,6 +1,6 @@
 # Popover
 
-Apple Style [Popover](https://developer.apple.com/design/human-interface-guidelines/ios/views/popovers/) for Flutter.
+iOS/iPadOS Style [Popover](https://developer.apple.com/design/human-interface-guidelines/ios/views/popovers/) for Flutter.
 
 
 # Content
@@ -38,7 +38,6 @@ _WIP_
 - [ ] Add tests
 - [ ] Add examples 
 - [ ] Add documentation 
-
 
 ## FAQ
 
