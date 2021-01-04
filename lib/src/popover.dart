@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:popover/src/popover_direction.dart';
-import 'package:popover/src/popover_item.dart';
-import 'package:popover/src/utils/build_context_extension.dart';
+
+import 'popover_direction.dart';
+import 'popover_item.dart';
+import 'utils/build_context_extension.dart';
 
 class Popover extends StatelessWidget {
   static const _kDefaultShadow = [
@@ -48,7 +49,7 @@ class Popover extends StatelessWidget {
       onTap: () {
         final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
         final bounds = BuildContextExtension.getWidgetBounds(context);
-        var body;
+        Widget body;
 
         showGeneralDialog(
           context: context,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:popover/src/popover_direction.dart';
-import 'package:popover/src/utils/utils.dart';
+
+import 'popover_direction.dart';
+import 'utils/utils.dart';
 
 class PopoverUtils {
   static const double arrowWidth = 12;

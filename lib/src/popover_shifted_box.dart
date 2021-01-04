@@ -1,8 +1,9 @@
 import 'package:flutter/rendering.dart';
-import 'package:popover/src/popover_direction.dart';
-import 'package:popover/src/popover_utils.dart';
 
-class PopoverContextRenderObject extends RenderShiftedBox {
+import 'popover_direction.dart';
+import 'popover_utils.dart';
+
+class PopoverShiftedBox extends RenderShiftedBox {
   PopoverDirection _direction;
   Rect _attachRect;
   Color _color;
@@ -10,7 +11,7 @@ class PopoverContextRenderObject extends RenderShiftedBox {
   double _scale;
   double _radius;
 
-  PopoverContextRenderObject({
+  PopoverShiftedBox({
     RenderBox child,
     Rect attachRect,
     Color color,
@@ -19,12 +20,12 @@ class PopoverContextRenderObject extends RenderShiftedBox {
     double radius,
     PopoverDirection direction,
   }) : super(child) {
-    this._attachRect = attachRect;
-    this._color = color;
-    this._boxShadow = boxShadow;
-    this._scale = scale;
-    this._radius = radius;
-    this._direction = direction;
+    _attachRect = attachRect;
+    _color = color;
+    _boxShadow = boxShadow;
+    _scale = scale;
+    _radius = radius;
+    _direction = direction;
   }
 
   Rect get attachRect => _attachRect;

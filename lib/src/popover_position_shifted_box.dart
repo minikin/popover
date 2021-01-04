@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:popover/src/popover_direction.dart';
-import 'package:popover/src/popover_utils.dart';
-import 'package:popover/src/utils/utils.dart';
 
-class PopoverPositionRenderObject extends RenderShiftedBox {
+import 'popover_direction.dart';
+import 'popover_utils.dart';
+import 'utils/utils.dart';
+
+class PopoverPositionShiftedBox extends RenderShiftedBox {
   PopoverDirection _direction;
   Rect _attachRect;
   BoxConstraints _additionalConstraints;
 
-  PopoverPositionRenderObject({
+  PopoverPositionShiftedBox({
     RenderBox child,
     Rect attachRect,
     Color color,
@@ -17,9 +18,9 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     Animation<double> scale,
     PopoverDirection direction,
   }) : super(child) {
-    this._attachRect = attachRect;
-    this._additionalConstraints = constraints;
-    this._direction = direction;
+    _attachRect = attachRect;
+    _additionalConstraints = constraints;
+    _direction = direction;
   }
 
   BoxConstraints get additionalConstraints => _additionalConstraints;

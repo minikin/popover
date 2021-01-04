@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:popover/src/popover_direction.dart';
-import 'package:popover/src/popover_position_render_object.dart';
+
+import 'popover_direction.dart';
+import 'popover_position_shifted_box.dart';
 
 class PopoverPosition extends SingleChildRenderObjectWidget {
   @override
@@ -22,7 +23,7 @@ class PopoverPosition extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      PopoverPositionRenderObject(
+      PopoverPositionShiftedBox(
         attachRect: attachRect,
         direction: direction,
         constraints: constraints,
@@ -31,7 +32,7 @@ class PopoverPosition extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
     BuildContext context,
-    PopoverPositionRenderObject renderObject,
+    PopoverPositionShiftedBox renderObject,
   ) {
     renderObject
       ..attachRect = attachRect

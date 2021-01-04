@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:popover/src/popover_context_render_object.dart';
-import 'package:popover/src/popover_direction.dart';
 
-class PopoverContext extends SingleChildRenderObjectWidget {
+import 'popover_direction.dart';
+import 'popover_shifted_box.dart';
+
+class PopoverRenderObject extends SingleChildRenderObjectWidget {
   final Rect attachRect;
   final Color color;
   final List<BoxShadow> boxShadow;
@@ -10,7 +11,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   final double radius;
   final PopoverDirection direction;
 
-  const PopoverContext({
+  const PopoverRenderObject({
     Widget child,
     this.attachRect,
     this.color,
@@ -22,8 +23,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   }) : super(child: child, key: key);
 
   @override
-  RenderObject createRenderObject(BuildContext context) =>
-      PopoverContextRenderObject(
+  RenderObject createRenderObject(BuildContext context) => PopoverShiftedBox(
         attachRect: attachRect,
         color: color,
         boxShadow: boxShadow,
@@ -35,7 +35,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
     BuildContext context,
-    PopoverContextRenderObject renderObject,
+    PopoverShiftedBox renderObject,
   ) {
     renderObject
       ..attachRect = attachRect
