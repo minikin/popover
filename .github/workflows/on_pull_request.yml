@@ -1,0 +1,26 @@
+name: On Pull Request
+
+on:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  on-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "beta"
+
+      - name: "Install dependencies"
+        run: flutter pub get
+
+      - name: "Analyzing project"
+        run: flutter analyze
+
+      - name: "Run tests"
+        run: flutter test
