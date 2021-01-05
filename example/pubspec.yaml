@@ -1,7 +1,7 @@
-name: popover
-description: iOS style popover.
+name: popover_example
+description: iOS/iPadOS Style Popover Example.
 version: 0.0.1
-author: Sasha Prokhorenko
+publish_to: none
 
 environment:
   sdk: ">=2.9.0 <3.0.0"
@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  popover:
+    path: ../
 
 dev_dependencies:
   flutter_test:

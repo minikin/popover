@@ -2,7 +2,6 @@
 
 iOS/iPadOS Style [Popover](https://developer.apple.com/design/human-interface-guidelines/ios/views/popovers/) for Flutter.
 
-
 # Content
 
 - [Features](#features)
