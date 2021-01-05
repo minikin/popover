@@ -4,8 +4,11 @@ import 'popover_direction.dart';
 import 'utils/utils.dart';
 
 class PopoverUtils {
-  static const double arrowWidth = 12;
-  static const double arrowHeight = 8;
+  static const double arrowWidth = 24;
+  static const double arrowHeight = 12;
+  static const defaultShadow = [
+    BoxShadow(color: Colors.black12, blurRadius: 5)
+  ];
 
   PopoverUtils._();
 
@@ -33,7 +36,7 @@ class PopoverUtils {
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
-        return direction;
+        return PopoverDirection.top;
     }
   }
 }
