@@ -6,7 +6,7 @@ on:
       - "*"
 
 jobs:
-  on-pull-request:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,10 +16,13 @@ jobs:
         with:
           channel: "beta"
 
-      - name: "Install dependencies"
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: "Analyzing project"
+      - name: Format
+        run: flutter format --set-exit-if-changed lib test example
+
+      - name: Analyzing project
         run: flutter analyze
 
       # - name: "Run tests"
