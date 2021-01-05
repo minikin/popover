@@ -1,4 +1,4 @@
-# example
+# Popover Example
 
 A new Flutter project.
 

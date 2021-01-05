@@ -7,6 +7,7 @@ class PopoverItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Popover(
+      width: 200,
       child: Container(
         width: 80,
         height: 40,
@@ -24,10 +25,13 @@ class PopoverItems extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                Container(
-                  height: 50,
-                  color: Colors.amber[100],
-                  child: const Center(child: Text('Entry A')),
+                InkWell(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    height: 50,
+                    color: Colors.amber[100],
+                    child: const Center(child: Text('Entry A')),
+                  ),
                 ),
                 const Divider(),
                 Container(

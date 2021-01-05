@@ -1,42 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
-import 'popover_position.dart';
-import 'popover_render_object.dart';
+import 'popover_position_widget.dart';
+import 'popover_render_shifted_box.dart';
 import 'popover_utils.dart';
+import 'utils/utils.dart';
 
-class PopoverItem extends StatefulWidget {
-  final Rect rect;
+// ignore: must_be_immutable
+class PopoverItem extends StatelessWidget {
+  final Rect attachRect;
   final Widget child;
-  final BoxConstraints constraints;
   final Color color;
-  final List<BoxShadow> boxShadow;
-  final double radius;
   final PopoverDirection direction;
-  final Animation<double> doubleAnimation;
+  final double radius;
+  final List<BoxShadow> boxShadow;
+  final Animation<double> animation;
+  BoxConstraints constraints;
 
   PopoverItem({
-    @required this.rect,
+    @required this.attachRect,
     @required this.child,
-    @required this.constraints,
     this.color = Colors.white,
     this.direction = PopoverDirection.bottom,
-    this.radius = 14,
-    this.doubleAnimation,
+    this.radius = 8,
     this.boxShadow,
+    this.animation,
+    this.constraints,
     Key key,
   }) : super(key: key) {
-    _configureConstrains(constraints);
+    _configure(constraints);
   }
 
-  @override
-  PopoverItemState createState() => PopoverItemState();
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        PopoverPositionWidget(
+          attachRect: attachRect,
+          scale: animation,
+          constraints: constraints,
+          direction: direction,
+          child: _PopoverContext(
+            attachRect: attachRect,
+            animation: animation,
+            radius: radius,
+            color: color,
+            boxShadow: boxShadow,
+            direction: direction,
+            child: Material(type: MaterialType.transparency, child: child),
+          ),
+        )
+      ],
+    );
+  }
 
-  void _configureConstrains(BoxConstraints constraints) {
+  void _configure(BoxConstraints constraints) {
     BoxConstraints temp;
     if (constraints != null) {
-      temp = const BoxConstraints(maxHeight: 120, maxWidth: 180).copyWith(
+      temp = BoxConstraints(
+        maxHeight: Utils().screenHeight / 3,
+        maxWidth: Utils().screenHeight / 3,
+      ).copyWith(
         minWidth: constraints.minWidth.isFinite ? constraints.minWidth : null,
         minHeight:
             constraints.minHeight.isFinite ? constraints.minHeight : null,
@@ -45,39 +68,58 @@ class PopoverItem extends StatefulWidget {
             constraints.maxHeight.isFinite ? constraints.maxHeight : null,
       );
     } else {
-      temp = const BoxConstraints(maxHeight: 300, maxWidth: 180);
+      temp = BoxConstraints(
+        maxHeight: Utils().screenHeight / 3,
+        maxWidth: Utils().screenHeight / 3,
+      );
     }
-    constraints = temp.copyWith(
+    this.constraints = temp.copyWith(
       maxHeight: temp.maxHeight + PopoverUtils.arrowHeight,
     );
   }
 }
 
-class PopoverItemState extends State<PopoverItem>
-    with TickerProviderStateMixin {
+class _PopoverContext extends SingleChildRenderObjectWidget {
+  final Rect attachRect;
+  final Color color;
+  final List<BoxShadow> boxShadow;
+  final Animation<double> animation;
+  final double radius;
+  final PopoverDirection direction;
+
+  _PopoverContext({
+    Widget child,
+    this.attachRect,
+    this.color,
+    this.boxShadow,
+    this.animation,
+    this.radius,
+    this.direction,
+  }) : super(child: child);
+
   @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PopoverPosition(
-          attachRect: widget.rect,
-          animation: widget.doubleAnimation,
-          constraints: widget.constraints,
-          direction: widget.direction,
-          child: PopoverRenderObject(
-            attachRect: widget.rect,
-            scale: widget.doubleAnimation,
-            radius: widget.radius,
-            color: widget.color,
-            boxShadow: widget.boxShadow,
-            direction: widget.direction,
-            child: Material(
-              type: MaterialType.transparency,
-              child: widget.child,
-            ),
-          ),
-        )
-      ],
+  RenderObject createRenderObject(BuildContext context) {
+    return PopoverRenderShiftedBox(
+      attachRect: attachRect,
+      color: color,
+      boxShadow: boxShadow,
+      scale: animation.value,
+      direction: direction,
+      radius: radius,
     );
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    PopoverRenderShiftedBox renderObject,
+  ) {
+    renderObject
+      ..attachRect = attachRect
+      ..color = color
+      ..boxShadow = boxShadow
+      ..scale = animation.value
+      ..direction = direction
+      ..radius = radius;
   }
 }

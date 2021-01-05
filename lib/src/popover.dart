@@ -1,46 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
+import 'popover_utils.dart';
 import 'utils/build_context_extension.dart';
-
-const _kDefaultShadow = [
-  BoxShadow(
-    color: Colors.black12,
-    blurRadius: 5,
-  )
-];
 
 class Popover extends StatelessWidget {
   final Widget child;
   final WidgetBuilder builder;
+  final Color backgroundColor;
+  final Color barrierColor;
+  final Duration transitionDuration;
+  final PopoverDirection direction;
+  final double radius;
+  final List<BoxShadow> shadow;
   final double width;
   final double height;
-  final Color backgroundColor;
-  final List<BoxShadow> shadow;
-  final double radius;
-  final Duration transitionDuration;
-  final BoxConstraints constraints;
-  final Color barrierColor;
-  final PopoverDirection direction;
+  final BoxConstraints popoverConstraints;
 
   Popover({
     @required this.child,
+    @required this.builder,
     this.backgroundColor = Colors.white,
-    this.direction = PopoverDirection.bottom,
+    this.barrierColor = Colors.black45,
     this.transitionDuration = const Duration(milliseconds: 200),
-    this.barrierColor = Colors.black54,
-    this.radius = 14,
-    this.shadow = _kDefaultShadow,
-    this.builder,
-    this.width = 120,
-    this.height = 180,
-    BoxConstraints constraints,
+    this.direction = PopoverDirection.bottom,
+    this.radius = 8,
+    this.shadow = PopoverUtils.defaultShadow,
+    this.width,
+    this.height,
+    BoxConstraints popoverConstraints,
   })  : assert(builder != null),
-        constraints = (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
+        popoverConstraints = (width != null || height != null)
+            ? popoverConstraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
-            : constraints;
+            : popoverConstraints;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +45,6 @@ class Popover extends StatelessWidget {
         final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
         final bounds = BuildContextExtension.getWidgetBounds(context);
         Widget body;
-
         showGeneralDialog(
           context: context,
           pageBuilder: (buildContext, animation, secondaryAnimation) {
@@ -71,18 +65,18 @@ class Popover extends StatelessWidget {
                 curve: Curves.easeOut,
               ),
               child: PopoverItem(
-                rect: Rect.fromLTWH(
+                attachRect: Rect.fromLTWH(
                   offset.dx,
                   offset.dy,
                   bounds.width,
                   bounds.height,
                 ),
                 child: body,
-                constraints: constraints,
+                constraints: popoverConstraints,
                 color: backgroundColor,
                 boxShadow: shadow,
                 radius: radius,
-                doubleAnimation: animation,
+                animation: animation,
                 direction: direction,
               ),
             );
