@@ -32,9 +32,9 @@ class PopoverPosition extends SingleChildRenderObjectWidget {
   @override
   void updateRenderObject(
     BuildContext context,
-    PopoverPositionShiftedBox renderObject,
+    PopoverPositionShiftedBox shiftedBox,
   ) {
-    renderObject
+    shiftedBox
       ..attachRect = attachRect
       ..direction = direction
       ..additionalConstraints = constraints;

@@ -62,7 +62,7 @@ class PopoverPositionShiftedBox extends RenderShiftedBox {
           Utils().screenWidth - attachRect.right > size.width / 2) {
         bodyLeft = attachRect.left + attachRect.width / 2 - size.width / 2;
       } else if (attachRect.left < size.width / 2) {
-        bodyLeft = 10.0;
+        bodyLeft = 10;
       } else {
         bodyLeft = Utils().screenWidth - 10.0 - size.width;
       }
@@ -78,7 +78,7 @@ class PopoverPositionShiftedBox extends RenderShiftedBox {
           Utils().screenHeight - attachRect.bottom > size.height / 2) {
         bodyTop = attachRect.top + attachRect.height / 2 - size.height / 2;
       } else if (attachRect.top < size.height / 2) {
-        bodyTop = 10.0;
+        bodyTop = 10;
       } else {
         bodyTop = Utils().screenHeight - 10.0 - size.height;
       }

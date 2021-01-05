@@ -8,38 +8,43 @@ class PopoverExample extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Popover Example')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Row(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                const PopoverItems(),
-                const PopoverItems(),
-                const PopoverItems(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
+                  ],
+                ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const PopoverItems(),
-                const PopoverItems(),
-                const PopoverItems(),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const PopoverItems(),
-                const PopoverItems(),
-                const PopoverItems(),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -4,14 +4,14 @@ import 'popover_direction.dart';
 import 'popover_item.dart';
 import 'utils/build_context_extension.dart';
 
-class Popover extends StatelessWidget {
-  static const _kDefaultShadow = [
-    BoxShadow(
-      color: Colors.black12,
-      blurRadius: 5,
-    )
-  ];
+const _kDefaultShadow = [
+  BoxShadow(
+    color: Colors.black12,
+    blurRadius: 5,
+  )
+];
 
+class Popover extends StatelessWidget {
   final Widget child;
   final WidgetBuilder builder;
   final double width;
@@ -33,8 +33,8 @@ class Popover extends StatelessWidget {
     this.radius = 14,
     this.shadow = _kDefaultShadow,
     this.builder,
-    this.width,
-    this.height,
+    this.width = 120,
+    this.height = 180,
     BoxConstraints constraints,
   })  : assert(builder != null),
         constraints = (width != null || height != null)
@@ -54,7 +54,7 @@ class Popover extends StatelessWidget {
         showGeneralDialog(
           context: context,
           pageBuilder: (buildContext, animation, secondaryAnimation) {
-            return Builder(builder: (context) => Container());
+            return Builder(builder: (_) => const SizedBox.shrink());
           },
           barrierDismissible: true,
           barrierLabel:
