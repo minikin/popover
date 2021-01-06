@@ -64,9 +64,10 @@ cd example && flutter run
 
 ## TODO:
 
-- [ ] Clean up code base
-- [ ] Add tests
-- [ ] Add documentation 
+- [Refactor Codebase](https://github.com/minikin/popover/issues/6)
+- [Add Tests](https://github.com/minikin/popover/issues/7)
+- [Integrate Codecov](https://github.com/minikin/popover/issues/8)
+- [Add documentaion](https://github.com/minikin/popover/issues/5) 
 
 ## FAQ
 
