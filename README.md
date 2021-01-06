@@ -1,19 +1,25 @@
-<h1 align="center">
-  Popover
-</h1>
+<h1 align="center">Popover</h1>
 
 <p align="center">
-Popover for Flutter
+  <a href="https://github.com/minikin/popover/">
+    <img src="https://i.ibb.co/WGZ3tbB/popover-demo-no-background.png" alt="Popover screenshots" />
+  </a>
+<h2 align="center">Popover for Flutter</h2>
 </p>
 
 <p align="center">
-  <a href="https://github.com/minikin/popover/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
-  </a>
   <a href="https://github.com/minikin/popover/actions">
     <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
   </a>
-  <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="style: effective dart"></a>
+
+  <a href="https://github.com/minikin/popover/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
+  </a>
+
+  <a href="https://github.com/tenhobi/effective_dart">
+    <img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="Effective Dart" />
+  </a>
+
   <a href="https://github.com/minikin/popover/blob/main/CODE_OF_CONDUCT.md">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
   </a>
