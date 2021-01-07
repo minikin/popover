@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/minikin/popover/">
-    <img src="https://i.ibb.co/f43ZFzf/popover-demo.png" alt="Popover screenshots" />
+    <img src="https://i.ibb.co/0DW1XQ0/popover-demo.png" alt="Popover screenshots" />
   </a>
 <h2 align="center">Popover for Flutter</h2>
 </p>
