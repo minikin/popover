@@ -60,9 +60,9 @@ class PopoverItem extends StatelessWidget {
   }
 
   void _configure(BoxConstraints constraints) {
-    BoxConstraints temp;
+    BoxConstraints _constraints;
     if (constraints != null) {
-      temp = BoxConstraints(
+      _constraints = BoxConstraints(
         maxHeight: Utils().screenHeight / 3,
         maxWidth: Utils().screenHeight / 3,
       ).copyWith(
@@ -74,13 +74,13 @@ class PopoverItem extends StatelessWidget {
             constraints.maxHeight.isFinite ? constraints.maxHeight : null,
       );
     } else {
-      temp = BoxConstraints(
+      _constraints = BoxConstraints(
         maxHeight: Utils().screenHeight / 3,
         maxWidth: Utils().screenHeight / 3,
       );
     }
-    this.constraints = temp.copyWith(
-      maxHeight: temp.maxHeight + PopoverUtils.arrowHeight,
+    this.constraints = _constraints.copyWith(
+      maxHeight: _constraints.maxHeight + PopoverUtils.arrowHeight,
     );
   }
 }

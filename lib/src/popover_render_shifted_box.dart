@@ -106,7 +106,10 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
         );
 
         translation = Offset(arrowLeft + arrowWidth / 2, size.height);
-
+        break;
+      case PopoverDirection.bottom:
+        arrowRect = Rect.fromLTWH(arrowLeft, 0, arrowWidth, arrowHeight);
+        translation = Offset(arrowLeft + arrowWidth / 2, 0);
         break;
       case PopoverDirection.left:
         arrowRect = Rect.fromLTWH(
@@ -115,11 +118,8 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
           arrowHeight,
           arrowWidth,
         );
+
         translation = Offset(size.width, arrowTop + arrowWidth / 2);
-        break;
-      case PopoverDirection.bottom:
-        arrowRect = Rect.fromLTWH(arrowLeft, 0, arrowWidth, arrowHeight);
-        translation = Offset(arrowLeft + arrowWidth / 2, 0);
         break;
       case PopoverDirection.right:
         arrowRect = Rect.fromLTWH(0, arrowTop, arrowHeight, arrowWidth);
@@ -128,14 +128,30 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       default:
     }
 
-    transform.translate(translation.dx, translation.dy);
-    transform.scale(scale, scale, 1.0);
-    transform.translate(-translation.dx, -translation.dy);
+    _transform(transform, translation);
 
     _paintShadows(context, transform, offset, _direction, arrowRect, bodyRect);
 
-    final path = PopoverPath(radius).draw(_direction, arrowRect, bodyRect);
+    _pushClipPath(
+      context,
+      offset,
+      PopoverPath(radius).draw(_direction, arrowRect, bodyRect),
+      transform,
+    );
+  }
 
+  void _transform(Matrix4 transform, Offset translation) {
+    transform.translate(translation.dx, translation.dy);
+    transform.scale(scale, scale, 1);
+    transform.translate(-translation.dx, -translation.dy);
+  }
+
+  void _pushClipPath(
+    PaintingContext context,
+    Offset offset,
+    Path path,
+    Matrix4 transform,
+  ) {
     context.pushClipPath(needsCompositing, offset, offset & size, path, (
       context,
       offset,
@@ -155,6 +171,13 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
   @override
   void performLayout() {
     assert(constraints.maxHeight.isFinite);
+
+    _configureChildConstrains();
+    _configureChildSize();
+    _configureChildOffset();
+  }
+
+  void _configureChildConstrains() {
     BoxConstraints childConstraints;
 
     if (direction == PopoverDirection.top ||
@@ -169,14 +192,18 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     }
 
     child.layout(childConstraints, parentUsesSize: true);
+  }
 
+  void _configureChildSize() {
     if (direction == PopoverDirection.top ||
         direction == PopoverDirection.bottom) {
       size = Size(child.size.width, child.size.height + arrowHeight);
     } else {
       size = Size(child.size.width + arrowHeight, child.size.height);
     }
+  }
 
+  void _configureChildOffset() {
     final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
@@ -185,9 +212,9 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
 
     final BoxParentData childParentData = child.parentData;
     if (_direction == PopoverDirection.bottom) {
-      childParentData.offset = Offset(0.0, arrowHeight);
+      childParentData.offset = Offset(0, arrowHeight);
     } else if (_direction == PopoverDirection.right) {
-      childParentData.offset = Offset(arrowHeight, 0.0);
+      childParentData.offset = Offset(arrowHeight, 0);
     }
   }
 

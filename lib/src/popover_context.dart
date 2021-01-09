@@ -13,7 +13,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   final double arrowWidth;
   final double arrowHeight;
 
-  PopoverContext({
+  const PopoverContext({
     Widget child,
     this.attachRect,
     this.backgroundColor,
