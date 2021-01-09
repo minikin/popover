@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/minikin/popover/">
-    <img src="https://i.ibb.co/WGZ3tbB/popover-demo-no-background.png" alt="Popover screenshots" />
+    <img src="https://i.ibb.co/0DW1XQ0/popover-demo.png" alt="Popover screenshots" />
   </a>
 <h2 align="center">Popover for Flutter</h2>
 </p>
@@ -11,7 +11,11 @@
   <a href="https://github.com/minikin/popover/actions">
     <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
   </a>
-
+  
+  <a href="https://github.com/minikin/popover">
+    <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
+  </a>
+  
   <a href="https://github.com/minikin/popover/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
   </a>
@@ -64,9 +68,10 @@ cd example && flutter run
 
 ## TODO:
 
-- [ ] Clean up code base
-- [ ] Add tests
-- [ ] Add documentation 
+- [Refactor Codebase](https://github.com/minikin/popover/issues/6)
+- [Add Tests](https://github.com/minikin/popover/issues/7)
+- [Integrate Codecov](https://github.com/minikin/popover/issues/8)
+- [Add documentaion](https://github.com/minikin/popover/issues/5) 
 
 ## FAQ
 
