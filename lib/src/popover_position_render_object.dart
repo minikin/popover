@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
-import 'popover_utils.dart';
+import 'utils/popover_utils.dart';
 import 'utils/utils.dart';
 
 class PopoverPositionRenderObject extends RenderShiftedBox {
@@ -42,7 +42,7 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
   }
 
   Offset calculateOffset(Size size) {
-    final _direction = PopoverUtils.reCalculatePopoverDirection(
+    final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
       direction,

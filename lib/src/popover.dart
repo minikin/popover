@@ -3,35 +3,39 @@ import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
-import 'popover_utils.dart';
 import 'utils/build_context_extension.dart';
+import 'utils/popover_utils.dart';
 
 class Popover extends StatelessWidget {
   final Widget child;
-  final WidgetBuilder builder;
+  final WidgetBuilder bodyBuilder;
   final Color backgroundColor;
   final Color barrierColor;
   final Duration transitionDuration;
   final PopoverDirection direction;
   final double radius;
   final List<BoxShadow> shadow;
+  final double arrowWidth;
+  final double arrowHeight;
   final double width;
   final double height;
   final BoxConstraints popoverConstraints;
 
   Popover({
     @required this.child,
-    @required this.builder,
+    @required this.bodyBuilder,
     this.backgroundColor = Colors.white,
     this.barrierColor = Colors.black45,
     this.transitionDuration = const Duration(milliseconds: 200),
     this.direction = PopoverDirection.bottom,
     this.radius = 8,
     this.shadow = PopoverUtils.defaultShadow,
+    this.arrowWidth = PopoverUtils.arrowWidth,
+    this.arrowHeight = PopoverUtils.arrowHeight,
     this.width,
     this.height,
     BoxConstraints popoverConstraints,
-  })  : assert(builder != null),
+  })  : assert(bodyBuilder != null),
         popoverConstraints = (width != null || height != null)
             ? popoverConstraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
@@ -44,7 +48,6 @@ class Popover extends StatelessWidget {
       onTap: () {
         final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
         final bounds = BuildContextExtension.getWidgetBounds(context);
-        Widget body;
         showGeneralDialog(
           context: context,
           pageBuilder: (buildContext, animation, secondaryAnimation) {
@@ -56,9 +59,6 @@ class Popover extends StatelessWidget {
           barrierColor: barrierColor,
           transitionDuration: transitionDuration,
           transitionBuilder: (context, animation, secondaryAnimation, child) {
-            if (body == null) {
-              body = builder(context);
-            }
             return FadeTransition(
               opacity: CurvedAnimation(
                 parent: animation,
@@ -71,13 +71,15 @@ class Popover extends StatelessWidget {
                   bounds.width,
                   bounds.height,
                 ),
-                child: body,
+                child: bodyBuilder(context),
                 constraints: popoverConstraints,
-                color: backgroundColor,
+                backgroundColor: backgroundColor,
                 boxShadow: shadow,
                 radius: radius,
                 animation: animation,
                 direction: direction,
+                arrowWidth: arrowWidth,
+                arrowHeight: arrowHeight,
               ),
             );
           },
