@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
-import 'popover_utils.dart';
+import 'utils/popover_utils.dart';
 import 'utils/utils.dart';
 
 class PopoverPositionRenderObject extends RenderShiftedBox {
@@ -19,6 +19,7 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     _additionalConstraints = constraints;
     _direction = direction;
   }
+
   BoxConstraints get additionalConstraints => _additionalConstraints;
   set additionalConstraints(BoxConstraints value) {
     if (_additionalConstraints == value) return;
@@ -34,54 +35,24 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
   }
 
   PopoverDirection get direction => _direction;
-
   set direction(PopoverDirection value) {
     if (_direction == value) return;
     _direction = value;
     markNeedsLayout();
   }
 
-  Offset calcOffset(Size size) {
-    final calcDirection = PopoverUtils.reCalculatePopoverDirection(
+  Offset calculateOffset(Size size) {
+    final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
       direction,
     );
 
-    if (calcDirection == PopoverDirection.top ||
-        calcDirection == PopoverDirection.bottom) {
-      var bodyLeft = 0.0;
-
-      if (attachRect.left > size.width / 2 &&
-          Utils().screenWidth - attachRect.right > size.width / 2) {
-        bodyLeft = attachRect.left + attachRect.width / 2 - size.width / 2;
-      } else if (attachRect.left < size.width / 2) {
-        bodyLeft = 10;
-      } else {
-        bodyLeft = Utils().screenWidth - 10 - size.width;
-      }
-
-      if (calcDirection == PopoverDirection.bottom) {
-        return Offset(bodyLeft, attachRect.bottom);
-      } else {
-        return Offset(bodyLeft, attachRect.top - size.height);
-      }
+    if (_direction == PopoverDirection.top ||
+        _direction == PopoverDirection.bottom) {
+      return _dxOffset(_direction, _horizontalOffset(size), size);
     } else {
-      var bodyTop = 0.0;
-      if (attachRect.top > size.height / 2 &&
-          Utils().screenHeight - attachRect.bottom > size.height / 2) {
-        bodyTop = attachRect.top + attachRect.height / 2 - size.height / 2;
-      } else if (attachRect.top < size.height / 2) {
-        bodyTop = 10;
-      } else {
-        bodyTop = Utils().screenHeight - 10.0 - size.height;
-      }
-
-      if (calcDirection == PopoverDirection.right) {
-        return Offset(attachRect.right, bodyTop);
-      } else {
-        return Offset(attachRect.left - size.width, bodyTop);
-      }
+      return _dyOffset(_direction, _verticalOffset(size), size);
     }
   }
 
@@ -93,6 +64,58 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     );
     size = Size(constraints.maxWidth, constraints.maxHeight);
     final BoxParentData childParentData = child.parentData;
-    childParentData.offset = calcOffset(child.size);
+    childParentData.offset = calculateOffset(child.size);
+  }
+
+  Offset _dxOffset(
+    PopoverDirection direction,
+    double horizontalOffset,
+    Size size,
+  ) {
+    if (direction == PopoverDirection.bottom) {
+      return Offset(horizontalOffset, attachRect.bottom);
+    } else {
+      return Offset(horizontalOffset, attachRect.top - size.height);
+    }
+  }
+
+  Offset _dyOffset(
+    PopoverDirection _direction,
+    double verticalOffset,
+    Size size,
+  ) {
+    if (_direction == PopoverDirection.right) {
+      return Offset(attachRect.right, verticalOffset);
+    } else {
+      return Offset(attachRect.left - size.width, verticalOffset);
+    }
+  }
+
+  double _horizontalOffset(Size size) {
+    var offset = 0.0;
+
+    if (attachRect.left > size.width / 2 &&
+        Utils().screenWidth - attachRect.right > size.width / 2) {
+      offset = attachRect.left + attachRect.width / 2 - size.width / 2;
+    } else if (attachRect.left < size.width / 2) {
+      offset = 10;
+    } else {
+      offset = Utils().screenWidth - 10 - size.width;
+    }
+    return offset;
+  }
+
+  double _verticalOffset(Size size) {
+    var offset = 0.0;
+
+    if (attachRect.top > size.height / 2 &&
+        Utils().screenHeight - attachRect.bottom > size.height / 2) {
+      offset = attachRect.top + attachRect.height / 2 - size.height / 2;
+    } else if (attachRect.top < size.height / 2) {
+      offset = 10;
+    } else {
+      offset = Utils().screenHeight - 10 - size.height;
+    }
+    return offset;
   }
 }

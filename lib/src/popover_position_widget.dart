@@ -9,12 +9,12 @@ class PopoverPositionWidget extends SingleChildRenderObjectWidget {
   final BoxConstraints constraints;
   final PopoverDirection direction;
 
-  PopoverPositionWidget({
-    Widget child,
+  const PopoverPositionWidget({
     this.attachRect,
     this.constraints,
     this.scale,
     this.direction,
+    Widget child,
   }) : super(child: child);
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'popover_direction.dart';
-import 'utils/utils.dart';
+import '../popover_direction.dart';
+import 'utils.dart';
 
 class PopoverUtils {
   static const double arrowWidth = 24;
@@ -12,7 +12,7 @@ class PopoverUtils {
 
   PopoverUtils._();
 
-  static PopoverDirection reCalculatePopoverDirection(
+  static PopoverDirection popoverDirection(
     Rect attachRect,
     Size size,
     PopoverDirection direction,

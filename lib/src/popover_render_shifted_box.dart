@@ -1,9 +1,12 @@
 import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
-import 'popover_utils.dart';
+import 'popover_path.dart';
+import 'utils/popover_utils.dart';
 
 class PopoverRenderShiftedBox extends RenderShiftedBox {
+  double arrowWidth;
+  double arrowHeight;
   PopoverDirection _direction;
   Rect _attachRect;
   Color _color;
@@ -12,6 +15,8 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
   double _radius;
 
   PopoverRenderShiftedBox({
+    this.arrowWidth,
+    this.arrowHeight,
     RenderBox child,
     Rect attachRect,
     Color color,
@@ -73,7 +78,7 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
   void paint(PaintingContext context, Offset offset) {
     final transform = Matrix4.identity();
     final BoxParentData childParentData = child.parentData;
-    final calcDirection = PopoverUtils.reCalculatePopoverDirection(
+    final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
       direction,
@@ -85,78 +90,69 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
 
     bodyRect = childParentData.offset & child.size;
 
-    final arrowLeft = attachRect.left +
-        attachRect.width / 2 -
-        PopoverUtils.arrowWidth / 2 -
-        offset.dx;
+    final arrowLeft =
+        attachRect.left + attachRect.width / 2 - arrowWidth / 2 - offset.dx;
 
-    final arrowTop = attachRect.top +
-        attachRect.height / 2 -
-        PopoverUtils.arrowWidth / 2 -
-        offset.dy;
+    final arrowTop =
+        attachRect.top + attachRect.height / 2 - arrowWidth / 2 - offset.dy;
 
-    switch (calcDirection) {
+    switch (_direction) {
       case PopoverDirection.top:
         arrowRect = Rect.fromLTWH(
           arrowLeft,
           child.size.height,
-          PopoverUtils.arrowWidth,
-          PopoverUtils.arrowHeight,
+          arrowWidth,
+          arrowHeight,
         );
 
-        translation = Offset(
-          arrowLeft + PopoverUtils.arrowWidth / 2,
-          size.height,
-        );
-
+        translation = Offset(arrowLeft + arrowWidth / 2, size.height);
+        break;
+      case PopoverDirection.bottom:
+        arrowRect = Rect.fromLTWH(arrowLeft, 0, arrowWidth, arrowHeight);
+        translation = Offset(arrowLeft + arrowWidth / 2, 0);
         break;
       case PopoverDirection.left:
         arrowRect = Rect.fromLTWH(
           child.size.width,
           arrowTop,
-          PopoverUtils.arrowHeight,
-          PopoverUtils.arrowWidth,
+          arrowHeight,
+          arrowWidth,
         );
-        translation =
-            Offset(size.width, arrowTop + PopoverUtils.arrowWidth / 2);
-        break;
-      case PopoverDirection.bottom:
-        arrowRect = Rect.fromLTWH(
-          arrowLeft,
-          0,
-          PopoverUtils.arrowWidth,
-          PopoverUtils.arrowHeight,
-        );
-        translation = Offset(arrowLeft + PopoverUtils.arrowWidth / 2, 0);
+
+        translation = Offset(size.width, arrowTop + arrowWidth / 2);
         break;
       case PopoverDirection.right:
-        arrowRect = Rect.fromLTWH(
-          0,
-          arrowTop,
-          PopoverUtils.arrowHeight,
-          PopoverUtils.arrowWidth,
-        );
-        translation = Offset(0, arrowTop + PopoverUtils.arrowWidth / 2);
+        arrowRect = Rect.fromLTWH(0, arrowTop, arrowHeight, arrowWidth);
+        translation = Offset(0, arrowTop + arrowWidth / 2);
         break;
       default:
     }
 
-    transform.translate(translation.dx, translation.dy);
-    transform.scale(scale, scale, 1.0);
-    transform.translate(-translation.dx, -translation.dy);
+    _transform(transform, translation);
 
-    _paintShadows(
+    _paintShadows(context, transform, offset, _direction, arrowRect, bodyRect);
+
+    _pushClipPath(
       context,
-      transform,
       offset,
-      calcDirection,
-      arrowRect,
-      bodyRect,
+      PopoverPath(radius).draw(_direction, arrowRect, bodyRect),
+      transform,
     );
+  }
 
-    final clipPath = _getClip(calcDirection, arrowRect, bodyRect);
+  void _transform(Matrix4 transform, Offset translation) {
+    transform.translate(translation.dx, translation.dy);
+    transform.scale(scale, scale, 1);
+    transform.translate(-translation.dx, -translation.dy);
+  }
 
-    context.pushClipPath(needsCompositing, offset, offset & size, clipPath, (
+  void _pushClipPath(
+    PaintingContext context,
+    Offset offset,
+    Path path,
+    Matrix4 transform,
+  ) {
+    context.pushClipPath(needsCompositing, offset, offset & size, path, (
       context,
       offset,
     ) {
@@ -175,192 +171,51 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
   @override
   void performLayout() {
     assert(constraints.maxHeight.isFinite);
+
+    _configureChildConstrains();
+    _configureChildSize();
+    _configureChildOffset();
+  }
+
+  void _configureChildConstrains() {
     BoxConstraints childConstraints;
 
     if (direction == PopoverDirection.top ||
         direction == PopoverDirection.bottom) {
       childConstraints = BoxConstraints(
-        maxHeight: constraints.maxHeight - PopoverUtils.arrowHeight,
+        maxHeight: constraints.maxHeight - arrowHeight,
       ).enforce(constraints);
     } else {
       childConstraints = BoxConstraints(
-              maxWidth: constraints.maxWidth - PopoverUtils.arrowHeight)
-          .enforce(constraints);
+        maxWidth: constraints.maxWidth - arrowHeight,
+      ).enforce(constraints);
     }
 
     child.layout(childConstraints, parentUsesSize: true);
+  }
 
+  void _configureChildSize() {
     if (direction == PopoverDirection.top ||
         direction == PopoverDirection.bottom) {
-      size = Size(
-        child.size.width,
-        child.size.height + PopoverUtils.arrowHeight,
-      );
+      size = Size(child.size.width, child.size.height + arrowHeight);
     } else {
-      size = Size(
-        child.size.width + PopoverUtils.arrowHeight,
-        child.size.height,
-      );
+      size = Size(child.size.width + arrowHeight, child.size.height);
     }
-    final calcDirection = PopoverUtils.reCalculatePopoverDirection(
+  }
+
+  void _configureChildOffset() {
+    final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
       direction,
     );
 
     final BoxParentData childParentData = child.parentData;
-    if (calcDirection == PopoverDirection.bottom) {
-      childParentData.offset = const Offset(0.0, PopoverUtils.arrowHeight);
-    } else if (calcDirection == PopoverDirection.right) {
-      childParentData.offset = const Offset(PopoverUtils.arrowHeight, 0.0);
+    if (_direction == PopoverDirection.bottom) {
+      childParentData.offset = Offset(0, arrowHeight);
+    } else if (_direction == PopoverDirection.right) {
+      childParentData.offset = Offset(arrowHeight, 0);
     }
-  }
-
-  Path _getClip(
-    PopoverDirection direction,
-    Rect arrowRect,
-    Rect bodyRect,
-  ) {
-    final path = Path();
-
-    if (direction == PopoverDirection.top) {
-      path.moveTo(arrowRect.left, arrowRect.top);
-      path.lineTo(arrowRect.left + arrowRect.width / 2, arrowRect.bottom);
-      path.lineTo(arrowRect.right, arrowRect.top);
-
-      path.lineTo(bodyRect.right - radius, bodyRect.bottom);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.bottom,
-        bodyRect.right,
-        bodyRect.bottom - radius,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.right, bodyRect.top + radius);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.top,
-        bodyRect.right - radius,
-        bodyRect.top,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.left + radius, bodyRect.top);
-      path.conicTo(
-        bodyRect.left,
-        bodyRect.top,
-        bodyRect.left,
-        bodyRect.top + radius,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.left, bodyRect.bottom - radius);
-      path.conicTo(
-        bodyRect.left,
-        bodyRect.bottom,
-        bodyRect.left + radius,
-        bodyRect.bottom,
-        1.0,
-      );
-    } else if (direction == PopoverDirection.right) {
-      path.moveTo(arrowRect.right, arrowRect.top);
-      path.lineTo(arrowRect.left, arrowRect.top + arrowRect.height / 2);
-      path.lineTo(arrowRect.right, arrowRect.bottom);
-
-      path.lineTo(bodyRect.left, bodyRect.bottom - radius);
-      path.conicTo(
-        bodyRect.left,
-        bodyRect.bottom,
-        bodyRect.left + radius,
-        bodyRect.bottom,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.right - radius, bodyRect.bottom);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.bottom,
-        bodyRect.right,
-        bodyRect.bottom - radius,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.right, bodyRect.top + radius);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.top,
-        bodyRect.right - radius,
-        bodyRect.top,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.left + radius, bodyRect.top);
-      path.conicTo(bodyRect.left, bodyRect.top, bodyRect.left,
-          bodyRect.top + radius, 1.0);
-    } else if (direction == PopoverDirection.left) {
-      path.moveTo(arrowRect.left, arrowRect.top);
-      path.lineTo(arrowRect.right, arrowRect.top + arrowRect.height / 2);
-      path.lineTo(arrowRect.left, arrowRect.bottom);
-
-      path.lineTo(bodyRect.right, bodyRect.bottom - radius);
-      path.conicTo(bodyRect.right, bodyRect.bottom, bodyRect.right - radius,
-          bodyRect.bottom, 1.0);
-
-      path.lineTo(bodyRect.left + radius, bodyRect.bottom);
-      path.conicTo(bodyRect.left, bodyRect.bottom, bodyRect.left,
-          bodyRect.bottom - radius, 1.0);
-
-      path.lineTo(bodyRect.left, bodyRect.top + radius);
-      path.conicTo(bodyRect.left, bodyRect.top, bodyRect.left + radius,
-          bodyRect.top, 1.0);
-
-      path.lineTo(bodyRect.right - radius, bodyRect.top);
-      path.conicTo(bodyRect.right, bodyRect.top, bodyRect.right,
-          bodyRect.top + radius, 1.0);
-    } else {
-      path.moveTo(arrowRect.left, arrowRect.bottom);
-      path.lineTo(arrowRect.left + arrowRect.width / 2, arrowRect.top);
-      path.lineTo(arrowRect.right, arrowRect.bottom);
-
-      path.lineTo(bodyRect.right - radius, bodyRect.top);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.top,
-        bodyRect.right,
-        bodyRect.top + radius,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.right, bodyRect.bottom - radius);
-      path.conicTo(
-        bodyRect.right,
-        bodyRect.bottom,
-        bodyRect.right - radius,
-        bodyRect.bottom,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.left + radius, bodyRect.bottom);
-      path.conicTo(
-        bodyRect.left,
-        bodyRect.bottom,
-        bodyRect.left,
-        bodyRect.bottom - radius,
-        1.0,
-      );
-
-      path.lineTo(bodyRect.left, bodyRect.top + radius);
-      path.conicTo(
-        bodyRect.left,
-        bodyRect.top,
-        bodyRect.left + radius,
-        bodyRect.top,
-        1.0,
-      );
-    }
-    path.close();
-    return path;
   }
 
   void _paintShadows(
@@ -385,7 +240,7 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
           .shift(boxShadow.offset)
           .inflate(boxShadow.spreadRadius);
 
-      final path = _getClip(direction, arrowRect, bodyRect);
+      final path = PopoverPath(radius).draw(_direction, arrowRect, bodyRect);
 
       context.pushTransform(needsCompositing, offset, transform, (
         context,
