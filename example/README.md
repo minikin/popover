@@ -1,7 +1,6 @@
 # Popover Example
 
 ```dart
-
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 

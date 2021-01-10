@@ -58,6 +58,7 @@ Source: [Human Interface Guidelines.
 ## Requirements
 
 - Dart: 2.9.0+
+- Flutter : 1.17.5+
 
 ## Install
 
@@ -68,6 +69,68 @@ dependencies:
 
 ## Example
 
+See `example/example.dart`.
+
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:popover/popover.dart';
+
+class PopoverItems extends StatelessWidget {
+  const PopoverItems({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Popover(
+      width: 200,
+      child: Container(
+        width: 80,
+        height: 40,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+        ),
+        child: const Center(child: Text('Click Me')),
+      ),
+      builder: (context) {
+        return Scrollbar(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: ListView(
+              padding: const EdgeInsets.all(8),
+              children: [
+                InkWell(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    height: 50,
+                    color: Colors.amber[100],
+                    child: const Center(child: Text('Entry A')),
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  height: 50,
+                  color: Colors.amber[200],
+                  child: const Center(child: Text('Entry B')),
+                ),
+                const Divider(),
+                Container(
+                  height: 50,
+                  color: Colors.amber[300],
+                  child: const Center(child: Text('Entry C')),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+```
+
 To see examples of the following package on a device or simulator:
 
 ```sh
@@ -76,7 +139,7 @@ cd example && flutter run
 
 ## TODO:
 
-- [Add documentaion](https://github.com/minikin/popover/issues/5) 
+- [Add documentation](https://github.com/minikin/popover/issues/5) 
 
 ## FAQ
 
