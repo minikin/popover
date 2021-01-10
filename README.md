@@ -8,14 +8,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/minikin/popover/actions">
-    <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
-  </a>
-  
+
   <a href="https://github.com/minikin/popover">
     <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
   </a>
   
+   <a href="https://github.com/minikin/popover/actions">
+    <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
+  </a>
+  
+  <a href="https://codecov.io/gh/minikin/popover">
+    <img src="https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ"/>
+  </a>
+    
+ 
   <a href="https://github.com/minikin/popover/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
   </a>
@@ -68,9 +74,6 @@ cd example && flutter run
 
 ## TODO:
 
-- [Refactor Codebase](https://github.com/minikin/popover/issues/6)
-- [Add Tests](https://github.com/minikin/popover/issues/7)
-- [Integrate Codecov](https://github.com/minikin/popover/issues/8)
 - [Add documentaion](https://github.com/minikin/popover/issues/5) 
 
 ## FAQ
