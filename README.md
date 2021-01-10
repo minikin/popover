@@ -13,16 +13,7 @@
     <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
   </a>
   
-   <a href="https://github.com/minikin/popover/actions">
-    <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
-  </a>
-  
-  <a href="https://codecov.io/gh/minikin/popover">
-    <img src="https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ"/>
-  </a>
-    
- 
-  <a href="https://github.com/minikin/popover/blob/main/LICENSE">
+   <a href="https://github.com/minikin/popover/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
   </a>
 
@@ -33,6 +24,17 @@
   <a href="https://github.com/minikin/popover/blob/main/CODE_OF_CONDUCT.md">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
   </a>
+  
+  </br>
+  
+   <a href="https://github.com/minikin/popover/actions">
+    <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
+  </a>
+  
+  <a href="https://codecov.io/gh/minikin/popover">
+    <img src="https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ"/>
+  </a>
+    
 </p>
 
 
