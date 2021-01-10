@@ -69,8 +69,7 @@ dependencies:
 
 ## Example
 
-See `example/example.dart`.
-
+See `example/lib/src/popover_example.dart`.
 
 ```dart
 import 'package:flutter/material.dart';
