@@ -7,18 +7,43 @@ import 'utils/build_context_extension.dart';
 import 'utils/popover_utils.dart';
 
 class Popover extends StatelessWidget {
+  /// Parent widget to which Popover is `attached`
   final Widget child;
+
+  /// [WidgetBuilder] is builder which builds body/content of Popover
   final WidgetBuilder bodyBuilder;
+
+  /// Background [Color] of Popover
   final Color backgroundColor;
+
+  /// Barrier [Color] of screen when Popoover is presented
   final Color barrierColor;
+
+  /// Animation transition duration
   final Duration transitionDuration;
+
+  /// Desired Popover's direction behaviour
   final PopoverDirection direction;
+
+  /// Radius of Popover's body
   final double radius;
+
+  /// Shadow [BoxShadow] of Popover
   final List<BoxShadow> shadow;
+
+  /// Popover's arrow width
   final double arrowWidth;
+
+  /// Popover's arrow height
   final double arrowHeight;
+
+  /// Popover's body/content widget width
   final double width;
+
+  /// Popover's body/content widget height
   final double height;
+
+  /// Popover's constraints
   final BoxConstraints popoverConstraints;
 
   Popover({

@@ -6,8 +6,7 @@ import 'popover_position_widget.dart';
 import 'utils/popover_utils.dart';
 import 'utils/utils.dart';
 
-// ignore: must_be_immutable
-class PopoverItem extends StatelessWidget {
+class PopoverItem extends StatefulWidget {
   final Rect attachRect;
   final Widget child;
   final Color backgroundColor;
@@ -17,9 +16,9 @@ class PopoverItem extends StatelessWidget {
   final Animation<double> animation;
   final double arrowWidth;
   final double arrowHeight;
-  BoxConstraints constraints;
+  final BoxConstraints constraints;
 
-  PopoverItem({
+  const PopoverItem({
     @required this.attachRect,
     @required this.child,
     this.backgroundColor,
@@ -31,47 +30,67 @@ class PopoverItem extends StatelessWidget {
     this.arrowHeight,
     this.constraints,
     Key key,
-  }) : super(key: key) {
-    _configure(constraints);
-  }
+  }) : super(key: key);
+
+  @override
+  _PopoverItemState createState() => _PopoverItemState();
+}
+
+class _PopoverItemState extends State<PopoverItem> {
+  BoxConstraints constraints;
 
   Widget build(BuildContext context) {
     return Stack(
       children: [
         PopoverPositionWidget(
-          attachRect: attachRect,
-          scale: animation,
+          attachRect: widget.attachRect,
+          scale: widget.animation,
           constraints: constraints,
-          direction: direction,
+          direction: widget.direction,
           child: PopoverContext(
-            attachRect: attachRect,
-            animation: animation,
-            radius: radius,
-            backgroundColor: backgroundColor,
-            boxShadow: boxShadow,
-            direction: direction,
-            arrowWidth: arrowWidth,
-            arrowHeight: arrowHeight,
-            child: Material(type: MaterialType.transparency, child: child),
+            attachRect: widget.attachRect,
+            animation: widget.animation,
+            radius: widget.radius,
+            backgroundColor: widget.backgroundColor,
+            boxShadow: widget.boxShadow,
+            direction: widget.direction,
+            arrowWidth: widget.arrowWidth,
+            arrowHeight: widget.arrowHeight,
+            child: Material(
+              type: MaterialType.transparency,
+              child: widget.child,
+            ),
           ),
         )
       ],
     );
   }
 
-  void _configure(BoxConstraints constraints) {
+  @override
+  void initState() {
+    super.initState();
+    _configureConstraints();
+  }
+
+  void _configureConstraints() {
     BoxConstraints _constraints;
-    if (constraints != null) {
+    if (widget.constraints != null) {
       _constraints = BoxConstraints(
         maxHeight: Utils().screenHeight / 3,
         maxWidth: Utils().screenHeight / 3,
       ).copyWith(
-        minWidth: constraints.minWidth.isFinite ? constraints.minWidth : null,
-        minHeight:
-            constraints.minHeight.isFinite ? constraints.minHeight : null,
-        maxWidth: constraints.maxWidth.isFinite ? constraints.maxWidth : null,
-        maxHeight:
-            constraints.maxHeight.isFinite ? constraints.maxHeight : null,
+        minWidth: widget.constraints.minWidth.isFinite
+            ? widget.constraints.minWidth
+            : null,
+        minHeight: widget.constraints.minHeight.isFinite
+            ? widget.constraints.minHeight
+            : null,
+        maxWidth: widget.constraints.maxWidth.isFinite
+            ? widget.constraints.maxWidth
+            : null,
+        maxHeight: widget.constraints.maxHeight.isFinite
+            ? widget.constraints.maxHeight
+            : null,
       );
     } else {
       _constraints = BoxConstraints(
@@ -79,7 +98,7 @@ class PopoverItem extends StatelessWidget {
         maxWidth: Utils().screenHeight / 3,
       );
     }
-    this.constraints = _constraints.copyWith(
+    constraints = _constraints.copyWith(
       maxHeight: _constraints.maxHeight + PopoverUtils.arrowHeight,
     );
   }
