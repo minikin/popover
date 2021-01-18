@@ -44,7 +44,6 @@
 - [Requirements](#requirements)
 - [Install](#install)
 - [Example](#example)
-- [Todo](#todo)
 - [FAQ](#faq)
 - [License](#license)
 
@@ -64,12 +63,12 @@ Source: [Human Interface Guidelines.
 
 ```yaml
 dependencies:
-  popover: ^0.0.1
+  popover: ^0.0.2
 ```
 
 ## Example
 
-See `example/lib/src/popover_example.dart`.
+See `example/lib/main.dart`.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -135,10 +134,6 @@ To see examples of the following package on a device or simulator:
 ```sh
 cd example && flutter run
 ```
-
-## TODO:
-
-- [Add documentation](https://github.com/minikin/popover/issues/5) 
 
 ## FAQ
 
