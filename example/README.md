@@ -3,7 +3,6 @@
 ```dart
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
-
 class PopoverItems extends StatelessWidget {
   const PopoverItems({Key key}) : super(key: key);
 
@@ -21,7 +20,7 @@ class PopoverItems extends StatelessWidget {
         ),
         child: const Center(child: Text('Click Me')),
       ),
-      builder: (context) {
+      bodyBuilder: (context) {
         return Scrollbar(
           child: Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8),
