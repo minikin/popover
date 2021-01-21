@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'multiple_gesture_recognizer.dart';
 import 'popover_direction.dart';
 import 'popover_item.dart';
 import 'utils/build_context_extension.dart';
-import 'utils/popover_utils.dart';
 
 class Popover extends StatelessWidget {
   /// Parent widget to which Popover is `attached`
@@ -54,13 +54,13 @@ class Popover extends StatelessWidget {
     this.transitionDuration = const Duration(milliseconds: 200),
     this.direction = PopoverDirection.bottom,
     this.radius = 8,
-    this.shadow = PopoverUtils.defaultShadow,
-    this.arrowWidth = PopoverUtils.arrowWidth,
-    this.arrowHeight = PopoverUtils.arrowHeight,
+    this.shadow = const [BoxShadow(color: Colors.black12, blurRadius: 5)],
+    this.arrowWidth = 24,
+    this.arrowHeight = 12,
     this.width,
     this.height,
     BoxConstraints popoverConstraints,
-  })  : assert(bodyBuilder != null),
+  })  : assert(bodyBuilder != null, child != null),
         popoverConstraints = (width != null || height != null)
             ? popoverConstraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
@@ -68,49 +68,58 @@ class Popover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
-        final bounds = BuildContextExtension.getWidgetBounds(context);
-        showGeneralDialog(
-          context: context,
-          pageBuilder: (buildContext, animation, secondaryAnimation) {
-            return Builder(builder: (_) => const SizedBox.shrink());
+    return RawGestureDetector(
+      gestures: {
+        MultipleGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<MultipleGestureRecognizer>(
+          () => MultipleGestureRecognizer(),
+          (i) {
+            i.onTap = () => _presentPopoverContent(context);
           },
-          barrierDismissible: true,
-          barrierLabel:
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: barrierColor,
-          transitionDuration: transitionDuration,
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOut,
-              ),
-              child: PopoverItem(
-                attachRect: Rect.fromLTWH(
-                  offset.dx,
-                  offset.dy,
-                  bounds.width,
-                  bounds.height,
-                ),
-                child: bodyBuilder(context),
-                constraints: popoverConstraints,
-                backgroundColor: backgroundColor,
-                boxShadow: shadow,
-                radius: radius,
-                animation: animation,
-                direction: direction,
-                arrowWidth: arrowWidth,
-                arrowHeight: arrowHeight,
-              ),
-            );
-          },
+        ),
+      },
+      behavior: HitTestBehavior.opaque,
+      child: child,
+    );
+  }
+
+  void _presentPopoverContent(BuildContext context) {
+    final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
+    final bounds = BuildContextExtension.getWidgetBounds(context);
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (buildContext, animation, secondaryAnimation) {
+        return Builder(builder: (_) => const SizedBox.shrink());
+      },
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ),
+          child: PopoverItem(
+            attachRect: Rect.fromLTWH(
+              offset.dx,
+              offset.dy,
+              bounds.width,
+              bounds.height,
+            ),
+            child: bodyBuilder(context),
+            constraints: popoverConstraints,
+            backgroundColor: backgroundColor,
+            boxShadow: shadow,
+            radius: radius,
+            animation: animation,
+            direction: direction,
+            arrowWidth: arrowWidth,
+            arrowHeight: arrowHeight,
+          ),
         );
       },
-      child: child,
     );
   }
 }

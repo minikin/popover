@@ -8,8 +8,10 @@ class PopoverPositionWidget extends SingleChildRenderObjectWidget {
   final Animation<double> scale;
   final BoxConstraints constraints;
   final PopoverDirection direction;
+  final double arrowHeight;
 
   const PopoverPositionWidget({
+    @required this.arrowHeight,
     this.attachRect,
     this.constraints,
     this.scale,
@@ -23,6 +25,7 @@ class PopoverPositionWidget extends SingleChildRenderObjectWidget {
       attachRect: attachRect,
       direction: direction,
       constraints: constraints,
+      arrowHeight: arrowHeight,
     );
   }
 

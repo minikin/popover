@@ -82,6 +82,7 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       attachRect,
       size,
       direction,
+      arrowHeight,
     );
 
     Rect arrowRect;
@@ -208,6 +209,7 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       attachRect,
       size,
       direction,
+      arrowHeight,
     );
 
     final BoxParentData childParentData = child.parentData;
