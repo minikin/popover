@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'popover_context.dart';
 import 'popover_direction.dart';
 import 'popover_position_widget.dart';
-import 'utils/popover_utils.dart';
 import 'utils/utils.dart';
 
 class PopoverItem extends StatefulWidget {
@@ -47,6 +46,7 @@ class _PopoverItemState extends State<PopoverItem> {
           scale: widget.animation,
           constraints: constraints,
           direction: widget.direction,
+          arrowHeight: widget.arrowHeight,
           child: PopoverContext(
             attachRect: widget.attachRect,
             animation: widget.animation,
@@ -99,7 +99,7 @@ class _PopoverItemState extends State<PopoverItem> {
       );
     }
     constraints = _constraints.copyWith(
-      maxHeight: _constraints.maxHeight + PopoverUtils.arrowHeight,
+      maxHeight: _constraints.maxHeight + widget.arrowHeight,
     );
   }
 }

@@ -12,7 +12,7 @@
   <a href="https://github.com/minikin/popover">
     <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
   </a>
-  
+
    <a href="https://github.com/minikin/popover/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
   </a>
@@ -24,17 +24,17 @@
   <a href="https://github.com/minikin/popover/blob/main/CODE_OF_CONDUCT.md">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
   </a>
-  
+
   </br>
-  
+
    <a href="https://github.com/minikin/popover/actions">
     <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
   </a>
-  
+
   <a href="https://codecov.io/gh/minikin/popover">
     <img src="https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ"/>
   </a>
-    
+
 </p>
 
 
@@ -80,16 +80,22 @@ class PopoverItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Popover(
+      direction: PopoverDirection.top,
       width: 200,
-      child: Container(
-        width: 80,
-        height: 40,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+      arrowHeight: 15,
+      arrowWidth: 30,
+      child: GestureDetector(
+        onTap: () => print('GestureDetector onTap'),
+        child: Container(
+          width: 80,
+          height: 40,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+          ),
+          child: const Center(child: Text('Click Me')),
         ),
-        child: const Center(child: Text('Click Me')),
       ),
       bodyBuilder: (context) {
         return Scrollbar(
@@ -126,7 +132,6 @@ class PopoverItems extends StatelessWidget {
     );
   }
 }
-
 ```
 
 To see examples of the following package on a device or simulator:

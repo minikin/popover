@@ -4,18 +4,13 @@ import '../popover_direction.dart';
 import 'utils.dart';
 
 class PopoverUtils {
-  static const double arrowWidth = 24;
-  static const double arrowHeight = 12;
-  static const defaultShadow = [
-    BoxShadow(color: Colors.black12, blurRadius: 5)
-  ];
-
   PopoverUtils._();
 
   static PopoverDirection popoverDirection(
     Rect attachRect,
     Size size,
     PopoverDirection direction,
+    double arrowHeight,
   ) {
     switch (direction) {
       case PopoverDirection.top:

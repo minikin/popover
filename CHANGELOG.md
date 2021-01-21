@@ -1,3 +1,7 @@
+## [0.0.3] - 21.01.2021.
+
+* A `child` widget can be wrapped in `InkWell` or `GestureDetector`.
+
 ## [0.0.2] - 18.01.2021.
 
 * Update `PopoverItem`.
