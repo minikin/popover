@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show required;
 import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
@@ -8,8 +9,10 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
   PopoverDirection _direction;
   Rect _attachRect;
   BoxConstraints _additionalConstraints;
+  double arrowHeight;
 
   PopoverPositionRenderObject({
+    @required this.arrowHeight,
     RenderBox child,
     Rect attachRect,
     BoxConstraints constraints,
@@ -46,6 +49,7 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
       attachRect,
       size,
       direction,
+      arrowHeight,
     );
 
     if (_direction == PopoverDirection.top ||

@@ -77,16 +77,21 @@ void main() {
           ),
         ),
       );
+
+      expect(tester.widget<Popover>(find.byType(Popover)), isNotNull);
     },
   );
 
   testWidgets(
-    'Popover: can be initialized',
+    'Popover: can be initialized with parameters',
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Popover(
             width: 200,
+            direction: PopoverDirection.bottom,
+            arrowWidth: 30,
+            arrowHeight: 15,
             child: Container(
               width: 80,
               height: 40,
@@ -110,7 +115,7 @@ void main() {
                   maxHeight: Utils().screenHeight / 3,
                   maxWidth: Utils().screenHeight / 3,
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.red,
                 boxShadow: [
                   const BoxShadow(color: Colors.black12, blurRadius: 5)
                 ],
@@ -121,18 +126,24 @@ void main() {
                     vsync: const TestVSync(),
                   ),
                 ),
-                direction: PopoverDirection.top,
-                arrowWidth: 10,
-                arrowHeight: 20,
               );
             },
           ),
         ),
       );
+
+      expect(
+        tester.widget<Popover>(find.byType(Popover)).direction,
+        PopoverDirection.bottom,
+      );
+      expect(tester.widget<Popover>(find.byType(Popover)).width, 200);
+      expect(tester.widget<Popover>(find.byType(Popover)).radius, 8);
+      expect(tester.widget<Popover>(find.byType(Popover)).arrowWidth, 30);
+      expect(tester.widget<Popover>(find.byType(Popover)).arrowHeight, 15);
     },
   );
 
-  testWidgets('Popover: has a attachRect', (tester) async {
+  testWidgets('Popover: has a child', (tester) async {
     await tester.pumpWidget(
       Builder(
         builder: (context) {
@@ -186,5 +197,65 @@ void main() {
         },
       ),
     );
+
+    expect(tester.widget<Popover>(find.byType(Popover)).child, isNotNull);
+  });
+
+  testWidgets('Popover: is shown', (tester) async {
+    await tester.pumpWidget(
+      Builder(
+        builder: (context) {
+          final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
+          final bounds = BuildContextExtension.getWidgetBounds(context);
+
+          return MaterialApp(
+            home: Popover(
+              width: 200,
+              child: Container(
+                width: 80,
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                ),
+                child: const Center(child: Text('Click Me')),
+              ),
+              bodyBuilder: (context) {
+                return PopoverItem(
+                  attachRect: Rect.fromLTWH(
+                    offset.dx,
+                    offset.dy,
+                    bounds.width,
+                    bounds.height,
+                  ),
+                  child: const SizedBox.shrink(),
+                  constraints: BoxConstraints(
+                    maxHeight: Utils().screenHeight / 3,
+                    maxWidth: Utils().screenHeight / 3,
+                  ),
+                  backgroundColor: Colors.white,
+                  boxShadow: [
+                    const BoxShadow(color: Colors.black12, blurRadius: 5)
+                  ],
+                  radius: 8,
+                  animation: Tween<double>(begin: 0, end: 300).animate(
+                    AnimationController(
+                      duration: const Duration(milliseconds: 500),
+                      vsync: const TestVSync(),
+                    ),
+                  ),
+                  direction: PopoverDirection.top,
+                  arrowWidth: 10,
+                  arrowHeight: 20,
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+
+    await tester.tap(find.byType(Popover).first);
   });
 }

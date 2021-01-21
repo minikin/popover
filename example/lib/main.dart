@@ -58,16 +58,22 @@ class PopoverItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Popover(
+      direction: PopoverDirection.top,
       width: 200,
-      child: Container(
-        width: 80,
-        height: 40,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+      arrowHeight: 15,
+      arrowWidth: 30,
+      child: GestureDetector(
+        onTap: () => print('GestureDetector onTap'),
+        child: Container(
+          width: 80,
+          height: 40,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+          ),
+          child: const Center(child: Text('Click Me')),
         ),
-        child: const Center(child: Text('Click Me')),
       ),
       bodyBuilder: (context) {
         return Scrollbar(
