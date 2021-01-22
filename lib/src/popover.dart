@@ -46,6 +46,9 @@ class Popover extends StatelessWidget {
   /// Popover's constraints
   final BoxConstraints popoverConstraints;
 
+  /// Called to veto attempts by the user to dismiss the [Popover]
+  final VoidCallback onPop;
+
   Popover({
     @required this.child,
     @required this.bodyBuilder,
@@ -59,6 +62,7 @@ class Popover extends StatelessWidget {
     this.arrowHeight = 12,
     this.width,
     this.height,
+    this.onPop,
     BoxConstraints popoverConstraints,
   })  : assert(bodyBuilder != null, child != null),
         popoverConstraints = (width != null || height != null)
@@ -96,30 +100,42 @@ class Popover extends StatelessWidget {
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
       transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOut,
-          ),
-          child: PopoverItem(
-            attachRect: Rect.fromLTWH(
-              offset.dx,
-              offset.dy,
-              bounds.width,
-              bounds.height,
+        return WillPopScope(
+          onWillPop: _shouldPop,
+          child: FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOut,
             ),
-            child: bodyBuilder(context),
-            constraints: popoverConstraints,
-            backgroundColor: backgroundColor,
-            boxShadow: shadow,
-            radius: radius,
-            animation: animation,
-            direction: direction,
-            arrowWidth: arrowWidth,
-            arrowHeight: arrowHeight,
+            child: PopoverItem(
+              attachRect: Rect.fromLTWH(
+                offset.dx,
+                offset.dy,
+                bounds.width,
+                bounds.height,
+              ),
+              child: bodyBuilder(context),
+              constraints: popoverConstraints,
+              backgroundColor: backgroundColor,
+              boxShadow: shadow,
+              radius: radius,
+              animation: animation,
+              direction: direction,
+              arrowWidth: arrowWidth,
+              arrowHeight: arrowHeight,
+            ),
           ),
         );
       },
     );
+  }
+
+  Future<bool> _shouldPop() {
+    if (onPop != null) {
+      onPop();
+      return Future.value(true);
+    } else {
+      return Future.value(true);
+    }
   }
 }

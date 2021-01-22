@@ -62,19 +62,8 @@ class PopoverItems extends StatelessWidget {
       width: 200,
       arrowHeight: 15,
       arrowWidth: 30,
-      child: GestureDetector(
-        onTap: () => print('GestureDetector onTap'),
-        child: Container(
-          width: 80,
-          height: 40,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-          ),
-          child: const Center(child: Text('Click Me')),
-        ),
-      ),
+      child: const Child(),
+      onPop: () => print('Popover was popped!'),
       bodyBuilder: (context) {
         return Scrollbar(
           child: Padding(
@@ -83,7 +72,10 @@ class PopoverItems extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               children: [
                 InkWell(
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: () {
+                    print('GestureDetector was called on Entry A');
+                    Navigator.of(context).pop();
+                  },
                   child: Container(
                     height: 50,
                     color: Colors.amber[100],
@@ -125,6 +117,34 @@ class PopoverItems extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class Child extends StatefulWidget {
+  const Child({Key key}) : super(key: key);
+
+  @override
+  _ChildState createState() => _ChildState();
+}
+
+class _ChildState extends State<Child> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      height: 40,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+      ),
+      child: GestureDetector(
+        child: const Center(child: Text('Click Me')),
+        onTap: () {
+          print('GestureDetector was called in Child!');
+        },
+      ),
     );
   }
 }
