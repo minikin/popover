@@ -37,6 +37,16 @@ class Popover extends StatelessWidget {
   /// Popover's arrow height
   final double arrowHeight;
 
+  /// Offsets arrow position on X axis. It can be positive or negative number
+  final double arrowDxOffset;
+
+  /// Offsets arrow position on Y axis. It can be positive 0r negative number
+  final double arrowDyOffset;
+
+  /// Offsets [Popover]s contetnt
+  /// position on Y axis. It can be positive or negative number
+  final double contentDyOffset;
+
   /// Popover's body/content widget width
   final double width;
 
@@ -44,7 +54,7 @@ class Popover extends StatelessWidget {
   final double height;
 
   /// Popover's constraints
-  final BoxConstraints popoverConstraints;
+  final BoxConstraints constraints;
 
   /// Called to veto attempts by the user to dismiss the [Popover]
   final VoidCallback onPop;
@@ -60,15 +70,18 @@ class Popover extends StatelessWidget {
     this.shadow = const [BoxShadow(color: Colors.black12, blurRadius: 5)],
     this.arrowWidth = 24,
     this.arrowHeight = 12,
+    this.arrowDxOffset = 0,
+    this.arrowDyOffset = 0,
+    this.contentDyOffset = 0,
     this.width,
     this.height,
     this.onPop,
-    BoxConstraints popoverConstraints,
+    BoxConstraints constraints,
   })  : assert(bodyBuilder != null, child != null),
-        popoverConstraints = (width != null || height != null)
-            ? popoverConstraints?.tighten(width: width, height: height) ??
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
-            : popoverConstraints;
+            : constraints;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +112,7 @@ class Popover extends StatelessWidget {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
+      transitionBuilder: (context, animation, _, child) {
         return WillPopScope(
           onWillPop: _shouldPop,
           child: FadeTransition(
@@ -109,13 +122,13 @@ class Popover extends StatelessWidget {
             ),
             child: PopoverItem(
               attachRect: Rect.fromLTWH(
-                offset.dx,
-                offset.dy,
+                offset.dx + arrowDxOffset,
+                offset.dy + arrowDyOffset,
                 bounds.width,
-                bounds.height,
+                bounds.height + contentDyOffset,
               ),
               child: bodyBuilder(context),
-              constraints: popoverConstraints,
+              constraints: constraints,
               backgroundColor: backgroundColor,
               boxShadow: shadow,
               radius: radius,
