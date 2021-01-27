@@ -1,3 +1,7 @@
+## [0.0.4] - 27.01.2021.
+
+* Add `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` public parameters.
+
 ## [0.0.3] - 21.01.2021.
 
 * A `child` widget can be wrapped in `InkWell` or `GestureDetector`.

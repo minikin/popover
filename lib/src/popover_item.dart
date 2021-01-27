@@ -76,8 +76,8 @@ class _PopoverItemState extends State<PopoverItem> {
     BoxConstraints _constraints;
     if (widget.constraints != null) {
       _constraints = BoxConstraints(
-        maxHeight: Utils().screenHeight / 3,
-        maxWidth: Utils().screenHeight / 3,
+        maxHeight: Utils().screenHeight / 2,
+        maxWidth: Utils().screenHeight / 2,
       ).copyWith(
         minWidth: widget.constraints.minWidth.isFinite
             ? widget.constraints.minWidth
@@ -94,8 +94,8 @@ class _PopoverItemState extends State<PopoverItem> {
       );
     } else {
       _constraints = BoxConstraints(
-        maxHeight: Utils().screenHeight / 3,
-        maxWidth: Utils().screenHeight / 3,
+        maxHeight: Utils().screenHeight / 2,
+        maxWidth: Utils().screenHeight / 2,
       );
     }
     constraints = _constraints.copyWith(
