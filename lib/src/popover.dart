@@ -76,6 +76,7 @@ class Popover extends StatelessWidget {
     this.width,
     this.height,
     this.onPop,
+    Key key,
     BoxConstraints constraints,
   })  : assert(bodyBuilder != null, child != null),
         constraints = (width != null || height != null)
@@ -98,6 +99,11 @@ class Popover extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: child,
     );
+  }
+
+  void programOnTap(BuildContext context) {
+    print('_presentPopoverContent');
+    _presentPopoverContent(context);
   }
 
   void _presentPopoverContent(BuildContext context) {
