@@ -1,3 +1,7 @@
+## [0.0.5] - 08.02.2021.
+
+* Add `Key key`, `barrierDismissible` and `showPopover`.
+
 ## [0.0.4] - 27.01.2021.
 
 * Add `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` public parameters.
