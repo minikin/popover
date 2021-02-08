@@ -44,7 +44,7 @@
 - [Requirements](#requirements)
 - [Install](#install)
 - [Example](#example)
-- [FAQ](#faq)
+- [Support](#support)
 - [License](#license)
 
 ## Features
