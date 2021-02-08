@@ -140,9 +140,9 @@ To see examples of the following package on a device or simulator:
 cd example && flutter run
 ```
 
-## FAQ
+## Support
 
-If you have any questions ping me on twitter: [@minikin](https://twitter.com/minikin)
+Post issues and feature requests on the GitHub [issue tracker](https://github.com/minikin/popover/issues).
 
 
 ## License
