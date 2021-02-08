@@ -1,6 +1,6 @@
 name: popover
 description: A popover is a transient view that appears above other content onscreen when you tap a control or in an area.
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/minikin/popover
 
 environment:
