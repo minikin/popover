@@ -59,6 +59,13 @@ class Popover extends StatelessWidget {
   /// Called to veto attempts by the user to dismiss the [Popover]
   final VoidCallback onPop;
 
+  /// The `barrierDismissible` argument is used to determine whether this route
+  /// can be dismissed by tapping the modal barrier. This argument defaults
+  /// to true.
+  final bool barrierDismissible;
+
+  /// A [Popover] is a transient view that appears above other content onscreen
+  /// when you tap a control or in an area.
   Popover({
     @required this.child,
     @required this.bodyBuilder,
@@ -73,16 +80,18 @@ class Popover extends StatelessWidget {
     this.arrowDxOffset = 0,
     this.arrowDyOffset = 0,
     this.contentDyOffset = 0,
+    this.barrierDismissible = true,
     this.width,
     this.height,
     this.onPop,
-    Key key,
     BoxConstraints constraints,
+    Key key,
   })  : assert(bodyBuilder != null, child != null),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
-            : constraints;
+            : constraints,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +101,7 @@ class Popover extends StatelessWidget {
             GestureRecognizerFactoryWithHandlers<MultipleGestureRecognizer>(
           () => MultipleGestureRecognizer(),
           (i) {
-            i.onTap = () => _presentPopoverContent(context);
+            i.onTap = () => _showPopover(context);
           },
         ),
       },
@@ -101,12 +110,21 @@ class Popover extends StatelessWidget {
     );
   }
 
-  void programOnTap(BuildContext context) {
-    print('_presentPopoverContent');
-    _presentPopoverContent(context);
+  /// Present [Popover] programmatically.
+  /// It might be useful for automation testing in case you're not using
+  /// flutter_driver.
+  void showPopover(BuildContext context) => _showPopover(context);
+
+  Future<bool> _shouldPop() {
+    if (onPop != null) {
+      onPop();
+      return Future.value(true);
+    } else {
+      return Future.value(true);
+    }
   }
 
-  void _presentPopoverContent(BuildContext context) {
+  void _showPopover(BuildContext context) {
     final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
     final bounds = BuildContextExtension.getWidgetBounds(context);
     showGeneralDialog(
@@ -114,7 +132,7 @@ class Popover extends StatelessWidget {
       pageBuilder: (buildContext, animation, secondaryAnimation) {
         return Builder(builder: (_) => const SizedBox.shrink());
       },
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
@@ -127,6 +145,7 @@ class Popover extends StatelessWidget {
               curve: Curves.easeOut,
             ),
             child: PopoverItem(
+              key: key,
               attachRect: Rect.fromLTWH(
                 offset.dx + arrowDxOffset,
                 offset.dy + arrowDyOffset,
@@ -147,14 +166,5 @@ class Popover extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<bool> _shouldPop() {
-    if (onPop != null) {
-      onPop();
-      return Future.value(true);
-    } else {
-      return Future.value(true);
-    }
   }
 }

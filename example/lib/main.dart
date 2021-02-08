@@ -5,35 +5,9 @@ import 'package:popover/popover.dart';
 
 void main() => runApp(PopoverExample());
 
-final widgetKey = GlobalKey();
-
-void _showPopooverAfterDelay(BuildContext context, Key key) {
-  Future.delayed(const Duration(milliseconds: 2500), () {
-    final Popover popover = widgetKey.currentWidget;
-    print(popover.toString());
-    popover.programOnTap(context);
-  });
-}
-
-// void _programTap(BuildContext context, GlobalKey key) {
-//   final renderObj = context.findRenderObject();
-//   if (renderObj is RenderBox) {
-//     final hitTestResult = BoxHitTestResult();
-//     if (renderObj.hitTest(hitTestResult, position: _widgetOffset(key))) {
-//       print(hitTestResult.path);
-//     }
-//   }
-// }
-
-// Offset _widgetOffset(GlobalKey key) {
-//   final RenderBox box = key.currentContext.findRenderObject();
-//   return box.localToGlobal(Offset.zero);
-// }
-
 class PopoverExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    _showPopooverAfterDelay(context, widgetKey);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Popover Example')),
@@ -48,27 +22,27 @@ class PopoverExample extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    PopoverItems(),
-                    PopoverItems(popoverKey: widgetKey),
-                    PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(isArtificialTap: true),
+                    const PopoverItems(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    PopoverItems(),
-                    PopoverItems(),
-                    PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    PopoverItems(),
-                    PopoverItems(),
-                    PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
+                    const PopoverItems(),
                   ],
                 ),
               ],
@@ -81,25 +55,33 @@ class PopoverExample extends StatelessWidget {
 }
 
 class PopoverItems extends StatelessWidget {
-  final Key popoverKey;
+  final bool isArtificialTap;
+  final Duration tapDelay;
 
-  PopoverItems({
-    this.popoverKey = const ValueKey('PopoverKey'),
+  const PopoverItems({
+    this.isArtificialTap = false,
+    this.tapDelay = const Duration(milliseconds: 1000),
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Popover(
-      key: popoverKey,
+    final popover = Popover(
       direction: PopoverDirection.top,
       width: 200,
+      height: 400,
       arrowHeight: 15,
       arrowWidth: 30,
       child: const Child(),
       onPop: () => print('Popover was popped!'),
       bodyBuilder: (context) => const ListItems(),
     );
+
+    if (isArtificialTap) {
+      Future.delayed(tapDelay, () => popover.showPopover(context));
+    }
+
+    return popover;
   }
 }
 
@@ -132,9 +114,7 @@ class _ChildState extends State<Child> {
 }
 
 class ListItems extends StatelessWidget {
-  const ListItems({
-    Key key,
-  }) : super(key: key);
+  const ListItems({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
