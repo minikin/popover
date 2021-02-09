@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:popover/popover.dart';
 
 void main() => runApp(PopoverExample());
@@ -22,27 +20,27 @@ class PopoverExample extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const PopoverItems(),
-                    const PopoverItems(isArtificialTap: true),
-                    const PopoverItems(),
+                    const Button(),
+                    const Button(),
+                    const Button(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const PopoverItems(),
-                    const PopoverItems(),
-                    const PopoverItems(),
+                    const Button(),
+                    const Button(),
+                    const Button(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const PopoverItems(),
-                    const PopoverItems(),
-                    const PopoverItems(),
+                    const Button(),
+                    const Button(),
+                    const Button(),
                   ],
                 ),
               ],
@@ -54,45 +52,9 @@ class PopoverExample extends StatelessWidget {
   }
 }
 
-class PopoverItems extends StatelessWidget {
-  final bool isArtificialTap;
-  final Duration tapDelay;
+class Button extends StatelessWidget {
+  const Button({Key key}) : super(key: key);
 
-  const PopoverItems({
-    this.isArtificialTap = false,
-    this.tapDelay = const Duration(milliseconds: 1000),
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final popover = Popover(
-      direction: PopoverDirection.top,
-      width: 200,
-      height: 400,
-      arrowHeight: 15,
-      arrowWidth: 30,
-      child: const Child(),
-      onPop: () => print('Popover was popped!'),
-      bodyBuilder: (context) => const ListItems(),
-    );
-
-    if (isArtificialTap) {
-      Future.delayed(tapDelay, () => popover.showPopover(context));
-    }
-
-    return popover;
-  }
-}
-
-class Child extends StatefulWidget {
-  const Child({Key key}) : super(key: key);
-
-  @override
-  _ChildState createState() => _ChildState();
-}
-
-class _ChildState extends State<Child> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -106,7 +68,16 @@ class _ChildState extends State<Child> {
       child: GestureDetector(
         child: const Center(child: Text('Click Me')),
         onTap: () {
-          print('GestureDetector was called in Child!');
+          showPopover(
+            context: context,
+            bodyBuilder: (context) => const ListItems(),
+            onPop: () => print('Popover was popped!'),
+            direction: PopoverDirection.top,
+            width: 200,
+            height: 400,
+            arrowHeight: 15,
+            arrowWidth: 30,
+          );
         },
       ),
     );
