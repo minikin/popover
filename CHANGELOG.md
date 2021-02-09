@@ -1,3 +1,9 @@
+## [0.1.0] - 09.02.2021.
+
+- **BREAKING**: Refactor popover implementation to have identical API to included in Flutter modal dialogs e.g. `showCupertinoDialog`
+- docs: README updates
+- docs: example application updates
+
 ## [0.0.5] - 08.02.2021.
 
 * Add `Key key`, `barrierDismissible` and `showPopover`.
