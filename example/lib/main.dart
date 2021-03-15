@@ -53,7 +53,7 @@ class PopoverExample extends StatelessWidget {
 }
 
 class Button extends StatelessWidget {
-  const Button({Key key}) : super(key: key);
+  const Button({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class Button extends StatelessWidget {
 }
 
 class ListItems extends StatelessWidget {
-  const ListItems({Key key}) : super(key: key);
+  const ListItems({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

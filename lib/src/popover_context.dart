@@ -4,17 +4,17 @@ import 'popover_direction.dart';
 import 'popover_render_shifted_box.dart';
 
 class PopoverContext extends SingleChildRenderObjectWidget {
-  final Rect attachRect;
-  final Color backgroundColor;
-  final List<BoxShadow> boxShadow;
-  final Animation<double> animation;
-  final double radius;
-  final PopoverDirection direction;
-  final double arrowWidth;
-  final double arrowHeight;
+  final Rect? attachRect;
+  final Color? backgroundColor;
+  final List<BoxShadow>? boxShadow;
+  final Animation<double>? animation;
+  final double? radius;
+  final PopoverDirection? direction;
+  final double? arrowWidth;
+  final double? arrowHeight;
 
   const PopoverContext({
-    Widget child,
+    Widget? child,
     this.attachRect,
     this.backgroundColor,
     this.boxShadow,
@@ -31,7 +31,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       attachRect: attachRect,
       color: backgroundColor,
       boxShadow: boxShadow,
-      scale: animation.value,
+      scale: animation!.value,
       direction: direction,
       radius: radius,
       arrowWidth: arrowWidth,
@@ -48,7 +48,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = animation.value
+      ..scale = animation!.value
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth

@@ -1,3 +1,7 @@
+## [0.1.1] - 15.03.2021.
+
+- Add support null safety
+
 ## [0.1.0] - 09.02.2021.
 
 - **BREAKING**: Refactor popover implementation to have identical API to included in Flutter modal dialogs e.g. `showCupertinoDialog`

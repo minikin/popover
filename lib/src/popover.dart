@@ -63,15 +63,15 @@ import 'utils/build_context_extension.dart';
 /// The `constraints` is popover's constraints.
 ///
 void showPopover({
-  @required BuildContext context,
-  @required WidgetBuilder bodyBuilder,
+  required BuildContext context,
+  required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
   Color backgroundColor = Colors.white,
   Color barrierColor = Colors.black45,
   Duration transitionDuration = const Duration(milliseconds: 200),
   double radius = 8,
   List<BoxShadow> shadow = const [
-    BoxShadow(color: Colors.black12, blurRadius: 5)
+    BoxShadow(color: Colors.black12, blurRadius: 5),
   ],
   double arrowWidth = 24,
   double arrowHeight = 12,
@@ -79,18 +79,18 @@ void showPopover({
   double arrowDyOffset = 0,
   double contentDyOffset = 0,
   bool barrierDismissible = true,
-  double width,
-  double height,
-  VoidCallback onPop,
-  BoxConstraints constraints,
-  Key key,
+  double? width,
+  double? height,
+  VoidCallback? onPop,
+  BoxConstraints? constraints,
+  Key? key,
 }) {
-  assert(context != null);
-  assert(bodyBuilder != null);
-
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
-          BoxConstraints.tightFor(width: width, height: height)
+          BoxConstraints.tightFor(
+            width: width,
+            height: height,
+          )
       : constraints;
 
   final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
