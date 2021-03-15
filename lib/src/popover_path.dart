@@ -5,23 +5,23 @@ import 'popover_direction.dart';
 class PopoverPath {
   final double radius;
 
-  const PopoverPath(this.radius) : assert(radius != null);
+  const PopoverPath(this.radius);
 
   Path draw(
-    PopoverDirection direction,
-    Rect arrowRect,
+    PopoverDirection? direction,
+    Rect? arrowRect,
     Rect bodyRect,
   ) {
     final path = Path();
 
     if (direction == PopoverDirection.top) {
-      _drawTopElement(path, arrowRect, bodyRect);
+      _drawTopElement(path, arrowRect!, bodyRect);
     } else if (direction == PopoverDirection.right) {
-      _drawRightElemet(path, arrowRect, bodyRect);
+      _drawRightElemet(path, arrowRect!, bodyRect);
     } else if (direction == PopoverDirection.left) {
-      _drawLeftElement(path, arrowRect, bodyRect);
+      _drawLeftElement(path, arrowRect!, bodyRect);
     } else {
-      _drawBottomElement(path, arrowRect, bodyRect);
+      _drawBottomElement(path, arrowRect!, bodyRect);
     }
     path.close();
     return path;

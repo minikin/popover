@@ -8,18 +8,18 @@ import 'utils/utils.dart';
 class PopoverItem extends StatefulWidget {
   final Rect attachRect;
   final Widget child;
-  final Color backgroundColor;
-  final PopoverDirection direction;
-  final double radius;
-  final List<BoxShadow> boxShadow;
-  final Animation<double> animation;
-  final double arrowWidth;
-  final double arrowHeight;
-  final BoxConstraints constraints;
+  final Color? backgroundColor;
+  final PopoverDirection? direction;
+  final double? radius;
+  final List<BoxShadow>? boxShadow;
+  final Animation<double>? animation;
+  final double? arrowWidth;
+  final double? arrowHeight;
+  final BoxConstraints? constraints;
 
   const PopoverItem({
-    @required this.attachRect,
-    @required this.child,
+    required this.attachRect,
+    required this.child,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -28,7 +28,7 @@ class PopoverItem extends StatefulWidget {
     this.arrowWidth,
     this.arrowHeight,
     this.constraints,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class PopoverItem extends StatefulWidget {
 }
 
 class _PopoverItemState extends State<PopoverItem> {
-  BoxConstraints constraints;
+  BoxConstraints? constraints;
 
   Widget build(BuildContext context) {
     return Stack(
@@ -79,17 +79,17 @@ class _PopoverItemState extends State<PopoverItem> {
         maxHeight: Utils().screenHeight / 2,
         maxWidth: Utils().screenHeight / 2,
       ).copyWith(
-        minWidth: widget.constraints.minWidth.isFinite
-            ? widget.constraints.minWidth
+        minWidth: widget.constraints!.minWidth.isFinite
+            ? widget.constraints!.minWidth
             : null,
-        minHeight: widget.constraints.minHeight.isFinite
-            ? widget.constraints.minHeight
+        minHeight: widget.constraints!.minHeight.isFinite
+            ? widget.constraints!.minHeight
             : null,
-        maxWidth: widget.constraints.maxWidth.isFinite
-            ? widget.constraints.maxWidth
+        maxWidth: widget.constraints!.maxWidth.isFinite
+            ? widget.constraints!.maxWidth
             : null,
-        maxHeight: widget.constraints.maxHeight.isFinite
-            ? widget.constraints.maxHeight
+        maxHeight: widget.constraints!.maxHeight.isFinite
+            ? widget.constraints!.maxHeight
             : null,
       );
     } else {
@@ -99,7 +99,7 @@ class _PopoverItemState extends State<PopoverItem> {
       );
     }
     constraints = _constraints.copyWith(
-      maxHeight: _constraints.maxHeight + widget.arrowHeight,
+      maxHeight: _constraints.maxHeight + widget.arrowHeight!,
     );
   }
 }

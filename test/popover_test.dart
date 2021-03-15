@@ -59,8 +59,7 @@ void main() {
     expect(find.text('Dialog'), findsNothing);
   });
 
-  testWidgets('Popover configurable to be not barrier dismissible',
-      (tester) async {
+  testWidgets('Popover configurable to be not barrier dismissible', (tester) async {
     await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
     final BuildContext context = tester.element(find.text('Go'));
@@ -93,7 +92,7 @@ void main() {
 
     await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
-    final BuildContext context = tester.element(find.text('Go'));
+    final BuildContext context = tester.element(find.text("Go"));
 
     showPopover(
       context: context,
@@ -108,8 +107,8 @@ void main() {
       onPop: () => didPop = true,
     );
 
-    await tester.tap(find.text('Go'));
-    await tester.pump();
+    await tester.tap(find.text("Go", skipOffstage: false));
+    await tester.pumpAndSettle();
 
     expect(didPop, isFalse);
 
@@ -120,29 +119,10 @@ void main() {
 
     expect(didPop, isTrue);
   });
-
-  testWidgets('Context can not be null', (tester) async {
-    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
-
-    expect(
-      () => showPopover(context: null, bodyBuilder: (context) => null),
-      throwsAssertionError,
-    );
-  });
-
-  testWidgets('BodyBuilder can not be null', (tester) async {
-    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
-    final BuildContext context = tester.element(find.text('Go'));
-
-    expect(
-      () => showPopover(context: context, bodyBuilder: null),
-      throwsAssertionError,
-    );
-  });
 }
 
 Widget createAppWithButtonThatLaunchesDialog({
-  @required WidgetBuilder dialogBuilder,
+  required WidgetBuilder dialogBuilder,
 }) {
   return MaterialApp(
     home: Material(
@@ -176,7 +156,7 @@ Widget createAppWithCenteredButton(Widget child) {
   return MaterialApp(
     home: Material(
       child: Center(
-        child: ElevatedButton(onPressed: null, child: child),
+        child: ElevatedButton(onPressed: () {}, child: child),
       ),
     ),
   );
