@@ -59,7 +59,8 @@ void main() {
     expect(find.text('Dialog'), findsNothing);
   });
 
-  testWidgets('Popover configurable to be not barrier dismissible', (tester) async {
+  testWidgets('Popover configurable to be not barrier dismissible',
+      (tester) async {
     await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
     final BuildContext context = tester.element(find.text('Go'));

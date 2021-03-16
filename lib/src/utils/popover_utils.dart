@@ -27,7 +27,8 @@ class PopoverUtils {
             ? PopoverDirection.right
             : PopoverDirection.left;
       case PopoverDirection.right:
-        return Utils().screenWidth > attachRect!.right + size.width + arrowHeight!
+        return Utils().screenWidth >
+                attachRect!.right + size.width + arrowHeight!
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
