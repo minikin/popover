@@ -14,4 +14,4 @@
 
 If you need help, consider asking for advice on [Twitter](https://twitter.com/minikin).
 
-Thanks for contributing!
+Thank you for contributing!
