@@ -9,7 +9,7 @@
 - [ ] I updated/added relevant documentation (doc comments with `///`).
 - [ ] I updated/added relevant documentation to README.md.
 - [ ] I updated/added relevant code samples to [example](https://github.com/minikin/popover/blob/main/example/lib/main.dart).
-- [ ] I added new tests to check the change I am making or feature I am adding, or Hixie said the PR is test-exempt.
+- [ ] I added new tests to check the change I am making or feature I am adding, or Minikin said the PR is test-exempt.
 - [ ] All existing and new tests are passing.
 
 If you need help, consider asking for advice on [Twitter](https://twitter.com/minikin).
