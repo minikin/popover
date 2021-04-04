@@ -7,27 +7,28 @@ class PopoverUtils {
   PopoverUtils._();
 
   static PopoverDirection popoverDirection(
-    Rect attachRect,
+    Rect? attachRect,
     Size size,
-    PopoverDirection direction,
-    double arrowHeight,
+    PopoverDirection? direction,
+    double? arrowHeight,
   ) {
     switch (direction) {
       case PopoverDirection.top:
-        return (attachRect.top < size.height + arrowHeight)
+        return (attachRect!.top < size.height + arrowHeight!)
             ? PopoverDirection.bottom
             : PopoverDirection.top;
       case PopoverDirection.bottom:
         return Utils().screenHeight >
-                attachRect.bottom + size.height + arrowHeight
+                attachRect!.bottom + size.height + arrowHeight!
             ? PopoverDirection.bottom
             : PopoverDirection.top;
       case PopoverDirection.left:
-        return (attachRect.left < size.width + arrowHeight)
+        return (attachRect!.left < size.width + arrowHeight!)
             ? PopoverDirection.right
             : PopoverDirection.left;
       case PopoverDirection.right:
-        return Utils().screenWidth > attachRect.right + size.width + arrowHeight
+        return Utils().screenWidth >
+                attachRect!.right + size.width + arrowHeight!
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
