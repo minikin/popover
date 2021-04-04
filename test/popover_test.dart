@@ -121,28 +121,31 @@ void main() {
     expect(didPop, isTrue);
   });
 
-  testWidgets('Context can not be null', (tester) async {
-    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
+  // testWidgets('Context can not be null', (tester) async {
+  //   await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
-    expect(
-      () => showPopover(context: null, bodyBuilder: (context) => null),
-      throwsAssertionError,
-    );
-  });
+  //   expect(
+  //     () => showPopover(
+  //       context: null,
+  //       bodyBuilder: (context) => null as Widget Function(BuildContext),
+  //     ),
+  //     throwsAssertionError,
+  //   );
+  // });
 
-  testWidgets('BodyBuilder can not be null', (tester) async {
-    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
-    final BuildContext context = tester.element(find.text('Go'));
+  // testWidgets('BodyBuilder can not be null', (tester) async {
+  //   await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
+  //   final BuildContext context = tester.element(find.text('Go'));
 
-    expect(
-      () => showPopover(context: context, bodyBuilder: null),
-      throwsAssertionError,
-    );
-  });
+  //   expect(
+  //     () => showPopover(context: context, bodyBuilder: null),
+  //     throwsAssertionError,
+  //   );
+  // });
 }
 
 Widget createAppWithButtonThatLaunchesDialog({
-  @required WidgetBuilder dialogBuilder,
+  required WidgetBuilder dialogBuilder,
 }) {
   return MaterialApp(
     home: Material(

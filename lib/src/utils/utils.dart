@@ -7,7 +7,7 @@ class Utils {
 
   double screenWidth = 0;
   double screenHeight = 0;
-  MediaQueryData mediaQueryData;
+  MediaQueryData? mediaQueryData;
 
   factory Utils() {
     _singleton._init();
