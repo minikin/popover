@@ -89,7 +89,15 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     late Offset translation;
     Rect bodyRect;
 
-    bodyRect = childParentData.offset & child!.size;
+    if (_direction == PopoverDirection.right) {
+      final parentOffset = Offset(
+        childParentData.offset.dx + arrowHeight,
+        childParentData.offset.dy,
+      );
+      bodyRect = parentOffset & child.size;
+    } else {
+      bodyRect = childParentData.offset & child.size;
+    }
 
     final arrowLeft =
         attachRect!.left + attachRect!.width / 2 - arrowWidth! / 2 - offset.dx;
