@@ -5,6 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/src/popover_direction.dart';
 import 'package:popover/src/popover_item.dart';
 import 'package:popover/src/utils/utils.dart';
+import 'package:popover/popover.dart';
+
+import 'popover_test.dart';
 
 void main() {
   setUp(() {
@@ -17,9 +20,9 @@ void main() {
     'PopoverItem: direction top',
     (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => PopoverItem(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (context) {
+            return PopoverItem(
               context: context,
               contentDyOffset: 0,
               arrowDyOffset: 0,
@@ -39,10 +42,12 @@ void main() {
               direction: PopoverDirection.top,
               arrowWidth: 10,
               arrowHeight: 20,
-            ),
-          ),
+            );
+          },
         ),
       );
+
+      await tester.tap(find.text('Go'));
     },
   );
 
@@ -50,9 +55,9 @@ void main() {
     'PopoverItem: direction bottom',
     (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => PopoverItem(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (context) {
+            return PopoverItem(
               context: context,
               contentDyOffset: 0,
               arrowDyOffset: 0,
@@ -72,10 +77,12 @@ void main() {
               direction: PopoverDirection.bottom,
               arrowWidth: 10,
               arrowHeight: 20,
-            ),
-          ),
+            );
+          },
         ),
       );
+
+      await tester.tap(find.text('Go'));
     },
   );
 
@@ -83,9 +90,9 @@ void main() {
     'PopoverItem: direction right',
     (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => PopoverItem(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (context) {
+            return PopoverItem(
               context: context,
               contentDyOffset: 0,
               arrowDyOffset: 0,
@@ -105,10 +112,12 @@ void main() {
               direction: PopoverDirection.right,
               arrowWidth: 10,
               arrowHeight: 20,
-            ),
-          ),
+            );
+          },
         ),
       );
+
+      await tester.tap(find.text('Go'));
     },
   );
 
@@ -116,9 +125,9 @@ void main() {
     'PopoverItem: direction left',
     (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => PopoverItem(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (context) {
+            return PopoverItem(
               context: context,
               contentDyOffset: 0,
               arrowDyOffset: 0,
@@ -138,10 +147,12 @@ void main() {
               direction: PopoverDirection.left,
               arrowWidth: 10,
               arrowHeight: 20,
-            ),
-          ),
+            );
+          },
         ),
       );
+
+      await tester.tap(find.text('Go'));
     },
   );
 
@@ -149,9 +160,9 @@ void main() {
     'PopoverItem: has constraints',
     (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => PopoverItem(
+        createAppWithButtonThatLaunchesDialog(
+          dialogBuilder: (context) {
+            return PopoverItem(
               context: context,
               contentDyOffset: 0,
               arrowDyOffset: 0,
@@ -175,10 +186,12 @@ void main() {
               direction: PopoverDirection.top,
               arrowWidth: 10,
               arrowHeight: 20,
-            ),
-          ),
+            );
+          },
         ),
       );
+
+      await tester.tap(find.text('Go'));
     },
   );
 }
