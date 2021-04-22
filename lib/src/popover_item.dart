@@ -43,22 +43,17 @@ class PopoverItem extends StatefulWidget {
 }
 
 class _PopoverItemState extends State<PopoverItem> {
-  BoxConstraints? constraints;
+  late BoxConstraints constraints;
+  late Offset offset;
+  late Rect bounds;
+  late Rect attachRect;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, _) {
+      builder: (_, __) {
         _configureConstraints();
-        final offset =
-            BuildContextExtension.getWidgetLocalToGlobal(widget.context);
-        final bounds = BuildContextExtension.getWidgetBounds(widget.context);
-        final attachRect = Rect.fromLTWH(
-          offset.dx + widget.arrowDxOffset,
-          offset.dy + widget.arrowDyOffset,
-          bounds.width,
-          bounds.height + widget.contentDyOffset,
-        );
+        _configureRect();
 
         return Stack(
           children: [
@@ -117,6 +112,17 @@ class _PopoverItemState extends State<PopoverItem> {
     }
     constraints = _constraints.copyWith(
       maxHeight: _constraints.maxHeight + widget.arrowHeight!,
+    );
+  }
+
+  void _configureRect() {
+    offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
+    bounds = BuildContextExtension.getWidgetBounds(widget.context);
+    attachRect = Rect.fromLTWH(
+      offset.dx + widget.arrowDxOffset,
+      offset.dy + widget.arrowDyOffset,
+      bounds.width,
+      bounds.height + widget.contentDyOffset,
     );
   }
 }
