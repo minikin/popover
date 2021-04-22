@@ -18,26 +18,28 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: PopoverItem(
-            attachRect: const Rect.fromLTWH(
-              0,
-              0,
-              100,
-              200,
-            ),
-            child: const SizedBox.shrink(),
-            backgroundColor: Colors.white,
-            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 5)],
-            radius: 8,
-            animation: Tween<double>(begin: 0, end: 300).animate(
-              AnimationController(
-                duration: const Duration(milliseconds: 500),
-                vsync: const TestVSync(),
+          home: Builder(
+            builder: (context) => PopoverItem(
+              context: context,
+              contentDyOffset: 0,
+              arrowDyOffset: 0,
+              arrowDxOffset: 0,
+              child: const SizedBox.shrink(),
+              backgroundColor: Colors.white,
+              boxShadow: [
+                const BoxShadow(color: Colors.black12, blurRadius: 5),
+              ],
+              radius: 8,
+              animation: Tween<double>(begin: 0, end: 300).animate(
+                AnimationController(
+                  duration: const Duration(milliseconds: 500),
+                  vsync: const TestVSync(),
+                ),
               ),
+              direction: PopoverDirection.top,
+              arrowWidth: 10,
+              arrowHeight: 20,
             ),
-            direction: PopoverDirection.top,
-            arrowWidth: 10,
-            arrowHeight: 20,
           ),
         ),
       );
@@ -49,26 +51,28 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: PopoverItem(
-            attachRect: const Rect.fromLTWH(
-              0,
-              0,
-              100,
-              200,
-            ),
-            child: const SizedBox.shrink(),
-            backgroundColor: Colors.white,
-            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 5)],
-            radius: 8,
-            animation: Tween<double>(begin: 0, end: 300).animate(
-              AnimationController(
-                duration: const Duration(milliseconds: 500),
-                vsync: const TestVSync(),
+          home: Builder(
+            builder: (context) => PopoverItem(
+              context: context,
+              contentDyOffset: 0,
+              arrowDyOffset: 0,
+              arrowDxOffset: 0,
+              child: const SizedBox.shrink(),
+              backgroundColor: Colors.white,
+              boxShadow: [
+                const BoxShadow(color: Colors.black12, blurRadius: 5)
+              ],
+              radius: 8,
+              animation: Tween<double>(begin: 0, end: 300).animate(
+                AnimationController(
+                  duration: const Duration(milliseconds: 500),
+                  vsync: const TestVSync(),
+                ),
               ),
+              direction: PopoverDirection.bottom,
+              arrowWidth: 10,
+              arrowHeight: 20,
             ),
-            direction: PopoverDirection.bottom,
-            arrowWidth: 10,
-            arrowHeight: 20,
           ),
         ),
       );
@@ -80,26 +84,28 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: PopoverItem(
-            attachRect: const Rect.fromLTWH(
-              0,
-              0,
-              100,
-              200,
-            ),
-            child: const SizedBox.shrink(),
-            backgroundColor: Colors.white,
-            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 5)],
-            radius: 8,
-            animation: Tween<double>(begin: 0, end: 300).animate(
-              AnimationController(
-                duration: const Duration(milliseconds: 500),
-                vsync: const TestVSync(),
+          home: Builder(
+            builder: (context) => PopoverItem(
+              context: context,
+              contentDyOffset: 0,
+              arrowDyOffset: 0,
+              arrowDxOffset: 0,
+              child: const SizedBox.shrink(),
+              backgroundColor: Colors.white,
+              boxShadow: [
+                const BoxShadow(color: Colors.black12, blurRadius: 5)
+              ],
+              radius: 8,
+              animation: Tween<double>(begin: 0, end: 300).animate(
+                AnimationController(
+                  duration: const Duration(milliseconds: 500),
+                  vsync: const TestVSync(),
+                ),
               ),
+              direction: PopoverDirection.right,
+              arrowWidth: 10,
+              arrowHeight: 20,
             ),
-            direction: PopoverDirection.right,
-            arrowWidth: 10,
-            arrowHeight: 20,
           ),
         ),
       );
@@ -111,26 +117,28 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: PopoverItem(
-            attachRect: const Rect.fromLTWH(
-              0,
-              0,
-              100,
-              200,
-            ),
-            child: const SizedBox.shrink(),
-            backgroundColor: Colors.white,
-            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 5)],
-            radius: 8,
-            animation: Tween<double>(begin: 0, end: 300).animate(
-              AnimationController(
-                duration: const Duration(milliseconds: 500),
-                vsync: const TestVSync(),
+          home: Builder(
+            builder: (context) => PopoverItem(
+              context: context,
+              contentDyOffset: 0,
+              arrowDyOffset: 0,
+              arrowDxOffset: 0,
+              child: const SizedBox.shrink(),
+              backgroundColor: Colors.white,
+              boxShadow: [
+                const BoxShadow(color: Colors.black12, blurRadius: 5)
+              ],
+              radius: 8,
+              animation: Tween<double>(begin: 0, end: 300).animate(
+                AnimationController(
+                  duration: const Duration(milliseconds: 500),
+                  vsync: const TestVSync(),
+                ),
               ),
+              direction: PopoverDirection.left,
+              arrowWidth: 10,
+              arrowHeight: 20,
             ),
-            direction: PopoverDirection.left,
-            arrowWidth: 10,
-            arrowHeight: 20,
           ),
         ),
       );
@@ -142,30 +150,32 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: PopoverItem(
-            attachRect: Rect.fromLTWH(
-              0,
-              0,
-              Utils().screenHeight / 3,
-              Utils().screenHeight / 3,
-            ),
-            child: const SizedBox.shrink(),
-            constraints: BoxConstraints(
-              maxHeight: Utils().screenHeight / 3,
-              maxWidth: Utils().screenHeight / 3,
-            ),
-            backgroundColor: Colors.white,
-            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 5)],
-            radius: 8,
-            animation: Tween<double>(begin: 0, end: 300).animate(
-              AnimationController(
-                duration: const Duration(milliseconds: 500),
-                vsync: const TestVSync(),
+          home: Builder(
+            builder: (context) => PopoverItem(
+              context: context,
+              contentDyOffset: 0,
+              arrowDyOffset: 0,
+              arrowDxOffset: 0,
+              child: const SizedBox.shrink(),
+              constraints: BoxConstraints(
+                maxHeight: Utils().screenHeight / 3,
+                maxWidth: Utils().screenHeight / 3,
               ),
+              backgroundColor: Colors.white,
+              boxShadow: [
+                const BoxShadow(color: Colors.black12, blurRadius: 5)
+              ],
+              radius: 8,
+              animation: Tween<double>(begin: 0, end: 300).animate(
+                AnimationController(
+                  duration: const Duration(milliseconds: 500),
+                  vsync: const TestVSync(),
+                ),
+              ),
+              direction: PopoverDirection.top,
+              arrowWidth: 10,
+              arrowHeight: 20,
             ),
-            direction: PopoverDirection.top,
-            arrowWidth: 10,
-            arrowHeight: 20,
           ),
         ),
       );

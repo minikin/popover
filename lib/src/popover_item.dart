@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'popover_context.dart';
 import 'popover_direction.dart';
 import 'popover_position_widget.dart';
+import 'utils/build_context_extension.dart';
 import 'utils/utils.dart';
 
 class PopoverItem extends StatefulWidget {
-  final Rect attachRect;
   final Widget child;
   final Color? backgroundColor;
   final PopoverDirection? direction;
@@ -16,10 +16,14 @@ class PopoverItem extends StatefulWidget {
   final double? arrowWidth;
   final double? arrowHeight;
   final BoxConstraints? constraints;
+  final BuildContext context;
+  final double arrowDxOffset;
+  final double arrowDyOffset;
+  final double contentDyOffset;
 
   const PopoverItem({
-    required this.attachRect,
     required this.child,
+    required this.context,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -28,6 +32,9 @@ class PopoverItem extends StatefulWidget {
     this.arrowWidth,
     this.arrowHeight,
     this.constraints,
+    this.arrowDxOffset = 0,
+    this.arrowDyOffset = 0,
+    this.contentDyOffset = 0,
     Key? key,
   }) : super(key: key);
 
@@ -38,38 +45,48 @@ class PopoverItem extends StatefulWidget {
 class _PopoverItemState extends State<PopoverItem> {
   BoxConstraints? constraints;
 
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PopoverPositionWidget(
-          attachRect: widget.attachRect,
-          scale: widget.animation,
-          constraints: constraints,
-          direction: widget.direction,
-          arrowHeight: widget.arrowHeight,
-          child: PopoverContext(
-            attachRect: widget.attachRect,
-            animation: widget.animation,
-            radius: widget.radius,
-            backgroundColor: widget.backgroundColor,
-            boxShadow: widget.boxShadow,
-            direction: widget.direction,
-            arrowWidth: widget.arrowWidth,
-            arrowHeight: widget.arrowHeight,
-            child: Material(
-              type: MaterialType.transparency,
-              child: widget.child,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
   @override
-  void initState() {
-    super.initState();
-    _configureConstraints();
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, _) {
+        _configureConstraints();
+        final offset =
+            BuildContextExtension.getWidgetLocalToGlobal(widget.context);
+        final bounds = BuildContextExtension.getWidgetBounds(widget.context);
+        final attachRect = Rect.fromLTWH(
+          offset.dx + widget.arrowDxOffset,
+          offset.dy + widget.arrowDyOffset,
+          bounds.width,
+          bounds.height + widget.contentDyOffset,
+        );
+
+        return Stack(
+          children: [
+            PopoverPositionWidget(
+              attachRect: attachRect,
+              scale: widget.animation,
+              constraints: constraints,
+              direction: widget.direction,
+              arrowHeight: widget.arrowHeight,
+              child: PopoverContext(
+                attachRect: attachRect,
+                animation: widget.animation,
+                radius: widget.radius,
+                backgroundColor: widget.backgroundColor,
+                boxShadow: widget.boxShadow,
+                direction: widget.direction,
+                arrowWidth: widget.arrowWidth,
+                arrowHeight: widget.arrowHeight,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: widget.child,
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
   void _configureConstraints() {
