@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
-import 'utils/build_context_extension.dart';
 
 /// A popover is a transient view that appears above other content onscreen
 /// when you tap a control or in an area.
@@ -90,9 +89,6 @@ void showPopover({
           BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
-  final offset = BuildContextExtension.getWidgetLocalToGlobal(context);
-  final bounds = BuildContextExtension.getWidgetBounds(context);
-
   showGeneralDialog(
     context: context,
     pageBuilder: (_, __, ___) {
@@ -102,7 +98,7 @@ void showPopover({
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: barrierColor,
     transitionDuration: transitionDuration,
-    transitionBuilder: (context, animation, _, child) {
+    transitionBuilder: (builderContext, animation, _, child) {
       return WillPopScope(
         onWillPop: () {
           if (onPop != null) {
@@ -119,13 +115,8 @@ void showPopover({
           ),
           child: PopoverItem(
             key: key,
-            attachRect: Rect.fromLTWH(
-              offset.dx + arrowDxOffset,
-              offset.dy + arrowDyOffset,
-              bounds.width,
-              bounds.height + contentDyOffset,
-            ),
-            child: bodyBuilder(context),
+            context: context,
+            child: bodyBuilder(builderContext),
             constraints: constraints,
             backgroundColor: backgroundColor,
             boxShadow: shadow,
