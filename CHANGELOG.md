@@ -1,3 +1,7 @@
+## [0.2.2] - 22.04.2021.
+
+- Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).
+
 ## [0.2.1] - 04.04.2021.
 
 - Lower minimum version requirements for Dart and Flutter to pass pub.dev validation.

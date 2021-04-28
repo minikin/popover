@@ -1,8 +1,16 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
 
 void main() {
+  setUp(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    ui.window.onBeginFrame = null;
+    ui.window.onDrawFrame = null;
+  });
+
   testWidgets('Popover dialog control test', (tester) async {
     var didDelete = false;
 
@@ -121,27 +129,71 @@ void main() {
     expect(didPop, isTrue);
   });
 
-  // testWidgets('Context can not be null', (tester) async {
-  //   await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
+  testWidgets('PopoverItem: direction top test', (tester) async {
+    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
-  //   expect(
-  //     () => showPopover(
-  //       context: null,
-  //       bodyBuilder: (context) => null as Widget Function(BuildContext),
-  //     ),
-  //     throwsAssertionError,
-  //   );
-  // });
+    final BuildContext context = tester.element(find.text('Go'));
 
-  // testWidgets('BodyBuilder can not be null', (tester) async {
-  //   await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
-  //   final BuildContext context = tester.element(find.text('Go'));
+    showPopover(
+      context: context,
+      direction: PopoverDirection.top,
+      bodyBuilder: (context) {
+        return Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: const Text('Dialog'),
+        );
+      },
+    );
 
-  //   expect(
-  //     () => showPopover(context: context, bodyBuilder: null),
-  //     throwsAssertionError,
-  //   );
-  // });
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.text('Dialog'), findsOneWidget);
+  });
+
+  testWidgets('PopoverItem: direction left test', (tester) async {
+    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
+
+    final BuildContext context = tester.element(find.text('Go'));
+
+    showPopover(
+      context: context,
+      direction: PopoverDirection.left,
+      bodyBuilder: (context) {
+        return Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: const Text('Dialog'),
+        );
+      },
+    );
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.text('Dialog'), findsOneWidget);
+  });
+
+  testWidgets('PopoverItem: direction right test', (tester) async {
+    await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
+
+    final BuildContext context = tester.element(find.text('Go'));
+
+    showPopover(
+      context: context,
+      direction: PopoverDirection.right,
+      bodyBuilder: (context) {
+        return Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: const Text('Dialog'),
+        );
+      },
+    );
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.text('Dialog'), findsOneWidget);
+  });
 }
 
 Widget createAppWithButtonThatLaunchesDialog({
