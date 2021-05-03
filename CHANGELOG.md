@@ -1,4 +1,4 @@
-## [0.2.1] - 03.05.2021.
+## [0.2.3] - 03.05.2021.
 
 - Add `RouteSettings? routeSettings` parameter.
 
