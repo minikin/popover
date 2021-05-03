@@ -74,5 +74,6 @@ build/
 !**/ios/**/default.perspectivev3
 
 
-# 
+#
 coverage/
+.fvm/flutter_sdk
