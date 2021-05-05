@@ -17,9 +17,9 @@ class PopoverItem extends StatefulWidget {
   final double? arrowHeight;
   final BoxConstraints? constraints;
   final BuildContext context;
-  final double arrowDxOffset;
-  final double arrowDyOffset;
-  final double contentDyOffset;
+  final double? arrowDxOffset;
+  final double? arrowDyOffset;
+  final double? contentDyOffset;
 
   const PopoverItem({
     required this.child,
@@ -32,9 +32,9 @@ class PopoverItem extends StatefulWidget {
     this.arrowWidth,
     this.arrowHeight,
     this.constraints,
-    this.arrowDxOffset = 0,
-    this.arrowDyOffset = 0,
-    this.contentDyOffset = 0,
+    this.arrowDxOffset,
+    this.arrowDyOffset,
+    this.contentDyOffset,
     Key? key,
   }) : super(key: key);
 
@@ -50,13 +50,12 @@ class _PopoverItemState extends State<PopoverItem> {
 
   @override
   Widget build(BuildContext context) {
+    if (mounted) {
+      _configureConstraints();
+      _configureRect();
+    }
     return LayoutBuilder(
       builder: (_, __) {
-        if (mounted) {
-          _configureConstraints();
-          _configureRect();
-        }
-
         return Stack(
           children: [
             PopoverPositionWidget(
@@ -121,10 +120,10 @@ class _PopoverItemState extends State<PopoverItem> {
     offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
     bounds = BuildContextExtension.getWidgetBounds(widget.context);
     attachRect = Rect.fromLTWH(
-      offset.dx + widget.arrowDxOffset,
-      offset.dy + widget.arrowDyOffset,
+      offset.dx + (widget.arrowDxOffset ?? 0.0),
+      offset.dy + (widget.arrowDyOffset ?? 0.0),
       bounds.width,
-      bounds.height + widget.contentDyOffset,
+      bounds.height + (widget.contentDyOffset ?? 0.0),
     );
   }
 }
