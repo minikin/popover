@@ -1,3 +1,7 @@
+## [0.2.3] - 03.05.2021.
+
+- Add `RouteSettings? routeSettings` parameter.
+
 ## [0.2.2] - 22.04.2021.
 
 - Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).

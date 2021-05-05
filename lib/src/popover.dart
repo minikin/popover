@@ -61,6 +61,8 @@ import 'popover_item.dart';
 ///
 /// The `constraints` is popover's constraints.
 ///
+/// The `routeSettings` is data that might be useful in constructing a [Route].
+///
 void showPopover({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
@@ -82,6 +84,7 @@ void showPopover({
   double? height,
   VoidCallback? onPop,
   BoxConstraints? constraints,
+  RouteSettings? routeSettings,
   Key? key,
 }) {
   constraints = (width != null || height != null)
@@ -98,6 +101,7 @@ void showPopover({
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: barrierColor,
     transitionDuration: transitionDuration,
+    routeSettings: routeSettings,
     transitionBuilder: (builderContext, animation, _, child) {
       return WillPopScope(
         onWillPop: () {
