@@ -1,3 +1,7 @@
+## [0.2.5] - 06.05.2021.
+
+* Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
+
 ## [0.2.3] - 03.05.2021.
 
 - Add `RouteSettings? routeSettings` parameter.
