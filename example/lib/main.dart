@@ -78,9 +78,9 @@ class Button extends StatelessWidget {
             height: 400,
             arrowHeight: 15,
             arrowWidth: 30,
-            arrowDxOffset: 0,
-            arrowDyOffset: -5,
-            contentDyOffset: 10,
+            // arrowDxOffset: 0,
+            // arrowDyOffset: -5,
+            // contentDyOffset: 10,
           );
         },
       ),
