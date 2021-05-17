@@ -117,6 +117,7 @@ class _PopoverItemState extends State<PopoverItem> {
     }
     constraints = _constraints.copyWith(
       maxHeight: _constraints.maxHeight + widget.arrowHeight!,
+      maxWidth: _constraints.maxWidth + widget.arrowWidth!,
     );
   }
 
