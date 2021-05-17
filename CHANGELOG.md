@@ -1,6 +1,8 @@
-## [0.2.5] - 06.05.2021.
+## [0.2.4] - 17.05.2021
 
 * Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
+* Fix [Popover breaks when opened to the right](https://github.com/minikin/popover/issues/17).
+* Update example.
 
 ## [0.2.3] - 03.05.2021.
 

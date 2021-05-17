@@ -50,12 +50,9 @@ class _PopoverItemState extends State<PopoverItem> {
 
   @override
   Widget build(BuildContext context) {
-    if (mounted) {
-      _configureConstraints();
-      _configureRect();
-    }
     return LayoutBuilder(
       builder: (_, __) {
+        _configure();
         return Stack(
           children: [
             PopoverPositionWidget(
@@ -83,6 +80,13 @@ class _PopoverItemState extends State<PopoverItem> {
         );
       },
     );
+  }
+
+  void _configure() {
+    if (mounted) {
+      _configureConstraints();
+      _configureRect();
+    }
   }
 
   void _configureConstraints() {
@@ -113,6 +117,7 @@ class _PopoverItemState extends State<PopoverItem> {
     }
     constraints = _constraints.copyWith(
       maxHeight: _constraints.maxHeight + widget.arrowHeight!,
+      maxWidth: _constraints.maxWidth + widget.arrowWidth!,
     );
   }
 

@@ -10,7 +10,7 @@
 <p align="center">
 
   <a href="https://github.com/minikin/popover">
-    <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
+    <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20iPadOS%20%7C%20macOS%20%7C%20Android%20%7C%20Web-green.svg" alt="Supported platforms" />
   </a>
 
    <a href="https://github.com/minikin/popover/blob/main/LICENSE">
@@ -92,7 +92,7 @@ class PopoverExample extends StatelessWidget {
 }
 
 class Button extends StatelessWidget {
-  const Button({Key key}) : super(key: key);
+  const Button({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +109,7 @@ class Button extends StatelessWidget {
         onTap: () {
           showPopover(
             context: context,
+            transitionDuration: const Duration(milliseconds: 150),
             bodyBuilder: (context) => const ListItems(),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.top,
@@ -124,7 +125,7 @@ class Button extends StatelessWidget {
 }
 
 class ListItems extends StatelessWidget {
-  const ListItems({Key key}) : super(key: key);
+  const ListItems({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +137,13 @@ class ListItems extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                print('GestureDetector was called on Entry A');
-                Navigator.of(context).pop();
+                Navigator.of(context)
+                  ..pop()
+                  ..push(
+                    MaterialPageRoute<SecondRoute>(
+                      builder: (context) => SecondRoute(),
+                    ),
+                  );
               },
               child: Container(
                 height: 50,
@@ -151,7 +157,31 @@ class ListItems extends StatelessWidget {
               color: Colors.amber[200],
               child: const Center(child: Text('Entry B')),
             ),
+            const Divider(),
+            Container(
+              height: 50,
+              color: Colors.amber[300],
+              child: const Center(child: Text('Entry C')),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+        automaticallyImplyLeading: false,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Go back!'),
         ),
       ),
     );

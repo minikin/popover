@@ -73,14 +73,11 @@ class Button extends StatelessWidget {
             transitionDuration: const Duration(milliseconds: 150),
             bodyBuilder: (context) => const ListItems(),
             onPop: () => print('Popover was popped!'),
-            direction: PopoverDirection.top,
+            direction: PopoverDirection.bottom,
             width: 200,
             height: 400,
             arrowHeight: 15,
             arrowWidth: 30,
-            arrowDxOffset: 0,
-            arrowDyOffset: -5,
-            contentDyOffset: 10,
           );
         },
       ),
@@ -101,14 +98,13 @@ class ListItems extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                print('GestureDetector was called on Entry A');
-                Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<SecondRoute>(
-                    builder: (context) => SecondRoute(),
-                  ),
-                );
+                Navigator.of(context)
+                  ..pop()
+                  ..push(
+                    MaterialPageRoute<SecondRoute>(
+                      builder: (context) => SecondRoute(),
+                    ),
+                  );
               },
               child: Container(
                 height: 50,
