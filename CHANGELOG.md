@@ -1,6 +1,7 @@
-## [0.2.5] - 06.05.2021.
+## [0.2.5] - 
 
 * Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
+* Update example.
 
 ## [0.2.3] - 03.05.2021.
 

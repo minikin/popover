@@ -84,18 +84,16 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       direction,
       arrowHeight,
     );
-
-    Rect? arrowRect;
-    late Offset translation;
-    Rect bodyRect;
-
-    bodyRect = childParentData.offset & child!.size;
+    final bodyRect = childParentData.offset & child!.size;
 
     final arrowLeft =
         attachRect!.left + attachRect!.width / 2 - arrowWidth! / 2 - offset.dx;
 
     final arrowTop =
         attachRect!.top + attachRect!.height / 2 - arrowWidth! / 2 - offset.dy;
+
+    late Rect arrowRect;
+    late Offset translation;
 
     switch (_direction) {
       case PopoverDirection.top:
@@ -123,10 +121,14 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
         translation = Offset(size.width, arrowTop + arrowWidth! / 2);
         break;
       case PopoverDirection.right:
-        arrowRect = Rect.fromLTWH(0, arrowTop, arrowHeight!, arrowWidth!);
+        arrowRect = Rect.fromLTWH(
+          0,
+          arrowTop,
+          arrowHeight!,
+          arrowWidth!,
+        );
         translation = Offset(0, arrowTop + arrowWidth! / 2);
         break;
-      default:
     }
 
     _transform(transform, translation);
