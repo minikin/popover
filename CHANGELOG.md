@@ -1,6 +1,6 @@
 ## [0.2.5] - 18.05.2021
 
-* Recalculate popover shape on context changes
+* Recalculate popover shape on context changes.
 
 ## [0.2.4] - 17.05.2021
 
