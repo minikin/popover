@@ -30,7 +30,7 @@ abstract class PopoverUtils {
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
-        return PopoverDirection.top;
+        return PopoverDirection.bottom;
     }
   }
 }

@@ -219,6 +219,8 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       childParentData!.offset = Offset(0, arrowHeight!);
     } else if (_direction == PopoverDirection.right) {
       childParentData!.offset = Offset(arrowHeight!, 0);
+    } else {
+      childParentData!.offset = const Offset(0, 0);
     }
   }
 

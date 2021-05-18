@@ -27,6 +27,7 @@ class PopoverPath {
       path.close();
       return path;
     } else {
+      path.close();
       return path;
     }
   }
