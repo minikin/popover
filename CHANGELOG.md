@@ -1,4 +1,8 @@
-## [0.2.4] - 18.05.2021
+## [0.2.5] - 18.05.2021
+
+* Recalculate popover shape on context changes
+
+## [0.2.4] - 17.05.2021
 
 * Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
 * Fix [Popover breaks when opened to the right](https://github.com/minikin/popover/issues/17).
@@ -6,19 +10,19 @@
 
 ## [0.2.3] - 03.05.2021.
 
-- Add `RouteSettings? routeSettings` parameter.
+* Add `RouteSettings? routeSettings` parameter.
 
 ## [0.2.2] - 22.04.2021.
 
-- Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).
+* Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).
 
 ## [0.2.1] - 04.04.2021.
 
-- Lower minimum version requirements for Dart and Flutter to pass pub.dev validation.
+* Lower minimum version requirements for Dart and Flutter to pass pub.dev validation.
 
 ## [0.2.0] - 04.04.2021.
 
-- Migrate to NNBD.
+* Migrate to NNBD.
 
 ## [0.1.0] - 09.02.2021.
 
