@@ -1,3 +1,7 @@
+## [0.2.6] - 21.05.2021
+
+* Fix constraints size for `PopoverDirection.top` & `PopoverDirection.bottom`.
+
 ## [0.2.5] - 18.05.2021
 
 * Recalculate popover shape on context changes.

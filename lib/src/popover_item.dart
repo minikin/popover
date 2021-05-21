@@ -115,10 +115,18 @@ class _PopoverItemState extends State<PopoverItem> {
         maxWidth: Utils().screenHeight / 2,
       );
     }
-    constraints = _constraints.copyWith(
-      maxHeight: _constraints.maxHeight + widget.arrowHeight!,
-      maxWidth: _constraints.maxWidth + widget.arrowWidth!,
-    );
+    if (widget.direction == PopoverDirection.top ||
+        widget.direction == PopoverDirection.bottom) {
+      constraints = _constraints.copyWith(
+        maxHeight: _constraints.maxHeight + widget.arrowHeight!,
+        maxWidth: _constraints.maxWidth,
+      );
+    } else {
+      constraints = _constraints.copyWith(
+        maxHeight: _constraints.maxHeight + widget.arrowHeight!,
+        maxWidth: _constraints.maxWidth + widget.arrowWidth!,
+      );
+    }
   }
 
   void _configureRect() {
