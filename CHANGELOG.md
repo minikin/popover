@@ -1,3 +1,7 @@
+## [0.2.6+1] - 21.05.2021
+
+* Set minimum dart version to 2.12.0.
+
 ## [0.2.6] - 21.05.2021
 
 * Fix constraints size for `PopoverDirection.top` & `PopoverDirection.bottom`.
