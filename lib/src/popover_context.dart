@@ -12,6 +12,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverDirection? direction;
   final double? arrowWidth;
   final double? arrowHeight;
+  final bool isAnimateZooming;
 
   const PopoverContext({
     Widget? child,
@@ -23,6 +24,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
     this.direction,
     this.arrowWidth,
     this.arrowHeight,
+    required this.isAnimateZooming,
   }) : super(child: child);
 
   @override
@@ -31,7 +33,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       attachRect: attachRect,
       color: backgroundColor,
       boxShadow: boxShadow,
-      scale: animation!.value,
+      scale: isAnimateZooming ? animation!.value : 1,
       direction: direction,
       radius: radius,
       arrowWidth: arrowWidth,
@@ -48,7 +50,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = animation!.value
+      ..scale = isAnimateZooming ? animation!.value : 1
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth

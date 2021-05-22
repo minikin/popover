@@ -20,10 +20,12 @@ class PopoverItem extends StatefulWidget {
   final double? arrowDxOffset;
   final double? arrowDyOffset;
   final double? contentDyOffset;
+  final bool isAnimateZooming;
 
   const PopoverItem({
     required this.child,
     required this.context,
+    required this.isAnimateZooming,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -70,6 +72,7 @@ class _PopoverItemState extends State<PopoverItem> {
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
                 arrowHeight: widget.arrowHeight,
+                isAnimateZooming: widget.isAnimateZooming,
                 child: Material(
                   type: MaterialType.transparency,
                   child: widget.child,

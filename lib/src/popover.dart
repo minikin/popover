@@ -88,6 +88,7 @@ Future<T?> showPopover<T extends Object?>({
   RouteSettings? routeSettings,
   String? barrierLabel,
   Key? key,
+  bool isAnimateZooming = true,
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
@@ -132,6 +133,7 @@ Future<T?> showPopover<T extends Object?>({
               arrowDyOffset: arrowDyOffset,
               contentDyOffset: contentDyOffset,
               key: key,
+              isAnimateZooming: isAnimateZooming,
             ),
           ),
         );
