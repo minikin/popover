@@ -1,6 +1,6 @@
 ## [0.2.6+2] - 17.06.2021
 
-* Fixed the bug that appears when you change window size while popover is opened. (thanks [@whitebug](https://github.com/whitebug)).
+* Fixed the bug that appears when you change window size while popover is opened (thanks [@whitebug](https://github.com/whitebug)).
 
 ## [0.2.6+1] - 21.05.2021
 
