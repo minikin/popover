@@ -83,7 +83,8 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   void _configure() {
-    if (mounted) {
+    final box = widget.context.findRenderObject() as RenderBox;
+    if (mounted && box.owner != null) {
       _configureConstraints();
       _configureRect();
     }
