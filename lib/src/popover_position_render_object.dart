@@ -103,7 +103,13 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     } else if (attachRect!.left < size.width / 2) {
       offset = arrowHeight!;
     } else {
-      offset = Utils().screenWidth - arrowHeight! - size.width;
+
+      // In this case the popover was shifted relative to the center of the widget
+      // We need to leave it in the center
+
+      // offset = Utils().screenWidth - arrowHeight! - size.width;
+
+      offset = attachRect!.left + attachRect!.width / 2 - size.width / 2;
     }
     return offset;
   }
