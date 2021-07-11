@@ -19,7 +19,8 @@ abstract class PopoverUtils {
         return Utils().screenHeight >
                 attachRect!.bottom + size.height + arrowHeight!
             ? PopoverDirection.bottom
-            : PopoverDirection.top;
+            : (attachRect.bottom > size.height + arrowHeight ?
+        PopoverDirection.top : PopoverDirection.left);
       case PopoverDirection.left:
         return (attachRect!.left < size.width + arrowHeight!)
             ? PopoverDirection.right
