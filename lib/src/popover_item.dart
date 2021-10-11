@@ -85,15 +85,15 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   void _configure() {
-    final bool isParentMounted;
+    final bool isParentAlive;
 
     if (widget.isParentAlive != null) {
-      isParentMounted = widget.isParentAlive!();
+      isParentAlive = widget.isParentAlive!();
     } else {
-      isParentMounted = true;
+      isParentAlive = true;
     }
 
-    if (!isParentMounted) {
+    if (!isParentAlive) {
       return;
     }
 
