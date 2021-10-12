@@ -116,7 +116,7 @@ void main() {
       onPop: () => didPop = true,
     );
 
-    await tester.tap(find.text('Go'));
+    await tester.tap(find.text('Go'), warnIfMissed: false);
     await tester.pump();
 
     expect(didPop, isFalse);

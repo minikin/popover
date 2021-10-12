@@ -53,7 +53,7 @@ linter:
     # Effective Dart Rules
     - avoid_catches_without_on_clauses
     - avoid_catching_errors
-    - avoid_classes_with_only_static_members
+    # - avoid_classes_with_only_static_members # Temporarily disable this rule, because it looks like it doesn't work properly now.
     - avoid_equals_and_hash_code_on_mutable_classes
     - avoid_function_literals_in_foreach_calls
     - avoid_init_to_null
@@ -80,7 +80,6 @@ linter:
     - prefer_iterable_whereType
     - prefer_mixin
     - prefer_relative_imports
-    # - public_member_api_docs
     - slash_for_doc_comments
     - type_init_formals
     - unnecessary_lambdas

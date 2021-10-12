@@ -20,6 +20,7 @@ class PopoverItem extends StatefulWidget {
   final double? arrowDxOffset;
   final double? arrowDyOffset;
   final double? contentDyOffset;
+  final bool Function()? isParentAlive;
 
   const PopoverItem({
     required this.child,
@@ -35,6 +36,7 @@ class PopoverItem extends StatefulWidget {
     this.arrowDxOffset,
     this.arrowDyOffset,
     this.contentDyOffset,
+    this.isParentAlive,
     Key? key,
   }) : super(key: key);
 
@@ -83,6 +85,18 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   void _configure() {
+    final bool isParentAlive;
+
+    if (widget.isParentAlive != null) {
+      isParentAlive = widget.isParentAlive!();
+    } else {
+      isParentAlive = true;
+    }
+
+    if (!isParentAlive) {
+      return;
+    }
+
     final box = widget.context.findRenderObject() as RenderBox;
     if (mounted && box.owner != null) {
       _configureConstraints();
