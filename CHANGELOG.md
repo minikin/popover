@@ -1,40 +1,44 @@
+## [0.2.6+3] - 12.10.2021
+
+- Fixed the bug that appears when the parent widget from which `Popover` was presented has been removed from a widget tree (thanks [@ajaxspace](https://github.com/ajaxspace)).
+
 ## [0.2.6+2] - 17.06.2021
 
-* Fixed the bug that appears when you change window size while popover is opened (thanks [@whitebug](https://github.com/whitebug)).
+- Fixed the bug that appears when you change window size while popover is opened (thanks [@whitebug](https://github.com/whitebug)).
 
 ## [0.2.6+1] - 21.05.2021
 
-* Set minimum dart version to 2.12.0.
+- Set minimum dart version to 2.12.0.
 
 ## [0.2.6] - 21.05.2021
 
-* Fix constraints size for `PopoverDirection.top` & `PopoverDirection.bottom`.
+- Fix constraints size for `PopoverDirection.top` & `PopoverDirection.bottom`.
 
 ## [0.2.5] - 18.05.2021
 
-* Recalculate popover shape on context changes.
+- Recalculate popover shape on context changes.
 
 ## [0.2.4] - 17.05.2021
 
-* Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
-* Fix [Popover breaks when opened to the right](https://github.com/minikin/popover/issues/17).
-* Update example.
+- Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
+- Fix [Popover breaks when opened to the right](https://github.com/minikin/popover/issues/17).
+- Update example.
 
 ## [0.2.3] - 03.05.2021.
 
-* Add `RouteSettings? routeSettings` parameter.
+- Add `RouteSettings? routeSettings` parameter.
 
 ## [0.2.2] - 22.04.2021.
 
-* Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).
+- Rebuild Popover on device orientation changes (thanks [@SanekLic](https://github.com/SanekLic), [@shcherbuk96](https://github.com/shcherbuk96)).
 
 ## [0.2.1] - 04.04.2021.
 
-* Lower minimum version requirements for Dart and Flutter to pass pub.dev validation.
+- Lower minimum version requirements for Dart and Flutter to pass pub.dev validation.
 
 ## [0.2.0] - 04.04.2021.
 
-* Migrate to NNBD.
+- Migrate to NNBD.
 
 ## [0.1.0] - 09.02.2021.
 
@@ -44,22 +48,22 @@
 
 ## [0.0.5] - 08.02.2021.
 
-* Add `Key key`, `barrierDismissible` and `showPopover`.
+- Add `Key key`, `barrierDismissible` and `showPopover`.
 
 ## [0.0.4] - 27.01.2021.
 
-* Add `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` public parameters.
+- Add `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` public parameters.
 
 ## [0.0.3] - 21.01.2021.
 
-* A `child` widget can be wrapped in `InkWell` or `GestureDetector`.
+- A `child` widget can be wrapped in `InkWell` or `GestureDetector`.
 
 ## [0.0.2] - 18.01.2021.
 
-* Update `PopoverItem`.
-* Add `PopoverDirection` to exports.
-* Add documentation.
+- Update `PopoverItem`.
+- Add `PopoverDirection` to exports.
+- Add documentation.
 
 ## [0.0.1] - 10.01.2021.
 
-* Initial release.
+- Initial release.
