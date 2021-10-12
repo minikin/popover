@@ -58,6 +58,10 @@ import 'popover_item.dart';
 ///
 /// The `onPop` called to veto attempts by the user to dismiss the popover.
 ///
+/// Pass `mounted` property from parent widget to the `isParentAlive`
+/// function to prevent red screen of death.
+/// `isParentAlive : () => mounted`
+///
 /// The `constraints` is popover's constraints.
 ///
 /// The `routeSettings` is data that might be useful in constructing a [Route].
