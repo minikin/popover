@@ -8,6 +8,7 @@
             "name": "Example",
             "request": "launch",
             "type": "dart",
+            "flutterMode": "profile",
             "program": "example/lib/main.dart",
         }
     ]
