@@ -37,7 +37,6 @@
 
 </p>
 
-
 # Content
 
 - [Features](#features)
@@ -63,7 +62,7 @@ Source: [Human Interface Guidelines.
 
 ```yaml
 dependencies:
-  popover: ^0.2.6+2
+  popover: ^0.2.6+3
 ```
 
 ## Example
@@ -198,7 +197,6 @@ cd example && flutter run
 ## Support
 
 Post issues and feature requests on the GitHub [issue tracker](https://github.com/minikin/popover/issues).
-
 
 ## License
 
