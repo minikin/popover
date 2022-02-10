@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:popover/src/utils/popover_utils.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
+import 'popover_transition.dart';
 
 /// A popover is a transient view that appears above other content onscreen
 /// when you tap a control or in an area.
@@ -12,6 +14,9 @@ import 'popover_item.dart';
 ///
 /// The `direction` is desired Popover's direction behaviour.
 /// This argument defaults to `PopoverDirection.bottom`.
+///
+/// /// The `transition` is desired Popover's transition behaviour.
+/// This argument defaults to `PopoverTransition.scaleTransition`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
 /// This argument defaults to `Color(0x8FFFFFFFF)`.
@@ -72,6 +77,7 @@ Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
+  PopoverTransition transition = PopoverTransition.scaleTransition,
   Color backgroundColor = const Color(0x8FFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
@@ -120,8 +126,10 @@ Future<T?> showPopover<T extends Object?>({
               return Future.value(true);
             }
           },
-          child: FadeTransition(
-            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+          child: PopoverUtils.popoverTransitionWidget(
+            transition: transition,
+            animation:
+                CurvedAnimation(parent: animation, curve: Curves.easeOut),
             child: PopoverItem(
               child: bodyBuilder(builderContext),
               context: context,
