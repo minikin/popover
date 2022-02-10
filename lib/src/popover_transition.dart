@@ -4,5 +4,4 @@ enum PopoverTransition {
   scaleTransition,
   rotationTransition,
   sizeTransition,
-  slideTransition
 }
