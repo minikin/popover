@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../popover.dart';
 
 import 'popover_context.dart';
-import 'popover_direction.dart';
 import 'popover_position_widget.dart';
 import 'utils/build_context_extension.dart';
 import 'utils/utils.dart';
@@ -21,10 +21,11 @@ class PopoverItem extends StatefulWidget {
   final double? arrowDyOffset;
   final double? contentDyOffset;
   final bool Function()? isParentAlive;
-
+  final PopoverTransition transition;
   const PopoverItem({
     required this.child,
     required this.context,
+    required this.transition,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -72,6 +73,7 @@ class _PopoverItemState extends State<PopoverItem> {
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
                 arrowHeight: widget.arrowHeight,
+                transition: widget.transition,
                 child: Material(
                   type: MaterialType.transparency,
                   child: widget.child,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:popover/src/utils/popover_utils.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
 import 'popover_transition.dart';
+import 'utils/popover_utils.dart';
 
 /// A popover is a transient view that appears above other content onscreen
 /// when you tap a control or in an area.
@@ -131,6 +131,7 @@ Future<T?> showPopover<T extends Object?>({
             animation:
                 CurvedAnimation(parent: animation, curve: Curves.easeOut),
             child: PopoverItem(
+              transition: transition,
               child: bodyBuilder(builderContext),
               context: context,
               backgroundColor: backgroundColor,

@@ -45,11 +45,14 @@ abstract class PopoverUtils {
           opacity: animation,
           child: child,
         );
-      case PopoverTransition.sizeTransition:
-        return SizeTransition(
-          sizeFactor: animation,
+      case PopoverTransition.slideTransition:
+        final doubleToTween = animation
+            .drive(Tween(begin: const Offset(0.0, 1.5), end: Offset.zero));
+        return SlideTransition(
+          position: doubleToTween,
           child: child,
         );
+
       case PopoverTransition.rotationTransition:
         return RotationTransition(
           turns: animation,

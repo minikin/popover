@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'popover_direction.dart';
 import 'popover_render_shifted_box.dart';
+import 'popover_transition.dart';
 
 class PopoverContext extends SingleChildRenderObjectWidget {
   final Rect? attachRect;
@@ -12,8 +13,9 @@ class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverDirection? direction;
   final double? arrowWidth;
   final double? arrowHeight;
-
+  final PopoverTransition transition;
   const PopoverContext({
+    required this.transition,
     Widget? child,
     this.attachRect,
     this.backgroundColor,
@@ -48,7 +50,9 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = animation!.value
+      ..scale = transition == PopoverTransition.scaleTransition
+          ? animation!.value
+          : 1.0
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth
