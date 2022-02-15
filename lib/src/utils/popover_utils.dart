@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../popover_direction.dart';
-import '../popover_transition.dart';
 import 'utils.dart';
 
 abstract class PopoverUtils {
@@ -34,36 +33,6 @@ abstract class PopoverUtils {
         return PopoverDirection.bottom;
     }
   }
-
-  static Widget popoverTransitionWidget(
-      {required PopoverTransition transition,
-      required CurvedAnimation animation,
-      required Widget child}) {
-    switch (transition) {
-      case PopoverTransition.fadeTransition:
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      case PopoverTransition.slideTransition:
-        final doubleToTween = animation
-            .drive(Tween(begin: const Offset(0.0, 1.5), end: Offset.zero));
-        return SlideTransition(
-          position: doubleToTween,
-          child: child,
-        );
-
-      case PopoverTransition.rotationTransition:
-        return RotationTransition(
-          turns: animation,
-          child: child,
-        );
-
-      default:
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
-    }
-  }
 }
+
+typedef PopoverBuilder = Widget Function(Animation<double> anim, Widget child);

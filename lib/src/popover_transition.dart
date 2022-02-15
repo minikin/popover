@@ -1,7 +1,2 @@
 /// Popover Transation
-enum PopoverTransition {
-  fadeTransition,
-  scaleTransition,
-  rotationTransition,
-  slideTransition
-}
+enum PopoverTransition { scale, none }

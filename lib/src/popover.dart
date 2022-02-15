@@ -73,11 +73,13 @@ import 'utils/popover_utils.dart';
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
 ///
+///The `popoverBuilder` is used for transition builder
+
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
-  PopoverTransition transition = PopoverTransition.scaleTransition,
+  PopoverTransition transition = PopoverTransition.scale,
   Color backgroundColor = const Color(0x8FFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
@@ -98,6 +100,7 @@ Future<T?> showPopover<T extends Object?>({
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
+  PopoverBuilder? popoverBuilder,
   Key? key,
 }) {
   constraints = (width != null || height != null)
@@ -126,29 +129,49 @@ Future<T?> showPopover<T extends Object?>({
               return Future.value(true);
             }
           },
-          child: PopoverUtils.popoverTransitionWidget(
-            transition: transition,
-            animation:
-                CurvedAnimation(parent: animation, curve: Curves.easeOut),
-            child: PopoverItem(
-              transition: transition,
-              child: bodyBuilder(builderContext),
-              context: context,
-              backgroundColor: backgroundColor,
-              direction: direction,
-              radius: radius,
-              boxShadow: shadow,
-              animation: animation,
-              arrowWidth: arrowWidth,
-              arrowHeight: arrowHeight,
-              constraints: constraints,
-              arrowDxOffset: arrowDxOffset,
-              arrowDyOffset: arrowDyOffset,
-              contentDyOffset: contentDyOffset,
-              isParentAlive: isParentAlive,
-              key: key,
-            ),
-          ),
+          child: popoverBuilder == null
+              ? ScaleTransition(
+                  scale: animation,
+                  child: PopoverItem(
+                    transition: transition,
+                    child: bodyBuilder(builderContext),
+                    context: context,
+                    backgroundColor: backgroundColor,
+                    direction: direction,
+                    radius: radius,
+                    boxShadow: shadow,
+                    animation: animation,
+                    arrowWidth: arrowWidth,
+                    arrowHeight: arrowHeight,
+                    constraints: constraints,
+                    arrowDxOffset: arrowDxOffset,
+                    arrowDyOffset: arrowDyOffset,
+                    contentDyOffset: contentDyOffset,
+                    isParentAlive: isParentAlive,
+                    key: key,
+                  ),
+                )
+              : popoverBuilder(
+                  animation,
+                  PopoverItem(
+                    transition: transition,
+                    child: bodyBuilder(builderContext),
+                    context: context,
+                    backgroundColor: backgroundColor,
+                    direction: direction,
+                    radius: radius,
+                    boxShadow: shadow,
+                    animation: animation,
+                    arrowWidth: arrowWidth,
+                    arrowHeight: arrowHeight,
+                    constraints: constraints,
+                    arrowDxOffset: arrowDxOffset,
+                    arrowDyOffset: arrowDyOffset,
+                    contentDyOffset: contentDyOffset,
+                    isParentAlive: isParentAlive,
+                    key: key,
+                  ),
+                ),
         );
       },
     ),

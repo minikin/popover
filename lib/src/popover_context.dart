@@ -50,9 +50,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = transition == PopoverTransition.scaleTransition
-          ? animation!.value
-          : 1.0
+      ..scale = transition == PopoverTransition.scale ? animation!.value : 1.0
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth
