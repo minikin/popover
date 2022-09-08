@@ -30,12 +30,12 @@ void main() {
     );
 
     await tester.tap(find.text('Go'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(didDelete, isFalse);
 
-    await tester.tap(find.text('Delete'));
-    await tester.pump();
+    await tester.tap(find.textContaining('Delete'));
+    await tester.pumpAndSettle();
 
     expect(didDelete, isTrue);
     expect(find.text('Delete'), findsNothing);
