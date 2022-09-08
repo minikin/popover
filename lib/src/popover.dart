@@ -12,7 +12,7 @@ import 'utils/popover_utils.dart';
 ///
 /// `bodyBuilder` argument is  builder which builds body/content of popover.
 ///
-/// The `direction` is desired Popover's direction behaviour.
+/// The `direction` is desired Popover's direction behavior.
 /// This argument defaults to `PopoverDirection.bottom`.
 ///
 /// /// The `transition` is desired Popover's transition behaviour.
@@ -49,7 +49,7 @@ import 'utils/popover_utils.dart';
 /// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
-/// The`contentDyOffset` offsets [Popover]s contetnt
+/// The`contentDyOffset` offsets [Popover]s content
 /// position on Y axis. It can be positive or negative number.
 /// This argument defaults to 0.
 ///

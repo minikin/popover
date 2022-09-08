@@ -18,7 +18,7 @@ class PopoverPath {
       if (direction == PopoverDirection.top) {
         _drawTopElement(path, arrowRect, bodyRect);
       } else if (direction == PopoverDirection.right) {
-        _drawRightElemet(path, arrowRect, bodyRect);
+        _drawRightElement(path, arrowRect, bodyRect);
       } else if (direction == PopoverDirection.left) {
         _drawLeftElement(path, arrowRect, bodyRect);
       } else {
@@ -116,7 +116,7 @@ class PopoverPath {
     );
   }
 
-  void _drawRightElemet(Path path, Rect arrowRect, Rect bodyRect) {
+  void _drawRightElement(Path path, Rect arrowRect, Rect bodyRect) {
     path.moveTo(arrowRect.right, arrowRect.top);
     path.lineTo(arrowRect.left, arrowRect.top + arrowRect.height / 2);
     path.lineTo(arrowRect.right, arrowRect.bottom);

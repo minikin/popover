@@ -1,3 +1,7 @@
+## [0.2.7] - 19.09.2022
+
+TODO:
+
 ## [0.2.6+3] - 12.10.2021
 
 - Fixed the bug that appears when the parent widget from which `Popover` was presented has been removed from a widget tree (thanks [@ajaxspace](https://github.com/ajaxspace)).
@@ -20,7 +24,7 @@
 
 ## [0.2.4] - 17.05.2021
 
-- Parametrs `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
+- Parameters `arrowDyOffset`, `arrowDxOffset` and `contentDyOffset` now can be apply again.
 - Fix [Popover breaks when opened to the right](https://github.com/minikin/popover/issues/17).
 - Update example.
 
