@@ -1,2 +1,2 @@
-/// Popover Transation
-enum PopoverTransition { scale, none }
+/// Popover Transition
+enum PopoverTransition { scale, other }

@@ -7,6 +7,7 @@ import 'package:popover/popover.dart';
 void main() {
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
+
     ui.window.onBeginFrame = null;
     ui.window.onDrawFrame = null;
   });

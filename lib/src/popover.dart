@@ -15,7 +15,7 @@ import 'utils/popover_utils.dart';
 /// The `direction` is desired Popover's direction behavior.
 /// This argument defaults to `PopoverDirection.bottom`.
 ///
-/// /// The `transition` is desired Popover's transition behaviour.
+/// The `transition` is desired Popover's transition behavior.
 /// This argument defaults to `PopoverTransition.scaleTransition`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
@@ -100,7 +100,7 @@ Future<T?> showPopover<T extends Object?>({
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
-  PopoverBuilder? popoverBuilder,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
   Key? key,
 }) {
   constraints = (width != null || height != null)
@@ -129,7 +129,7 @@ Future<T?> showPopover<T extends Object?>({
               return Future.value(true);
             }
           },
-          child: popoverBuilder == null
+          child: popoverTransitionBuilder == null
               ? ScaleTransition(
                   scale: animation,
                   child: PopoverItem(
@@ -151,7 +151,7 @@ Future<T?> showPopover<T extends Object?>({
                     key: key,
                   ),
                 )
-              : popoverBuilder(
+              : popoverTransitionBuilder(
                   animation,
                   PopoverItem(
                     transition: transition,
