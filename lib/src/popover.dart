@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
+import 'popover_transition.dart';
+import 'utils/popover_utils.dart';
 
 /// A popover is a transient view that appears above other content onscreen
 /// when you tap a control or in an area.
@@ -12,6 +14,9 @@ import 'popover_item.dart';
 ///
 /// The `direction` is desired Popover's direction behavior.
 /// This argument defaults to `PopoverDirection.bottom`.
+///
+/// The `transition` is desired Popover's transition behavior.
+/// This argument defaults to `PopoverTransition.scaleTransition`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
 /// This argument defaults to `Color(0x8FFFFFFFF)`.
@@ -68,10 +73,13 @@ import 'popover_item.dart';
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
 ///
+///The `popoverBuilder` is used for transition builder
+
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
+  PopoverTransition transition = PopoverTransition.scale,
   Color backgroundColor = const Color(0x8FFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
@@ -92,6 +100,7 @@ Future<T?> showPopover<T extends Object?>({
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
   Key? key,
 }) {
   constraints = (width != null || height != null)
@@ -120,26 +129,49 @@ Future<T?> showPopover<T extends Object?>({
               return Future.value(true);
             }
           },
-          child: FadeTransition(
-            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-            child: PopoverItem(
-              child: bodyBuilder(builderContext),
-              context: context,
-              backgroundColor: backgroundColor,
-              direction: direction,
-              radius: radius,
-              boxShadow: shadow,
-              animation: animation,
-              arrowWidth: arrowWidth,
-              arrowHeight: arrowHeight,
-              constraints: constraints,
-              arrowDxOffset: arrowDxOffset,
-              arrowDyOffset: arrowDyOffset,
-              contentDyOffset: contentDyOffset,
-              isParentAlive: isParentAlive,
-              key: key,
-            ),
-          ),
+          child: popoverTransitionBuilder == null
+              ? ScaleTransition(
+                  scale: animation,
+                  child: PopoverItem(
+                    transition: transition,
+                    child: bodyBuilder(builderContext),
+                    context: context,
+                    backgroundColor: backgroundColor,
+                    direction: direction,
+                    radius: radius,
+                    boxShadow: shadow,
+                    animation: animation,
+                    arrowWidth: arrowWidth,
+                    arrowHeight: arrowHeight,
+                    constraints: constraints,
+                    arrowDxOffset: arrowDxOffset,
+                    arrowDyOffset: arrowDyOffset,
+                    contentDyOffset: contentDyOffset,
+                    isParentAlive: isParentAlive,
+                    key: key,
+                  ),
+                )
+              : popoverTransitionBuilder(
+                  animation,
+                  PopoverItem(
+                    transition: transition,
+                    child: bodyBuilder(builderContext),
+                    context: context,
+                    backgroundColor: backgroundColor,
+                    direction: direction,
+                    radius: radius,
+                    boxShadow: shadow,
+                    animation: animation,
+                    arrowWidth: arrowWidth,
+                    arrowHeight: arrowHeight,
+                    constraints: constraints,
+                    arrowDxOffset: arrowDxOffset,
+                    arrowDyOffset: arrowDyOffset,
+                    contentDyOffset: contentDyOffset,
+                    isParentAlive: isParentAlive,
+                    key: key,
+                  ),
+                ),
         );
       },
     ),

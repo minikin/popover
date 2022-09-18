@@ -69,8 +69,9 @@ class Button extends StatelessWidget {
         child: const Center(child: Text('Click Me')),
         onTap: () {
           showPopover(
+            transition: PopoverTransition.other,
             context: context,
-            transitionDuration: const Duration(milliseconds: 150),
+            transitionDuration: const Duration(seconds: 1),
             bodyBuilder: (context) => const ListItems(),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.bottom,
@@ -78,6 +79,12 @@ class Button extends StatelessWidget {
             height: 400,
             arrowHeight: 15,
             arrowWidth: 30,
+            popoverTransitionBuilder: (animation, child) {
+              return RotationTransition(
+                turns: animation,
+                child: child,
+              );
+            },
           );
         },
       ),

@@ -34,3 +34,8 @@ abstract class PopoverUtils {
     }
   }
 }
+
+typedef PopoverTransitionBuilder = Widget Function(
+  Animation<double> animation,
+  Widget child,
+);
