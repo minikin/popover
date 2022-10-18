@@ -1,6 +1,6 @@
-## [0.2.7] - 19.09.2022
+## [0.2.7] - 20.10.2022
 
-TODO:
+- Add `popoverTransitionBuilder`. Users can provide custom animation transition now. (thanks [@sanjidbillah](https://github.com/sanjidbillah)).
 
 ## [0.2.6+3] - 12.10.2021
 

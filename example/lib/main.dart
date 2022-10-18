@@ -79,12 +79,6 @@ class Button extends StatelessWidget {
             height: 400,
             arrowHeight: 15,
             arrowWidth: 30,
-            popoverTransitionBuilder: (animation, child) {
-              return RotationTransition(
-                turns: animation,
-                child: child,
-              );
-            },
           );
         },
       ),
