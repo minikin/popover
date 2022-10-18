@@ -130,8 +130,11 @@ Future<T?> showPopover<T extends Object?>({
             }
           },
           child: popoverTransitionBuilder == null
-              ? ScaleTransition(
-                  scale: animation,
+              ? FadeTransition(
+                  opacity: CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOut,
+                  ),
                   child: PopoverItem(
                     transition: transition,
                     child: bodyBuilder(builderContext),
