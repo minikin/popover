@@ -110,10 +110,10 @@ class Button extends StatelessWidget {
         child: const Center(child: Text('Click Me')),
         onTap: () {
           showPopover(
-            context: context,,
+            context: context,
             bodyBuilder: (context) => const ListItems(),
             onPop: () => print('Popover was popped!'),
-            direction: PopoverDirection.top,
+            direction: PopoverDirection.bottom,
             width: 200,
             height: 400,
             arrowHeight: 15,
