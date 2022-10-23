@@ -16,7 +16,7 @@ import 'utils/popover_utils.dart';
 /// This argument defaults to `PopoverDirection.bottom`.
 ///
 /// The `transition` is desired Popover's transition behavior.
-/// This argument defaults to `PopoverTransition.scaleTransition`.
+/// This argument defaults to `PopoverTransition.scale`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
 /// This argument defaults to `Color(0x8FFFFFFFF)`.

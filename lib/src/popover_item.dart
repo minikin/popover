@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../popover.dart';
 
+import '../popover.dart';
 import 'popover_context.dart';
 import 'popover_position_widget.dart';
 import 'utils/build_context_extension.dart';
@@ -22,6 +22,7 @@ class PopoverItem extends StatefulWidget {
   final double? contentDyOffset;
   final bool Function()? isParentAlive;
   final PopoverTransition transition;
+
   const PopoverItem({
     required this.child,
     required this.context,
