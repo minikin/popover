@@ -63,10 +63,6 @@ import 'utils/popover_utils.dart';
 ///
 /// The `onPop` called to veto attempts by the user to dismiss the popover.
 ///
-/// Pass `mounted` property from parent widget to the `isParentAlive`
-/// function to prevent red screen of death.
-/// `isParentAlive : () => mounted`
-///
 /// The `constraints` is popover's constraints.
 ///
 /// The `routeSettings` is data that might be useful in constructing a [Route].
@@ -96,7 +92,6 @@ Future<T?> showPopover<T extends Object?>({
   double? width,
   double? height,
   VoidCallback? onPop,
-  bool Function()? isParentAlive,
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
@@ -110,8 +105,41 @@ Future<T?> showPopover<T extends Object?>({
 
   return Navigator.of(context, rootNavigator: true).push<T>(
     RawDialogRoute<T>(
-      pageBuilder: (_, __, ___) {
-        return Builder(builder: (_) => const SizedBox.shrink());
+      pageBuilder: (_, animation, __) {
+        return WillPopScope(
+          onWillPop: () {
+            onPop?.call();
+            return Future.value(true);
+          },
+          child: PopoverItem(
+            transition: transition,
+            child: Builder(builder: bodyBuilder),
+            context: context,
+            backgroundColor: backgroundColor,
+            direction: direction,
+            radius: radius,
+            boxShadow: shadow,
+            animation: animation,
+            arrowWidth: arrowWidth,
+            arrowHeight: arrowHeight,
+            constraints: constraints,
+            arrowDxOffset: arrowDxOffset,
+            arrowDyOffset: arrowDyOffset,
+            contentDyOffset: contentDyOffset,
+            key: key,
+          ),
+        );
+      },
+      transitionBuilder: (builderContext, animation, _, child) {
+        return popoverTransitionBuilder == null
+            ? FadeTransition(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOut,
+                ),
+                child: child,
+              )
+            : popoverTransitionBuilder(animation, child);
       },
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel ??=
@@ -119,64 +147,6 @@ Future<T?> showPopover<T extends Object?>({
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
       settings: routeSettings,
-      transitionBuilder: (builderContext, animation, _, child) {
-        return WillPopScope(
-          onWillPop: () {
-            if (onPop != null) {
-              onPop();
-              return Future.value(true);
-            } else {
-              return Future.value(true);
-            }
-          },
-          child: popoverTransitionBuilder == null
-              ? FadeTransition(
-                  opacity: CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOut,
-                  ),
-                  child: PopoverItem(
-                    transition: transition,
-                    child: bodyBuilder(builderContext),
-                    context: context,
-                    backgroundColor: backgroundColor,
-                    direction: direction,
-                    radius: radius,
-                    boxShadow: shadow,
-                    animation: animation,
-                    arrowWidth: arrowWidth,
-                    arrowHeight: arrowHeight,
-                    constraints: constraints,
-                    arrowDxOffset: arrowDxOffset,
-                    arrowDyOffset: arrowDyOffset,
-                    contentDyOffset: contentDyOffset,
-                    isParentAlive: isParentAlive,
-                    key: key,
-                  ),
-                )
-              : popoverTransitionBuilder(
-                  animation,
-                  PopoverItem(
-                    transition: transition,
-                    child: bodyBuilder(builderContext),
-                    context: context,
-                    backgroundColor: backgroundColor,
-                    direction: direction,
-                    radius: radius,
-                    boxShadow: shadow,
-                    animation: animation,
-                    arrowWidth: arrowWidth,
-                    arrowHeight: arrowHeight,
-                    constraints: constraints,
-                    arrowDxOffset: arrowDxOffset,
-                    arrowDyOffset: arrowDyOffset,
-                    contentDyOffset: contentDyOffset,
-                    isParentAlive: isParentAlive,
-                    key: key,
-                  ),
-                ),
-        );
-      },
     ),
   );
 }
