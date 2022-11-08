@@ -5,20 +5,20 @@ import 'popover_path.dart';
 import 'utils/popover_utils.dart';
 
 class PopoverRenderShiftedBox extends RenderShiftedBox {
+  late Rect _attachRect;
   double? arrowWidth;
-  double? arrowHeight;
+  double arrowHeight;
   PopoverDirection? _direction;
-  Rect? _attachRect;
   Color? _color;
   List<BoxShadow>? _boxShadow;
   double? _scale;
   double? _radius;
 
   PopoverRenderShiftedBox({
+    required Rect attachRect,
+    required this.arrowHeight,
     this.arrowWidth,
-    this.arrowHeight,
     RenderBox? child,
-    Rect? attachRect,
     Color? color,
     List<BoxShadow>? boxShadow,
     double? scale,
@@ -33,8 +33,8 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     _direction = direction;
   }
 
-  Rect? get attachRect => _attachRect;
-  set attachRect(Rect? value) {
+  Rect get attachRect => _attachRect;
+  set attachRect(Rect value) {
     if (_attachRect == value) return;
     _attachRect = value;
     markNeedsLayout();
@@ -81,16 +81,16 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
-      direction,
       arrowHeight,
+      direction,
     );
     final bodyRect = childParentData.offset & child!.size;
 
     final arrowLeft =
-        attachRect!.left + attachRect!.width / 2 - arrowWidth! / 2 - offset.dx;
+        attachRect.left + attachRect.width / 2 - arrowWidth! / 2 - offset.dx;
 
     final arrowTop =
-        attachRect!.top + attachRect!.height / 2 - arrowWidth! / 2 - offset.dy;
+        attachRect.top + attachRect.height / 2 - arrowWidth! / 2 - offset.dy;
 
     late Rect arrowRect;
     late Offset translation;
@@ -101,20 +101,20 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
           arrowLeft,
           child!.size.height,
           arrowWidth!,
-          arrowHeight!,
+          arrowHeight,
         );
 
         translation = Offset(arrowLeft + arrowWidth! / 2, size.height);
         break;
       case PopoverDirection.bottom:
-        arrowRect = Rect.fromLTWH(arrowLeft, 0, arrowWidth!, arrowHeight!);
+        arrowRect = Rect.fromLTWH(arrowLeft, 0, arrowWidth!, arrowHeight);
         translation = Offset(arrowLeft + arrowWidth! / 2, 0);
         break;
       case PopoverDirection.left:
         arrowRect = Rect.fromLTWH(
           child!.size.width,
           arrowTop,
-          arrowHeight!,
+          arrowHeight,
           arrowWidth!,
         );
 
@@ -124,7 +124,7 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
         arrowRect = Rect.fromLTWH(
           0,
           arrowTop,
-          arrowHeight!,
+          arrowHeight,
           arrowWidth!,
         );
         translation = Offset(0, arrowTop + arrowWidth! / 2);
@@ -186,11 +186,11 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     if (direction == PopoverDirection.top ||
         direction == PopoverDirection.bottom) {
       childConstraints = BoxConstraints(
-        maxHeight: constraints.maxHeight - arrowHeight!,
+        maxHeight: constraints.maxHeight - arrowHeight,
       ).enforce(constraints);
     } else {
       childConstraints = BoxConstraints(
-        maxWidth: constraints.maxWidth - arrowHeight!,
+        maxWidth: constraints.maxWidth - arrowHeight,
       ).enforce(constraints);
     }
 
@@ -200,9 +200,9 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
   void _configureChildSize() {
     if (direction == PopoverDirection.top ||
         direction == PopoverDirection.bottom) {
-      size = Size(child!.size.width, child!.size.height + arrowHeight!);
+      size = Size(child!.size.width, child!.size.height + arrowHeight);
     } else {
-      size = Size(child!.size.width + arrowHeight!, child!.size.height);
+      size = Size(child!.size.width + arrowHeight, child!.size.height);
     }
   }
 
@@ -210,15 +210,15 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
-      direction,
       arrowHeight,
+      direction,
     );
 
     final childParentData = child!.parentData as BoxParentData?;
     if (_direction == PopoverDirection.bottom) {
-      childParentData!.offset = Offset(0, arrowHeight!);
+      childParentData!.offset = Offset(0, arrowHeight);
     } else if (_direction == PopoverDirection.right) {
-      childParentData!.offset = Offset(arrowHeight!, 0);
+      childParentData!.offset = Offset(arrowHeight, 0);
     } else {
       childParentData!.offset = const Offset(0, 0);
     }

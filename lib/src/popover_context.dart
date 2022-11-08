@@ -5,28 +5,28 @@ import 'popover_render_shifted_box.dart';
 import 'popover_transition.dart';
 
 class PopoverContext extends SingleChildRenderObjectWidget {
-  final Rect? attachRect;
+  final PopoverTransition transition;
+  final Animation<double> animation;
+  final Rect attachRect;
   final Color? backgroundColor;
   final List<BoxShadow>? boxShadow;
-  final Animation<double>? animation;
   final double? radius;
   final PopoverDirection? direction;
   final double? arrowWidth;
-  final double? arrowHeight;
-  final PopoverTransition transition;
+  final double arrowHeight;
 
   const PopoverContext({
     required this.transition,
-    Widget? child,
-    this.attachRect,
+    required this.animation,
+    required this.attachRect,
+    required this.arrowHeight,
+    super.child,
     this.backgroundColor,
     this.boxShadow,
-    this.animation,
     this.radius,
     this.direction,
     this.arrowWidth,
-    this.arrowHeight,
-  }) : super(child: child);
+  });
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -34,7 +34,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       attachRect: attachRect,
       color: backgroundColor,
       boxShadow: boxShadow,
-      scale: animation!.value,
+      scale: animation.value,
       direction: direction,
       radius: radius,
       arrowWidth: arrowWidth,
@@ -51,7 +51,7 @@ class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = transition == PopoverTransition.scale ? animation!.value : 1.0
+      ..scale = transition == PopoverTransition.scale ? animation.value : 1.0
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth
