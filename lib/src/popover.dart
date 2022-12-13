@@ -92,6 +92,11 @@ Future<T?> showPopover<T extends Object?>({
   double? width,
   double? height,
   VoidCallback? onPop,
+  @Deprecated(
+    'No longer used, please remove any reference to it.\n'
+    'This feature was deprecated after 0.2.7.',
+  )
+      bool Function()? isParentAlive,
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
