@@ -5,15 +5,15 @@ import 'utils/popover_utils.dart';
 import 'utils/utils.dart';
 
 class PopoverPositionRenderObject extends RenderShiftedBox {
-  PopoverDirection? _direction;
-  Rect? _attachRect;
+  late Rect _attachRect;
+  double arrowHeight;
   BoxConstraints? _additionalConstraints;
-  double? arrowHeight;
+  PopoverDirection? _direction;
 
   PopoverPositionRenderObject({
     required this.arrowHeight,
+    required Rect attachRect,
     RenderBox? child,
-    Rect? attachRect,
     BoxConstraints? constraints,
     PopoverDirection? direction,
   }) : super(child) {
@@ -29,8 +29,8 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     markNeedsLayout();
   }
 
-  Rect? get attachRect => _attachRect;
-  set attachRect(Rect? value) {
+  Rect get attachRect => _attachRect;
+  set attachRect(Rect value) {
     if (_attachRect == value) return;
     _attachRect = value;
     markNeedsLayout();
@@ -47,8 +47,8 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     final _direction = PopoverUtils.popoverDirection(
       attachRect,
       size,
-      direction,
       arrowHeight,
+      direction,
     );
 
     if (_direction == PopoverDirection.top ||
@@ -76,9 +76,9 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     Size size,
   ) {
     if (direction == PopoverDirection.bottom) {
-      return Offset(horizontalOffset, attachRect!.bottom);
+      return Offset(horizontalOffset, attachRect.bottom);
     } else {
-      return Offset(horizontalOffset, attachRect!.top - size.height);
+      return Offset(horizontalOffset, attachRect.top - size.height);
     }
   }
 
@@ -88,22 +88,22 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     Size size,
   ) {
     if (_direction == PopoverDirection.right) {
-      return Offset(attachRect!.right, verticalOffset);
+      return Offset(attachRect.right, verticalOffset);
     } else {
-      return Offset(attachRect!.left - size.width, verticalOffset);
+      return Offset(attachRect.left - size.width, verticalOffset);
     }
   }
 
   double _horizontalOffset(Size size) {
     var offset = 0.0;
 
-    if (attachRect!.left > size.width / 2 &&
-        Utils().screenWidth - attachRect!.right > size.width / 2) {
-      offset = attachRect!.left + attachRect!.width / 2 - size.width / 2;
-    } else if (attachRect!.left < size.width / 2) {
-      offset = arrowHeight!;
+    if (attachRect.left > size.width / 2 &&
+        Utils().screenWidth - attachRect.right > size.width / 2) {
+      offset = attachRect.left + attachRect.width / 2 - size.width / 2;
+    } else if (attachRect.left < size.width / 2) {
+      offset = arrowHeight;
     } else {
-      offset = Utils().screenWidth - arrowHeight! - size.width;
+      offset = Utils().screenWidth - arrowHeight - size.width;
     }
     return offset;
   }
@@ -111,13 +111,13 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
   double _verticalOffset(Size size) {
     var offset = 0.0;
 
-    if (attachRect!.top > size.height / 2 &&
-        Utils().screenHeight - attachRect!.bottom > size.height / 2) {
-      offset = attachRect!.top + attachRect!.height / 2 - size.height / 2;
-    } else if (attachRect!.top < size.height / 2) {
-      offset = arrowHeight!;
+    if (attachRect.top > size.height / 2 &&
+        Utils().screenHeight - attachRect.bottom > size.height / 2) {
+      offset = attachRect.top + attachRect.height / 2 - size.height / 2;
+    } else if (attachRect.top < size.height / 2) {
+      offset = arrowHeight;
     } else {
-      offset = Utils().screenHeight - arrowHeight! - size.height;
+      offset = Utils().screenHeight - arrowHeight - size.height;
     }
     return offset;
   }
