@@ -93,8 +93,8 @@ Future<T?> showPopover<T extends Object?>({
   double? height,
   VoidCallback? onPop,
   @Deprecated(
-    'No longer used, please remove any reference to it.\n'
-    'This feature was deprecated after 0.2.7.',
+    'This argument is ignored. Implementation of [PopoverItem] was updated.'
+    'This feature was deprecated in v0.2.8',
   )
       bool Function()? isParentAlive,
   BoxConstraints? constraints,
@@ -135,6 +135,12 @@ Future<T?> showPopover<T extends Object?>({
           ),
         );
       },
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel ??=
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
         return popoverTransitionBuilder == null
             ? FadeTransition(
@@ -146,12 +152,6 @@ Future<T?> showPopover<T extends Object?>({
               )
             : popoverTransitionBuilder(animation, child);
       },
-      barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel ??=
-          MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: barrierColor,
-      transitionDuration: transitionDuration,
-      settings: routeSettings,
     ),
   );
 }

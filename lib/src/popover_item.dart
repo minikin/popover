@@ -45,7 +45,55 @@ class PopoverItem extends StatefulWidget {
 
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
-  BoxConstraints? _constraints;
+  late BoxConstraints _constraints;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        PopoverPositionWidget(
+          attachRect: _attachRect,
+          constraints: _constraints,
+          direction: widget.direction,
+          arrowHeight: widget.arrowHeight,
+          child: AnimatedBuilder(
+            animation: widget.animation,
+            builder: (context, child) {
+              return PopoverContext(
+                attachRect: _attachRect,
+                animation: widget.animation,
+                radius: widget.radius,
+                backgroundColor: widget.backgroundColor,
+                boxShadow: widget.boxShadow,
+                direction: widget.direction,
+                arrowWidth: widget.arrowWidth,
+                arrowHeight: widget.arrowHeight,
+                transition: widget.transition,
+                child: child,
+              );
+            },
+            child: Material(child: widget.child),
+          ),
+        )
+      ],
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    _configureConstraints();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => setState(_configureRect),
+    );
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    _configureRect();
+    super.initState();
+  }
 
   void _configureConstraints() {
     final size = MediaQuery.of(context).size;
@@ -94,53 +142,5 @@ class _PopoverItemState extends State<PopoverItem> {
         bounds.height + (widget.contentDyOffset),
       );
     }
-  }
-
-  @override
-  void initState() {
-    _configureRect();
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    _configureConstraints();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => setState(_configureRect),
-    );
-
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PopoverPositionWidget(
-          attachRect: _attachRect,
-          constraints: _constraints,
-          direction: widget.direction,
-          arrowHeight: widget.arrowHeight,
-          child: AnimatedBuilder(
-            animation: widget.animation,
-            builder: (context, child) {
-              return PopoverContext(
-                attachRect: _attachRect,
-                animation: widget.animation,
-                radius: widget.radius,
-                backgroundColor: widget.backgroundColor,
-                boxShadow: widget.boxShadow,
-                direction: widget.direction,
-                arrowWidth: widget.arrowWidth,
-                arrowHeight: widget.arrowHeight,
-                transition: widget.transition,
-                child: child,
-              );
-            },
-            child: Material(child: widget.child),
-          ),
-        )
-      ],
-    );
   }
 }

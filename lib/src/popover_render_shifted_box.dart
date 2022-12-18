@@ -143,34 +143,6 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     );
   }
 
-  void _transform(Matrix4 transform, Offset translation) {
-    transform.translate(translation.dx, translation.dy);
-    transform.scale(scale, scale, 1);
-    transform.translate(-translation.dx, -translation.dy);
-  }
-
-  void _pushClipPath(
-    PaintingContext context,
-    Offset offset,
-    Path path,
-    Matrix4 transform,
-  ) {
-    context.pushClipPath(needsCompositing, offset, offset & size, path, (
-      context,
-      offset,
-    ) {
-      context.pushTransform(needsCompositing, offset, transform, (
-        context,
-        offset,
-      ) {
-        final backgroundPaint = Paint();
-        backgroundPaint.color = color!;
-        context.canvas.drawRect(offset & size, backgroundPaint);
-        super.paint(context, offset);
-      });
-    });
-  }
-
   @override
   void performLayout() {
     assert(constraints.maxHeight.isFinite);
@@ -197,15 +169,6 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
     child!.layout(childConstraints, parentUsesSize: true);
   }
 
-  void _configureChildSize() {
-    if (direction == PopoverDirection.top ||
-        direction == PopoverDirection.bottom) {
-      size = Size(child!.size.width, child!.size.height + arrowHeight);
-    } else {
-      size = Size(child!.size.width + arrowHeight, child!.size.height);
-    }
-  }
-
   void _configureChildOffset() {
     final _direction = PopoverUtils.popoverDirection(
       attachRect,
@@ -221,6 +184,15 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
       childParentData!.offset = Offset(arrowHeight, 0);
     } else {
       childParentData!.offset = const Offset(0, 0);
+    }
+  }
+
+  void _configureChildSize() {
+    if (direction == PopoverDirection.top ||
+        direction == PopoverDirection.bottom) {
+      size = Size(child!.size.width, child!.size.height + arrowHeight);
+    } else {
+      size = Size(child!.size.width + arrowHeight, child!.size.height);
     }
   }
 
@@ -255,5 +227,33 @@ class PopoverRenderShiftedBox extends RenderShiftedBox {
         context.canvas.drawPath(path, paint);
       });
     }
+  }
+
+  void _pushClipPath(
+    PaintingContext context,
+    Offset offset,
+    Path path,
+    Matrix4 transform,
+  ) {
+    context.pushClipPath(needsCompositing, offset, offset & size, path, (
+      context,
+      offset,
+    ) {
+      context.pushTransform(needsCompositing, offset, transform, (
+        context,
+        offset,
+      ) {
+        final backgroundPaint = Paint();
+        backgroundPaint.color = color!;
+        context.canvas.drawRect(offset & size, backgroundPaint);
+        super.paint(context, offset);
+      });
+    });
+  }
+
+  void _transform(Matrix4 transform, Offset translation) {
+    transform.translate(translation.dx, translation.dy);
+    transform.scale(scale, scale, 1);
+    transform.translate(-translation.dx, -translation.dy);
   }
 }
