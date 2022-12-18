@@ -94,7 +94,7 @@ Future<T?> showPopover<T extends Object?>({
   VoidCallback? onPop,
   @Deprecated(
     'No longer used, please remove any reference to it.\n'
-    'This feature was deprecated after 0.3.0.',
+    'This feature was deprecated after 0.2.7.',
   )
       bool Function()? isParentAlive,
   BoxConstraints? constraints,
