@@ -1,4 +1,4 @@
-## [0.2.8] - 02.01.2022
+## [0.2.8] - 02.01.2023
 
 - **BREAKING**: Improve popover rendering. `isParentAlive` parameter was deprecated. (thanks [@VictorOhashi](https://github.com/VictorOhashi)).
 
