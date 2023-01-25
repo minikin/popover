@@ -73,6 +73,7 @@ class Button extends StatelessWidget {
             bodyBuilder: (context) => const ListItems(),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.bottom,
+            backgroundColor: Colors.white10,
             width: 200,
             height: 400,
             arrowHeight: 15,
