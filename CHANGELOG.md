@@ -1,3 +1,7 @@
+## [0.2.8+1] - 26.01.2023
+
+- Fix popover's background color.
+
 ## [0.2.8] - 02.01.2023
 
 - **BREAKING**: Improve popover rendering. `isParentAlive` parameter was deprecated. (thanks [@VictorOhashi](https://github.com/VictorOhashi)).
