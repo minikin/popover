@@ -1,6 +1,6 @@
-## [0.2.8+1] - 26.01.2023
+## [0.2.8+1] - 01.02.2023
 
-- Fix popover's background color.
+- Fix the bug with popover's background color.
 
 ## [0.2.8] - 02.01.2023
 
