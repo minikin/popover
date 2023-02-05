@@ -1,6 +1,6 @@
-## [0.2.8+1] - 01.02.2023
+## [0.2.8+1] - 05.02.2023
 
-- Fix the bug with popover's background color.
+- Fix [`backgrounColor` only effects arrow](https://github.com/minikin/popover/issues/59).
 
 ## [0.2.8] - 02.01.2023
 
