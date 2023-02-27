@@ -134,6 +134,7 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   void _configureRect() {
+    if (!widget.context.mounted) return;
     final offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
     final bounds = BuildContextExtension.getWidgetBounds(widget.context);
 
