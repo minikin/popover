@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 
@@ -90,62 +92,65 @@ class ListItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: ListView(
-          padding: const EdgeInsets.all(8),
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.of(context)
-                  ..pop()
-                  ..push(
-                    MaterialPageRoute<SecondRoute>(
-                      builder: (context) => SecondRoute(),
-                    ),
-                  );
-              },
-              child: Container(
-                height: 50,
-                color: Colors.amber[100],
-                child: const Center(child: Text('Entry A')),
-              ),
-            ),
-            const Divider(),
-            Container(
+    final child = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.of(context)
+                ..pop()
+                ..push(
+                  MaterialPageRoute<SecondRoute>(
+                    builder: (context) => SecondRoute(),
+                  ),
+                );
+            },
+            child: Container(
               height: 50,
-              color: Colors.amber[200],
-              child: const Center(child: Text('Entry B')),
+              color: Colors.amber[100],
+              child: const Center(child: Text('Entry A')),
             ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[300],
-              child: const Center(child: Text('Entry C')),
-            ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[400],
-              child: const Center(child: Text('Entry D')),
-            ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[500],
-              child: const Center(child: Text('Entry E')),
-            ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[600],
-              child: const Center(child: Text('Entry F')),
-            ),
-          ],
-        ),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[200],
+            child: const Center(child: Text('Entry B')),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[300],
+            child: const Center(child: Text('Entry C')),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[400],
+            child: const Center(child: Text('Entry D')),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[500],
+            child: const Center(child: Text('Entry E')),
+          ),
+          const Divider(),
+          Container(
+            height: 50,
+            color: Colors.amber[600],
+            child: const Center(child: Text('Entry F')),
+          ),
+        ],
       ),
     );
+    // Prevent the creation of an extra Scrollbar for desktop apps
+    // since ListView does it
+    return Platform.isLinux || Platform.isMacOS || Platform.isWindows
+        ? child
+        : Scrollbar(child: child);
   }
 }
 
