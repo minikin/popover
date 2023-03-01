@@ -76,8 +76,8 @@
             "addWords": true
         },
         {
-            "name": "rust",
-            "path": "./.cspell/rust.txt",
+            "name": "project",
+            "path": "./.cspell/project.txt",
             "addWords": true
         },
         {
