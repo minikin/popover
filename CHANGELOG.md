@@ -1,6 +1,10 @@
+## [0.2.8+2] - 01.03.2023
+
+- Fix [`PopoverItem._configureRect()` throws trying to access unmounted context](https://github.com/minikin/popover/issues/63).(thanks [@moescs](https://github.com/moescs)).
+
 ## [0.2.8+1] - 05.02.2023
 
-- Fix [`backgrounColor` only effects arrow](https://github.com/minikin/popover/issues/59).
+- Fix [`backgroundColor` only effects arrow](https://github.com/minikin/popover/issues/59).
 
 ## [0.2.8] - 02.01.2023
 

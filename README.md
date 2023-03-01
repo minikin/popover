@@ -65,7 +65,7 @@ Source: [Human Interface Guidelines.
 
 ```yaml
 dependencies:
-  popover: ^0.2.8+1
+  popover: ^0.2.8+2
 ```
 
 ## Example
@@ -130,8 +130,7 @@ class ListItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: ListView(
           padding: const EdgeInsets.all(8),
@@ -166,7 +165,6 @@ class ListItems extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
