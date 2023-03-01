@@ -1,0 +1,89 @@
+{
+    "version": "0.2",
+    "language": "en",
+    "flagWords": ["teh", "hte"],
+    "ignorePaths": [
+        "**/assets/**",
+        "**/test/**",
+        "**/CHANGELOG.md"
+    ],
+    "ignoreRegExpList": [
+        "@[\\w\\-]+",
+        "\\$\\w+",
+        "\\{\\w+",
+        "\\`\\w+",
+        "\\:\\w+",
+        "\\/\\w+",
+        "\\#[\\w\\-]+"
+    ],
+    "dictionaries": [
+        "companies",
+        "cryptocurrencies",
+        "cryptography",
+        "en_US",
+        "flutterDart",
+        "forbidden",
+        "hyph_en_US",
+        "networkingTerms",
+        "project",
+        "rust",
+        "softwareTerms"
+    ],
+    "languageSettings": [{
+        "languageId": "markdown",
+        "ignoreRegExpList": [
+            "/^\\s*```[\\s\\S]*?^\\s*```/gm"
+        ]
+    }],
+    "dictionaryDefinitions": [{
+            "name": "companies",
+            "path": "./.cspell/companies.txt",
+            "addWords": true
+        },
+        {
+            "name": "cryptocurrencies",
+            "path": "./.cspell/cryptocurrencies.txt",
+            "addWords": true
+        },
+        {
+            "name": "cryptography",
+            "path": "./.cspell/cryptography.txt",
+            "addWords": true
+        },
+        {
+            "name": "en_US",
+            "path": "./.cspell/en_US.txt",
+            "addWords": true
+        },
+        {
+            "name": "flutterDart",
+            "path": "./.cspell/flutter_dart.txt",
+            "addWords": true
+        },
+        {
+            "name": "forbidden",
+            "path": "./.cspell/forbidden.txt",
+            "addWords": true
+        },
+        {
+            "name": "hyph_en_US",
+            "path": "./.cspell/hyph_en_US.txt",
+            "addWords": true
+        },
+        {
+            "name": "networkingTerms",
+            "path": "./.cspell/networking_terms.txt",
+            "addWords": true
+        },
+        {
+            "name": "rust",
+            "path": "./.cspell/rust.txt",
+            "addWords": true
+        },
+        {
+            "name": "softwareTerms",
+            "path": "./.cspell/software_terms.txt",
+            "addWords": true
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+name: Spell Checker
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+      types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: 'Check spelling'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+      - uses: streetsidesoftware/cspell-action@48c17f77a224fd11ab3bbb8ef454117ff098eff7 # v2.21.0
+        with:
+          files: "**/*.{md,dart}"
+          incremental_files_only: false
+          config: ./.github/workflows/cspell.json
