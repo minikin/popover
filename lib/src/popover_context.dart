@@ -4,7 +4,7 @@ import 'popover_direction.dart';
 import 'popover_render_shifted_box.dart';
 import 'popover_transition.dart';
 
-class PopoverContext extends SingleChildRenderObjectWidget {
+final class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverTransition transition;
   final Animation<double> animation;
   final Rect attachRect;

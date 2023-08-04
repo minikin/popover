@@ -1,3 +1,7 @@
+## [0.3.0] - 20.08.2023
+
+- TODO
+
 ## [0.2.8+2] - 01.03.2023
 
 - Fix [`PopoverItem._configureRect()` throws trying to access unmounted context](https://github.com/minikin/popover/issues/63).(thanks [@moescs](https://github.com/moescs)).

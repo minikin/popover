@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'popover_direction.dart';
 import 'popover_position_render_object.dart';
 
-class PopoverPositionWidget extends SingleChildRenderObjectWidget {
+final class PopoverPositionWidget extends SingleChildRenderObjectWidget {
   final Rect attachRect;
   final double arrowHeight;
   final BoxConstraints? constraints;

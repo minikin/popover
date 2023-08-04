@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../popover_direction.dart';
-import 'utils.dart';
 
 abstract class PopoverUtils {
   static PopoverDirection popoverDirection(
@@ -16,7 +16,7 @@ abstract class PopoverUtils {
             ? PopoverDirection.bottom
             : PopoverDirection.top;
       case PopoverDirection.bottom:
-        return Utils().screenHeight >
+        return physicalSize.height >
                 attachRect.bottom + size.height + arrowHeight
             ? PopoverDirection.bottom
             : PopoverDirection.top;
@@ -25,13 +25,16 @@ abstract class PopoverUtils {
             ? PopoverDirection.right
             : PopoverDirection.left;
       case PopoverDirection.right:
-        return Utils().screenWidth > attachRect.right + size.width + arrowHeight
+        return physicalSize.width > attachRect.right + size.width + arrowHeight
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
         return PopoverDirection.bottom;
     }
   }
+
+  static final physicalSize =
+      PlatformDispatcher.instance.views.first.physicalSize;
 }
 
 typedef PopoverTransitionBuilder = Widget Function(

@@ -9,9 +9,9 @@ class PopoverExample extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Popover Example')),
-        body: SafeArea(
+        body: const SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -20,27 +20,27 @@ class PopoverExample extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const Button(),
-                    const Button(),
-                    const Button(),
+                    Button(),
+                    Button(),
+                    Button(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const Button(),
-                    const Button(),
-                    const Button(),
+                    Button(),
+                    Button(),
+                    Button(),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const Button(),
-                    const Button(),
-                    const Button(),
+                    Button(),
+                    Button(),
+                    Button(),
                   ],
                 ),
               ],
