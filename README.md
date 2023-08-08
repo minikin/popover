@@ -18,6 +18,7 @@
    <a href="https://github.com/minikin/popover/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fminikin%2Fpopover?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fminikin%2Fpopover.svg?type=shield"/></a>
 
   <a href="https://github.com/tenhobi/effective_dart">
     <img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="Effective Dart" />
@@ -38,6 +39,9 @@
   </a>
 
 </p>
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fminikin%2Fpopover.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fminikin%2Fpopover?ref=badge_large)
 
 # Content
 
