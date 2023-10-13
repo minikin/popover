@@ -22,7 +22,7 @@ jobs:
         run: flutter pub get
 
       - name: Format
-        run: flutter format --set-exit-if-changed lib test example
+        run: dart format --set-exit-if-changed lib test example
 
       - name: Analyzing project
         run: flutter analyze
