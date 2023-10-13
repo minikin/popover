@@ -58,8 +58,8 @@ Source: [Human Interface Guidelines.
 
 ## Requirements
 
-- Dart: 3.0.6+
-- Flutter: 3.10.6+
+- Dart: 3.1.2+
+- Flutter: 3.13.5+
 
 ## Install
 
