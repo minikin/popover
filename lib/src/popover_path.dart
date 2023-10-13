@@ -2,7 +2,7 @@ import 'package:flutter/painting.dart';
 
 import 'popover_direction.dart';
 
-class PopoverPath {
+final class PopoverPath {
   final double radius;
 
   const PopoverPath(this.radius);

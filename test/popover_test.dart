@@ -1,16 +1,9 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
 
 void main() {
-  setUp(() {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    ui.window.onBeginFrame = null;
-    ui.window.onDrawFrame = null;
-  });
+  setUp(WidgetsFlutterBinding.ensureInitialized);
 
   testWidgets('Popover dialog control test', (tester) async {
     var didDelete = false;

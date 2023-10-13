@@ -4,7 +4,7 @@ import 'popover_direction.dart';
 import 'popover_path.dart';
 import 'utils/popover_utils.dart';
 
-class PopoverRenderShiftedBox extends RenderShiftedBox {
+final class PopoverRenderShiftedBox extends RenderShiftedBox {
   late Rect _attachRect;
   double? arrowWidth;
   double arrowHeight;

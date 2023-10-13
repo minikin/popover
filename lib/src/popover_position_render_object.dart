@@ -2,9 +2,8 @@ import 'package:flutter/rendering.dart';
 
 import 'popover_direction.dart';
 import 'utils/popover_utils.dart';
-import 'utils/utils.dart';
 
-class PopoverPositionRenderObject extends RenderShiftedBox {
+final class PopoverPositionRenderObject extends RenderShiftedBox {
   late Rect _attachRect;
   double arrowHeight;
   BoxConstraints? _additionalConstraints;
@@ -98,12 +97,12 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     var offset = 0.0;
 
     if (attachRect.left > size.width / 2 &&
-        Utils().screenWidth - attachRect.right > size.width / 2) {
+        PopoverUtils.physicalSize.width - attachRect.right > size.width / 2) {
       offset = attachRect.left + attachRect.width / 2 - size.width / 2;
     } else if (attachRect.left < size.width / 2) {
       offset = arrowHeight;
     } else {
-      offset = Utils().screenWidth - arrowHeight - size.width;
+      offset = PopoverUtils.physicalSize.width - arrowHeight - size.width;
     }
     return offset;
   }
@@ -112,12 +111,13 @@ class PopoverPositionRenderObject extends RenderShiftedBox {
     var offset = 0.0;
 
     if (attachRect.top > size.height / 2 &&
-        Utils().screenHeight - attachRect.bottom > size.height / 2) {
+        PopoverUtils.physicalSize.height - attachRect.bottom >
+            size.height / 2) {
       offset = attachRect.top + attachRect.height / 2 - size.height / 2;
     } else if (attachRect.top < size.height / 2) {
       offset = arrowHeight;
     } else {
-      offset = Utils().screenHeight - arrowHeight - size.height;
+      offset = PopoverUtils.physicalSize.height - arrowHeight - size.height;
     }
     return offset;
   }

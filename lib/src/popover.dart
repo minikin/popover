@@ -96,7 +96,7 @@ Future<T?> showPopover<T extends Object?>({
     'This argument is ignored. Implementation of [PopoverItem] was updated.'
     'This feature was deprecated in v0.2.8',
   )
-      bool Function()? isParentAlive,
+  bool Function()? isParentAlive,
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
