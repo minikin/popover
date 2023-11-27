@@ -53,6 +53,10 @@ import 'utils/popover_utils.dart';
 /// position on Y axis. It can be positive or negative number.
 /// This argument defaults to 0.
 ///
+/// The`contentDxOffset` offsets [Popover]s content
+/// position on X axis. It can be positive or negative number.
+/// This argument defaults to 0.
+///
 /// The `barrierDismissible` argument is used to determine whether this route
 /// can be dismissed by tapping the modal barrier. This argument defaults
 /// to true.
@@ -88,6 +92,7 @@ Future<T?> showPopover<T extends Object?>({
   double arrowDxOffset = 0,
   double arrowDyOffset = 0,
   double contentDyOffset = 0,
+  double contentDxOffset = 0,
   bool barrierDismissible = true,
   double? width,
   double? height,
@@ -131,6 +136,7 @@ Future<T?> showPopover<T extends Object?>({
             arrowDxOffset: arrowDxOffset,
             arrowDyOffset: arrowDyOffset,
             contentDyOffset: contentDyOffset,
+            contentDxOffset: contentDxOffset,
             key: key,
           ),
         );
