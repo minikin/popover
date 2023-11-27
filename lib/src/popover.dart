@@ -142,8 +142,8 @@ Future<T?> showPopover<T extends Object?>({
         );
       },
       barrierDismissible: barrierDismissible,
-      // ignore: lines_longer_than_80_chars
-      barrierLabel: barrierLabel ?? MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierLabel: barrierLabel ??
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
       settings: routeSettings,
