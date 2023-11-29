@@ -53,6 +53,10 @@ import 'utils/popover_utils.dart';
 /// position on Y axis. It can be positive or negative number.
 /// This argument defaults to 0.
 ///
+/// The`contentDxOffset` offsets [Popover]s content
+/// position on X axis. It can be positive or negative number.
+/// This argument defaults to 0.
+///
 /// The `barrierDismissible` argument is used to determine whether this route
 /// can be dismissed by tapping the modal barrier. This argument defaults
 /// to true.
@@ -81,13 +85,17 @@ Future<T?> showPopover<T extends Object?>({
   Duration transitionDuration = const Duration(milliseconds: 200),
   double radius = 8,
   List<BoxShadow> shadow = const [
-    BoxShadow(color: Color(0x1F000000), blurRadius: 5)
+    BoxShadow(
+      color: Color(0x1F000000),
+      blurRadius: 5,
+    )
   ],
   double arrowWidth = 24,
   double arrowHeight = 12,
   double arrowDxOffset = 0,
   double arrowDyOffset = 0,
   double contentDyOffset = 0,
+  double contentDxOffset = 0,
   bool barrierDismissible = true,
   double? width,
   double? height,
@@ -111,11 +119,8 @@ Future<T?> showPopover<T extends Object?>({
   return Navigator.of(context, rootNavigator: true).push<T>(
     RawDialogRoute<T>(
       pageBuilder: (_, animation, __) {
-        return WillPopScope(
-          onWillPop: () {
-            onPop?.call();
-            return Future.value(true);
-          },
+        return PopScope(
+          onPopInvoked: (_) => onPop?.call(),
           child: PopoverItem(
             transition: transition,
             child: Builder(builder: bodyBuilder),
@@ -131,12 +136,13 @@ Future<T?> showPopover<T extends Object?>({
             arrowDxOffset: arrowDxOffset,
             arrowDyOffset: arrowDyOffset,
             contentDyOffset: contentDyOffset,
+            contentDxOffset: contentDxOffset,
             key: key,
           ),
         );
       },
       barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel ??=
+      barrierLabel: barrierLabel ??
           MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,

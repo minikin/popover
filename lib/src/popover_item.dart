@@ -19,6 +19,7 @@ class PopoverItem extends StatefulWidget {
   final double arrowDxOffset;
   final double arrowDyOffset;
   final double contentDyOffset;
+  final double contentDxOffset;
   final PopoverTransition transition;
 
   const PopoverItem({
@@ -36,6 +37,7 @@ class PopoverItem extends StatefulWidget {
     this.arrowDxOffset = 0,
     this.arrowDyOffset = 0,
     this.contentDyOffset = 0,
+    this.contentDxOffset = 0,
     super.key,
   });
 
@@ -142,7 +144,7 @@ class _PopoverItemState extends State<PopoverItem> {
       _attachRect = Rect.fromLTWH(
         offset.dx + (widget.arrowDxOffset),
         offset.dy + (widget.arrowDyOffset),
-        bounds.width,
+        bounds.width + (widget.contentDxOffset),
         bounds.height + (widget.contentDyOffset),
       );
     }
