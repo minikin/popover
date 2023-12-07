@@ -91,6 +91,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  popover:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "0.3.0"
   sky_engine:
     dependency: transitive
     description: flutter

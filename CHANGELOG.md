@@ -1,6 +1,6 @@
-## [0.3.0] - 20.08.2023
+## [0.2.9] - 08.12.2023
 
-- TODO
+- Added `contentDxOffset`. (thanks [@kasyanyukd1995](https://github.com/kasyanyukd1995)).
 
 ## [0.2.8+2] - 01.03.2023
 
