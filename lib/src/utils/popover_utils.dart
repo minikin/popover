@@ -33,8 +33,9 @@ abstract class PopoverUtils {
     }
   }
 
-  static final physicalSize =
-      PlatformDispatcher.instance.views.first.physicalSize;
+  static Size get physicalSize =>
+      PlatformDispatcher.instance.views.first.physicalSize /
+      PlatformDispatcher.instance.views.first.devicePixelRatio;
 }
 
 typedef PopoverTransitionBuilder = Widget Function(
