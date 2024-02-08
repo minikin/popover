@@ -1,3 +1,7 @@
+## [0.3.0] - 08.02.2024
+
+- Fixed [Half of the widget is not shown](https://github.com/minikin/popover/issues/83). (thanks [@zwett](https://github.com/zwett)).
+
 ## [0.2.9] - 08.12.2023
 
 - Added `contentDxOffset`. (thanks [@kasyanyukd1995](https://github.com/kasyanyukd1995)).
