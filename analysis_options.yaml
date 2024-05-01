@@ -16,7 +16,6 @@ analyzer:
 linter:
   rules:
     - avoid_private_typedef_functions
-    - avoid_returning_null
     - avoid_setters_without_getters
     - await_only_futures
     - camel_case_types
