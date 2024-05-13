@@ -1,3 +1,7 @@
+## [0.3.0+1] - 13.05.2024
+
+- Update README.
+
 ## [0.3.0] - 08.02.2024
 
 - Fixed [Half of the widget is not shown](https://github.com/minikin/popover/issues/83). (thanks [@zwett](https://github.com/zwett)).

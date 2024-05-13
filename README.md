@@ -63,7 +63,7 @@ Source: [Human Interface Guidelines.
 
 ```yaml
 dependencies:
-  popover: ^0.3.0
+  popover: ^0.3.0+1
 ```
 
 ## Example
