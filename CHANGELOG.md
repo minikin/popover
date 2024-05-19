@@ -1,6 +1,7 @@
-## [0.3.0+1] - 13.05.2024
+## [0.3.0+1] - 19.05.2024
 
 - Update README.
+- Update web example to use flutter.js service worker bootstrapping.
 
 ## [0.3.0] - 08.02.2024
 
