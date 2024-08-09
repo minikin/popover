@@ -1,3 +1,7 @@
+## [0.3.1] - 10.00.2024
+
+- Update minimum Flutter and Dart versions to 3.24.0+ and 3.5.0+ respectively.
+
 ## [0.3.0+1] - 19.05.2024
 
 - Update README.

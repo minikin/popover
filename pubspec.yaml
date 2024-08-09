@@ -1,11 +1,11 @@
 name: popover
 description: A popover is a transient view that appears above other content onscreen when you tap a control or in an area.
-version: 0.3.0+1
+version: 0.3.1
 homepage: https://github.com/minikin/popover
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
-  flutter: '>=3.16.0'
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
 
 dependencies:
   flutter:

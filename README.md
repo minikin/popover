@@ -56,14 +56,14 @@ Source: [Human Interface Guidelines.
 
 ## Requirements
 
-- Dart: 3.2.0+
-- Flutter: 3.16.0+
+- Dart: 3.5.0+
+- Flutter: 3.24.0+
 
 ## Install
 
 ```yaml
 dependencies:
-  popover: ^0.3.0+1
+  popover: ^0.3.1
 ```
 
 ## Example

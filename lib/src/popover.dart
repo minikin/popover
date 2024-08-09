@@ -120,7 +120,7 @@ Future<T?> showPopover<T extends Object?>({
     RawDialogRoute<T>(
       pageBuilder: (_, animation, __) {
         return PopScope(
-          onPopInvoked: (_) => onPop?.call(),
+          onPopInvokedWithResult: (didPop, _) => onPop?.call(),
           child: PopoverItem(
             transition: transition,
             child: Builder(builder: bodyBuilder),
