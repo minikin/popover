@@ -90,6 +90,92 @@ void main() {
     expect(find.text('Dialog'), findsOneWidget);
   });
 
+  testWidgets('Clicks on background are disabled on default', (tester) async {
+    var didOpenDialog = false;
+
+    await tester.pumpWidget(
+      createAppWithButtonThatLaunchesDialog(
+        dialogBuilder: (context) {
+          didOpenDialog = true;
+          return InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Text('This should not happen'),
+          );
+        },
+      ),
+    );
+
+    final BuildContext context = tester.element(find.text('Go'));
+
+    showPopover(
+      context: context,
+      bodyBuilder: (context) {
+        return Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: const Text('Popover'),
+        );
+      },
+    );
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.text('Popover'), findsOneWidget);
+
+    // Tap on the 'Go' button, which should not open the dialog.
+    await tester.tap(find.text('Go'));
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    expect(didOpenDialog, isFalse);
+  });
+
+  testWidgets('Popover configurable to allow clicks on background',
+      (tester) async {
+    var didOpenDialog = false;
+
+    await tester.pumpWidget(
+      createAppWithButtonThatLaunchesDialog(
+        dialogBuilder: (context) {
+          didOpenDialog = true;
+          return InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: const Text('This should happen'),
+          );
+        },
+      ),
+    );
+
+    final BuildContext context = tester.element(find.text('Go'));
+
+    showPopover(
+      context: context,
+      bodyBuilder: (context) {
+        return Container(
+          width: 100.0,
+          height: 100.0,
+          alignment: Alignment.center,
+          child: const Text('Popover'),
+        );
+      },
+      allowClicksOnBackground: true,
+    );
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+    expect(find.text('Popover'), findsOneWidget);
+
+    // Tap on the 'Go' button, which should open the dialog.
+    await tester.tap(find.text('Go'));
+
+    await tester.pumpAndSettle(const Duration(seconds: 1));
+
+    expect(didOpenDialog, isTrue);
+  });
+
   testWidgets('onPop is called after tap on barrier', (tester) async {
     var didPop = false;
 
