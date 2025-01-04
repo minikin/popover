@@ -1,4 +1,0 @@
-{
-  "java.compile.nullAnalysis.mode": "disabled",
-  "dart.flutterSdkPath": ".fvm/versions/3.24.3"
-}

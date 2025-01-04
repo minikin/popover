@@ -78,3 +78,7 @@ coverage/
 
 # FVM Version Cache
 .fvm/
+.fvmrc
+
+# Vscode settings
+.vscode/settings.json
