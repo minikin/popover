@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
+import 'popover_route.dart';
 import 'popover_transition.dart';
 import 'utils/popover_utils.dart';
 
 /// A popover is a transient view that appears above other content onscreen
 /// when you tap a control or in an area.
+///
+/// Note that when [allowClicksOnBackground] is set to true,
+/// [barrierDismissible] is ignored (will behave as if it was set to false).
 ///
 /// This function allows for customization of aspects of the dialog popup.
 ///
@@ -110,6 +114,7 @@ Future<T?> showPopover<T extends Object?>({
   String? barrierLabel,
   PopoverTransitionBuilder? popoverTransitionBuilder,
   Key? key,
+  bool allowClicksOnBackground = false,
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
@@ -117,7 +122,8 @@ Future<T?> showPopover<T extends Object?>({
       : constraints;
 
   return Navigator.of(context, rootNavigator: true).push<T>(
-    RawDialogRoute<T>(
+    PopoverRoute<T>(
+      allowClicksOnBackground: allowClicksOnBackground,
       pageBuilder: (_, animation, __) {
         return PopScope(
           onPopInvokedWithResult: (didPop, _) => onPop?.call(),

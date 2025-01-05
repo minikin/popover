@@ -73,7 +73,5 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 
-
 #
 coverage/
-.fvm/flutter_sdk
