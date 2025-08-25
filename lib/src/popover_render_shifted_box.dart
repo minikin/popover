@@ -252,8 +252,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _transform(Matrix4 transform, Offset translation) {
-    transform.translate(translation.dx, translation.dy);
-    transform.scale(scale, scale, 1);
-    transform.translate(-translation.dx, -translation.dy);
+    final s = scale ?? 1.0;
+    transform.translateByDouble(translation.dx, translation.dy, 0.0, 1.0);
+    transform.scaleByDouble(s, s, 1.0, 1.0);
+    transform.translateByDouble(-translation.dx, -translation.dy, 0.0, 1.0);
   }
 }
