@@ -155,27 +155,26 @@ Future<T?> showPopover<T extends Object?>({
       settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
         return popoverTransitionBuilder == null
-            ? FadeTransitionWidget(child: child, animation: animation)
+            ? _FadeTransitionWidget(child: child, animation: animation)
             : popoverTransitionBuilder(animation, child);
       },
     ),
   );
 }
 
-class FadeTransitionWidget extends StatefulWidget {
-  const FadeTransitionWidget({
+class _FadeTransitionWidget extends StatefulWidget {
+  const _FadeTransitionWidget({
     required this.child,
     required this.animation,
-    super.key,
   });
   final Widget child;
   final Animation<double> animation;
 
   @override
-  State<FadeTransitionWidget> createState() => _FadeTransitionWidgetState();
+  State<_FadeTransitionWidget> createState() => _FadeTransitionWidgetState();
 }
 
-class _FadeTransitionWidgetState extends State<FadeTransitionWidget> {
+class _FadeTransitionWidgetState extends State<_FadeTransitionWidget> {
   late final CurvedAnimation _animation;
 
   @override
