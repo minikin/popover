@@ -1,5 +1,4 @@
 import 'package:flutter/rendering.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 import 'popover_direction.dart';
 import 'popover_path.dart';
@@ -253,8 +252,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _transform(Matrix4 transform, Offset translation) {
-    transform.translateByVector3(Vector3(translation.dx, translation.dy, 0));
-    transform.scaleByVector3(Vector3(scale ?? 1.0, scale ?? 1.0, 1.0));
-    transform.translateByVector3(Vector3(-translation.dx, -translation.dy, 0));
+    final s = scale ?? 1.0;
+    transform.translateByDouble(translation.dx, translation.dy, 0.0, 1.0);
+    transform.scaleByDouble(s, s, 1.0, 1.0);
+    transform.translateByDouble(-translation.dx, -translation.dy, 0.0, 1.0);
   }
 }
