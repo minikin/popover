@@ -56,8 +56,8 @@ Source: [Human Interface Guidelines.
 
 ## Requirements
 
-- Dart: 3.5.0+
-- Flutter: 3.24.0+
+- Dart: 3.9.0+
+- Flutter: 3.35.0+
 
 ## Install
 
