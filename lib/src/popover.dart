@@ -104,6 +104,7 @@ Future<T?> showPopover<T extends Object?>({
   double? width,
   double? height,
   VoidCallback? onPop,
+  bool? requestFocus,
   @Deprecated(
     'This argument is ignored. Implementation of [PopoverItem] was updated.'
     'This feature was deprecated in v0.2.8',
@@ -147,6 +148,7 @@ Future<T?> showPopover<T extends Object?>({
           ),
         );
       },
+      requestFocus: requestFocus,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel ??
           MaterialLocalizations.of(context).modalBarrierDismissLabel,
