@@ -89,10 +89,7 @@ Future<T?> showPopover<T extends Object?>({
   Duration transitionDuration = const Duration(milliseconds: 200),
   double radius = 8,
   List<BoxShadow> shadow = const [
-    BoxShadow(
-      color: Color(0x1F000000),
-      blurRadius: 5,
-    )
+    BoxShadow(color: Color(0x1F000000), blurRadius: 5),
   ],
   double arrowWidth = 24,
   double arrowHeight = 12,
@@ -118,7 +115,7 @@ Future<T?> showPopover<T extends Object?>({
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
-          BoxConstraints.tightFor(width: width, height: height)
+            BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
   return Navigator.of(context, rootNavigator: true).push<T>(
@@ -148,7 +145,8 @@ Future<T?> showPopover<T extends Object?>({
         );
       },
       barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel ??
+      barrierLabel:
+          barrierLabel ??
           MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
@@ -163,10 +161,7 @@ Future<T?> showPopover<T extends Object?>({
 }
 
 class _FadeTransitionWidget extends StatefulWidget {
-  const _FadeTransitionWidget({
-    required this.child,
-    required this.animation,
-  });
+  const _FadeTransitionWidget({required this.child, required this.animation});
   final Widget child;
   final Animation<double> animation;
 
@@ -194,9 +189,6 @@ class _FadeTransitionWidgetState extends State<_FadeTransitionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _animation, child: widget.child);
   }
 }

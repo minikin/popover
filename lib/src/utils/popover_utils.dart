@@ -38,7 +38,5 @@ abstract class PopoverUtils {
       PlatformDispatcher.instance.views.first.devicePixelRatio;
 }
 
-typedef PopoverTransitionBuilder = Widget Function(
-  Animation<double> animation,
-  Widget child,
-);
+typedef PopoverTransitionBuilder =
+    Widget Function(Animation<double> animation, Widget child);

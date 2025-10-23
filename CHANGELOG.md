@@ -1,3 +1,9 @@
+## [0.4.0] - 23.10.2025
+
+- Fixed memory leak by disposing CurvedAnimation in FadeTransitionWidget ([#105](https://github.com/minikin/popover/pull/105), [#106](https://github.com/minikin/popover/pull/106)).(thanks [@ZacharyYongBB](https://github.com/ZacharyYongBB)).
+- Added ability to click on widgets behind the barrier ([#101](https://github.com/minikin/popover/pull/101)).(thanks [@mcquenji](https://github.com/mcquenji)).
+- Updated minimum Flutter and Dart versions to 3.35.0+ and 3.9.0+ respectively.
+
 ## [0.3.1] - 10.00.2024
 
 - Update minimum Flutter and Dart versions to 3.24.0+ and 3.5.0+ respectively.
