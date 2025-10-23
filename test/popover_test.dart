@@ -129,7 +129,7 @@ void main() {
     expect(find.text('Popover'), findsOneWidget);
 
     // Tap on the 'Go' button, which should not open the dialog.
-    await tester.tap(find.text('Go'));
+    await tester.tap(find.text('Go'), warnIfMissed: false);
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
