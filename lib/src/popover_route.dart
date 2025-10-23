@@ -14,6 +14,7 @@ class PopoverRoute<T> extends RawDialogRoute<T> {
     super.transitionBuilder,
     super.transitionDuration,
     super.traversalEdgeBehavior,
+    super.requestFocus,
     this.allowClicksOnBackground = false,
   });
 
