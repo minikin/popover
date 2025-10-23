@@ -65,8 +65,9 @@ void main() {
     expect(find.text('Dialog'), findsNothing);
   });
 
-  testWidgets('Popover configurable to be not barrier dismissible',
-      (tester) async {
+  testWidgets('Popover configurable to be not barrier dismissible', (
+    tester,
+  ) async {
     await tester.pumpWidget(createAppWithCenteredButton(const Text('Go')));
 
     final BuildContext context = tester.element(find.text('Go'));
@@ -136,8 +137,9 @@ void main() {
     expect(didOpenDialog, isFalse);
   });
 
-  testWidgets('Popover configurable to allow clicks on background',
-      (tester) async {
+  testWidgets('Popover configurable to allow clicks on background', (
+    tester,
+  ) async {
     var didOpenDialog = false;
 
     await tester.pumpWidget(
@@ -327,10 +329,7 @@ void main() {
     showPopover(
       context: context,
       popoverTransitionBuilder: (animation, child) {
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
+        return ScaleTransition(scale: animation, child: child);
       },
       bodyBuilder: (context) {
         return const Center(child: Text('Custom Transition'));
@@ -379,8 +378,9 @@ void main() {
     expect(find.text('Custom Arrow'), findsOneWidget);
   });
 
-  testWidgets('Popover at edge positions for horizontal offset coverage',
-      (tester) async {
+  testWidgets('Popover at edge positions for horizontal offset coverage', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Material(
@@ -417,8 +417,9 @@ void main() {
     expect(find.text('Edge Popover'), findsOneWidget);
   });
 
-  testWidgets('Popover at edge positions for vertical offset coverage',
-      (tester) async {
+  testWidgets('Popover at edge positions for vertical offset coverage', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Material(
@@ -492,10 +493,7 @@ Widget createAppWithButtonThatLaunchesDialog({
           builder: (context) {
             return ElevatedButton(
               onPressed: () {
-                showPopover(
-                  context: context,
-                  bodyBuilder: dialogBuilder,
-                );
+                showPopover(context: context, bodyBuilder: dialogBuilder);
               },
               child: const Text('Go'),
             );
@@ -507,18 +505,13 @@ Widget createAppWithButtonThatLaunchesDialog({
 }
 
 Widget boilerplate(Widget child) {
-  return Directionality(
-    textDirection: TextDirection.ltr,
-    child: child,
-  );
+  return Directionality(textDirection: TextDirection.ltr, child: child);
 }
 
 Widget createAppWithCenteredButton(Widget child) {
   return MaterialApp(
     home: Material(
-      child: Center(
-        child: ElevatedButton(onPressed: null, child: child),
-      ),
+      child: Center(child: ElevatedButton(onPressed: null, child: child)),
     ),
   );
 }

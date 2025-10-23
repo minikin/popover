@@ -7,11 +7,7 @@ final class PopoverPath {
 
   const PopoverPath(this.radius);
 
-  Path draw(
-    PopoverDirection? direction,
-    Rect? arrowRect,
-    Rect bodyRect,
-  ) {
+  Path draw(PopoverDirection? direction, Rect? arrowRect, Rect bodyRect) {
     final path = Path();
 
     if (arrowRect != null) {
