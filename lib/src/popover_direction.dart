@@ -1,7 +1,2 @@
 /// Popover direction
-enum PopoverDirection {
-  top,
-  bottom,
-  left,
-  right,
-}
+enum PopoverDirection { top, bottom, left, right }

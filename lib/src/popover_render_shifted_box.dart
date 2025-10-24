@@ -121,12 +121,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
         translation = Offset(size.width, arrowTop + arrowWidth! / 2);
         break;
       case PopoverDirection.right:
-        arrowRect = Rect.fromLTWH(
-          0,
-          arrowTop,
-          arrowHeight,
-          arrowWidth!,
-        );
+        arrowRect = Rect.fromLTWH(0, arrowTop, arrowHeight, arrowWidth!);
         translation = Offset(0, arrowTop + arrowWidth! / 2);
         break;
     }

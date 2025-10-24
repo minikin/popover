@@ -19,29 +19,17 @@ class PopoverExample extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Button(),
-                    Button(),
-                    Button(),
-                  ],
+                  children: [Button(), Button(), Button()],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Button(),
-                    Button(),
-                    Button(),
-                  ],
+                  children: [Button(), Button(), Button()],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Button(),
-                    Button(),
-                    Button(),
-                  ],
+                  children: [Button(), Button(), Button()],
                 ),
               ],
             ),
