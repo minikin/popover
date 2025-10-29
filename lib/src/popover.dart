@@ -77,6 +77,10 @@ import 'utils/popover_utils.dart';
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
 ///
+/// The `requestFocus` controls whether the popover should request focus when
+/// presented. Set it to false to prevent dismissing any active keyboard.
+/// Defaults to [Navigator.requestFocus] if not provided
+///
 ///The `popoverBuilder` is used for transition builder
 
 Future<T?> showPopover<T extends Object?>({
@@ -101,6 +105,7 @@ Future<T?> showPopover<T extends Object?>({
   double? width,
   double? height,
   VoidCallback? onPop,
+  bool? requestFocus,
   @Deprecated(
     'This argument is ignored. Implementation of [PopoverItem] was updated.'
     'This feature was deprecated in v0.2.8',
@@ -144,6 +149,7 @@ Future<T?> showPopover<T extends Object?>({
           ),
         );
       },
+      requestFocus: requestFocus,
       barrierDismissible: barrierDismissible,
       barrierLabel:
           barrierLabel ??
