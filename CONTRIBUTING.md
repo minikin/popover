@@ -1,20 +1,35 @@
 # Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+## How this project works
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+This project is maintained on a volunteer basis with limited bandwidth.
+After years of open source experience, I've found that the vast majority of
+GitHub issues are requests for the maintainer to do work — not contributions.
+That model isn't sustainable.
+
+**Issues are therefore disabled. Pull requests are the only contribution channel.**
+
+If you've found a bug or have an improvement in mind, please open a PR directly.
+A PR with a working fix or a minimal reproduction in the example app is always welcome.
 
 ## Pull Request Process
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
+1. Fork the repository and create your branch from `main`.
+2. Make sure the existing tests pass: `flutter test`.
+3. If your change affects the public API or behaviour, update `README.md` and add or
+   update tests accordingly.
+4. Bump the version in `pubspec.yaml` following [SemVer](http://semver.org/) and add
+   an entry to `CHANGELOG.md`.
+5. Open the PR against `main`. Describe what problem it solves and which platforms
+   you tested on.
+
+The maintainer reviews PRs as time allows. Providing a clean, well-scoped PR is the
+best way to get a fast review.
+
+## Code Style
+
+Follow [Effective Dart](https://dart.dev/guides/language/effective-dart) conventions.
+Run `dart format .` and `dart analyze` before submitting.
 
 ## Code of Conduct
 
@@ -29,64 +44,37 @@ orientation.
 
 ### Our Standards
 
-Examples of behavior that contributes to creating a positive environment
-include:
+Examples of behaviour that contributes to creating a positive environment include:
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Focusing on what is best for the community
+- Showing empathy towards other community members
 
-Examples of unacceptable behavior by participants include:
+Examples of unacceptable behaviour by participants include:
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
-advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
-  address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+- The use of sexualised language or imagery and unwelcome sexual attention or advances
+- Trolling, insulting/derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or electronic address,
+  without explicit permission
+- Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ### Our Responsibilities
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
-
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
-
-### Scope
-
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
+Project maintainers are responsible for clarifying the standards of acceptable behaviour
+and are expected to take appropriate and fair corrective action in response to any
+instances of unacceptable behaviour.
 
 ### Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at djminikin at gmail dot com. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
-
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
+Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported by
+contacting the project team at djminikin at gmail dot com. All complaints will be reviewed
+and investigated and will result in a response deemed necessary and appropriate to the
+circumstances.
 
 ### Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at [http://contributor-covenant.org/version/1/4][version]
-
-[homepage]: http://contributor-covenant.org
-[version]: http://contributor-covenant.org/version/1/4/
+This Code of Conduct is adapted from the
+[Contributor Covenant](http://contributor-covenant.org), version 1.4.
