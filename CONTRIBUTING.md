@@ -18,7 +18,7 @@ A PR with a working fix or a minimal reproduction in the example app is always w
 2. Make sure the existing tests pass: `flutter test`.
 3. If your change affects the public API or behavior, update `README.md` and add or
    update tests accordingly.
-4. Bump the version in `pubspec.yaml` following [SemVer](http://semver.org/) and add
+4. Bump the version in `pubspec.yaml` following [SemVer](https://semver.org/) and add
    an entry to `CHANGELOG.md`.
 5. Open the PR against `main`. Describe what problem it solves and which platforms
    you tested on.
