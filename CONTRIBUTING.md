@@ -16,7 +16,7 @@ A PR with a working fix or a minimal reproduction in the example app is always w
 
 1. Fork the repository and create your branch from `main`.
 2. Make sure the existing tests pass: `flutter test`.
-3. If your change affects the public API or behaviour, update `README.md` and add or
+3. If your change affects the public API or behavior, update `README.md` and add or
    update tests accordingly.
 4. Bump the version in `pubspec.yaml` following [SemVer](http://semver.org/) and add
    an entry to `CHANGELOG.md`.
@@ -44,7 +44,7 @@ orientation.
 
 ### Our Standards
 
-Examples of behaviour that contributes to creating a positive environment include:
+Examples of behavior that contributes to creating a positive environment include:
 
 - Using welcoming and inclusive language
 - Being respectful of differing viewpoints and experiences
@@ -52,7 +52,7 @@ Examples of behaviour that contributes to creating a positive environment includ
 - Focusing on what is best for the community
 - Showing empathy towards other community members
 
-Examples of unacceptable behaviour by participants include:
+Examples of unacceptable behavior by participants include:
 
 - The use of sexualized language or imagery and unwelcome sexual attention or advances
 - Trolling, insulting/derogatory comments, and personal or political attacks
@@ -63,13 +63,13 @@ Examples of unacceptable behaviour by participants include:
 
 ### Our Responsibilities
 
-Project maintainers are responsible for clarifying the standards of acceptable behaviour
+Project maintainers are responsible for clarifying the standards of acceptable behavior
 and are expected to take appropriate and fair corrective action in response to any
-instances of unacceptable behaviour.
+instances of unacceptable behavior.
 
 ### Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported by
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by
 contacting the project team at djminikin at gmail dot com. All complaints will be reviewed
 and investigated and will result in a response deemed necessary and appropriate to the
 circumstances.
