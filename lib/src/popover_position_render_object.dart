@@ -95,30 +95,41 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
 
   double _horizontalOffset(Size size) {
     var offset = 0.0;
+    const horizontalMargin = 8.0;
 
-    if (attachRect.left > size.width / 2 &&
-        PopoverUtils.physicalSize.width - attachRect.right > size.width / 2) {
-      offset = attachRect.left + attachRect.width / 2 - size.width / 2;
-    } else if (attachRect.left < size.width / 2) {
-      offset = arrowHeight;
+    final centeredOffset =
+        attachRect.left + attachRect.width / 2 - size.width / 2;
+
+    if (centeredOffset >= horizontalMargin &&
+        centeredOffset + size.width <=
+            PopoverUtils.physicalSize.width - horizontalMargin) {
+      offset = centeredOffset;
+    } else if (centeredOffset < horizontalMargin) {
+      offset = horizontalMargin;
     } else {
-      offset = PopoverUtils.physicalSize.width - arrowHeight - size.width;
+      offset = PopoverUtils.physicalSize.width - horizontalMargin - size.width;
     }
+
     return offset;
   }
 
   double _verticalOffset(Size size) {
     var offset = 0.0;
+    const verticalMargin = 8.0;
 
-    if (attachRect.top > size.height / 2 &&
-        PopoverUtils.physicalSize.height - attachRect.bottom >
-            size.height / 2) {
-      offset = attachRect.top + attachRect.height / 2 - size.height / 2;
-    } else if (attachRect.top < size.height / 2) {
-      offset = arrowHeight;
+    final centeredOffset =
+        attachRect.top + attachRect.height / 2 - size.height / 2;
+
+    if (centeredOffset >= verticalMargin &&
+        centeredOffset + size.height <=
+            PopoverUtils.physicalSize.height - verticalMargin) {
+      offset = centeredOffset;
+    } else if (centeredOffset < verticalMargin) {
+      offset = verticalMargin;
     } else {
-      offset = PopoverUtils.physicalSize.height - arrowHeight - size.height;
+      offset = PopoverUtils.physicalSize.height - verticalMargin - size.height;
     }
+
     return offset;
   }
 }
