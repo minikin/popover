@@ -12,6 +12,7 @@ analyzer:
   exclude:
     - lib/generated_plugin_registrant.dart
     - lib/**.g.dart
+    - build/**
 
 linter:
   rules:
