@@ -27,15 +27,15 @@ Future<void> _open(
 }
 
 Widget _at(Rect rect, Widget anchor, {TextDirection? textDirection}) {
-  Widget app = MaterialApp(
+  return MaterialApp(
+    builder: textDirection == null
+        ? null
+        : (_, child) =>
+              Directionality(textDirection: textDirection, child: child!),
     home: Stack(
       children: [Positioned.fromRect(rect: rect, child: anchor)],
     ),
   );
-  if (textDirection != null) {
-    app = Directionality(textDirection: textDirection, child: app);
-  }
-  return app;
 }
 
 void main() {
@@ -87,6 +87,10 @@ void main() {
 
     final anchor = tester.getRect(find.byKey(_anchor));
     final body = tester.getRect(find.byKey(_body));
+    expect(
+      Directionality.of(tester.element(find.byKey(_body))),
+      TextDirection.rtl,
+    );
     expect(body.left, greaterThanOrEqualTo(anchor.right));
   });
 
@@ -151,7 +155,7 @@ void main() {
   ) async {
     await _open(tester, app: (anchor) => MaterialApp(home: anchor));
 
-    expect(find.byKey(_body), findsOneWidget);
+    expect(tester.getSize(find.byKey(_body)).height, 0);
     expect(tester.takeException(), isNull);
   });
 }

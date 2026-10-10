@@ -61,18 +61,20 @@ jobs:
         run: |
           xcrun simctl boot "$IPHONE"
           xcrun simctl bootstatus "$IPHONE" -b
-          flutter drive -d "$IPHONE" $DRIVE_ARGS
+          status=0
+          flutter drive -d "$IPHONE" $DRIVE_ARGS || status=$?
           xcrun simctl shutdown "$IPHONE"
+          exit $status
 
       - name: iPad
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           xcrun simctl boot "$IPAD"
           xcrun simctl bootstatus "$IPAD" -b
           flutter drive -d "$IPAD" $DRIVE_ARGS
 
       - name: macOS
-        if: always()
+        if: ${{ !cancelled() }}
         run: flutter drive -d macos $DRIVE_ARGS
 
       - name: Upload screenshots
