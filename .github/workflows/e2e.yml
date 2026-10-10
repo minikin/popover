@@ -34,15 +34,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with:
-          channel: "stable"
-          flutter-version: "3.47.4"
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
       - name: Pick the simulator
         if: matrix.target != 'macOS'
         env:
@@ -63,6 +54,20 @@ jobs:
                       raise SystemExit
           raise SystemExit(f"no simulator matches {pattern}")
           EOF
+
+      # Boots while Flutter installs, drive_simulator.sh waits for it.
+      - name: Start the simulator
+        if: matrix.target != 'macOS'
+        run: xcrun simctl boot "$DEVICE"
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Simulator
         if: matrix.target != 'macOS'

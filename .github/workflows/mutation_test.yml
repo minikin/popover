@@ -15,14 +15,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  shard:
-    name: Mutation shard ${{ matrix.shard }}
+  plan:
+    name: Mutation plan
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [0, 1, 2, 3, 4, 5]
+    timeout-minutes: 15
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,22 +36,56 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Pull requests mutate only the code they change, main mutates all of lib/.
+      # Pull requests mutate only the methods they change, main all of lib/.
       - name: Plan shards
+        id: plan
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
-        run: python3 tool/ci/mutation_shards.py plan 6 build/mutation $BASE
+        run: |
+          set -o pipefail
+          shards=$(python3 tool/ci/mutation_shards.py plan build/mutation $BASE)
+          echo "shards=$shards" >> "$GITHUB_OUTPUT"
+
+      - name: Upload plan
+        if: steps.plan.outputs.shards != '[]'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mutation-plan
+          path: build/mutation
+
+  shard:
+    name: Mutation shard ${{ matrix.shard }}
+    needs: plan
+    if: needs.plan.outputs.shards != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: mutation-plan
+          path: build/mutation
 
       - name: Run mutation test
         env:
           SHARD: ${{ matrix.shard }}
         run: |
           set -o pipefail
-          mkdir -p build/mutation
-          if [ ! -f "build/mutation/shard_$SHARD.xml" ]; then
-            echo "Nothing to mutate in this shard" | tee "build/mutation/shard_$SHARD.log"
-            exit 0
-          fi
           dart run mutation_test -o "build/mutation-test-report/shard-$SHARD" \
             "build/mutation/shard_$SHARD.xml" | tee "build/mutation/shard_$SHARD.log"
 
@@ -68,7 +100,7 @@ jobs:
 
   mutation-test:
     name: Mutation test
-    needs: shard
+    needs: [plan, shard]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -76,10 +108,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: All shards finished
+      - name: Plan and shards finished
         env:
+          PLAN: ${{ needs.plan.result }}
           SHARDS: ${{ needs.shard.result }}
-        run: test "$SHARDS" = success
+        run: |
+          test "$PLAN" = success
+          test "$SHARDS" = success || test "$SHARDS" = skipped
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

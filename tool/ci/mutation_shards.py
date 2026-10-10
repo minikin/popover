@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Splits the mutation test into shards of about the same number of mutants.
 
-    python3 tool/ci/mutation_shards.py plan <shards> <out dir> [<base ref>]
-        Writes <out dir>/shard_<i>.xml for every shard with mutants. Every file
+    python3 tool/ci/mutation_shards.py plan <out dir> [<base ref>]
+        Writes <out dir>/shard_<i>.xml for every shard with mutants and prints
+        the shard numbers as a JSON list. Every file
         in lib/ is cut into chunks of about CHUNK lines, a dry run counts the
         mutants of each chunk, and the chunks are packed into shards of about
-        the same size. With a base ref, only the chunks that touch lines changed
-        since that ref are mutated.
+        the same size, PER_SHARD mutants each and at most MAX_SHARDS shards.
+        With a base ref, only the chunks that touch lines changed since that
+        ref are mutated.
 
     python3 tool/ci/mutation_shards.py total <results dir>
         Sums the "Total tests" and "Undetected Mutations" lines of every
@@ -15,6 +17,7 @@
 """
 
 import glob
+import json
 import os
 import re
 import subprocess
@@ -22,6 +25,8 @@ import sys
 import tempfile
 
 CHUNK = 10
+PER_SHARD = 50
+MAX_SHARDS = 10
 CONFIG = "mutation_test.xml"
 
 
@@ -74,7 +79,7 @@ def changed_lines(base):
     return changed
 
 
-def plan(shards, out, base=None):
+def plan(out, base=None):
     parts = list(chunks())
     if base:
         changed = changed_lines(base)
@@ -84,7 +89,8 @@ def plan(shards, out, base=None):
         ]
     os.makedirs(out, exist_ok=True)
     if not parts:
-        print("no Dart changes in lib/ to mutate")
+        print("no Dart changes in lib/ to mutate", file=sys.stderr)
+        print("[]")
         return
     with tempfile.TemporaryDirectory() as tmp:
         inputs = []
@@ -102,6 +108,7 @@ def plan(shards, out, base=None):
         sys.exit(f"expected {len(parts)} counts, got {len(counts)}\n{result.stdout}")
 
     total = sum(counts)
+    shards = max(1, min(MAX_SHARDS, -(-total // PER_SHARD)))
     target = total / shards
     # Largest chunks first, each into the lightest shard so far.
     files = [[] for _ in range(shards)]
@@ -111,10 +118,14 @@ def plan(shards, out, base=None):
             shard = sizes.index(min(sizes))
             files[shard].append(file_xml(*part))
             sizes[shard] += count
+    used = []
     for shard, shard_files in enumerate(files):
         if shard_files:
             write(out, shard, shard_files)
-    print(f"{total} mutants in {shards} shards of about {round(target)}")
+            used.append(shard)
+    print(f"{total} mutants in {len(used)} shards of about {round(target)}",
+          file=sys.stderr)
+    print(json.dumps(used))
 
 
 def write(out, shard, files):
@@ -145,7 +156,7 @@ def total(results):
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "plan":
-        plan(int(sys.argv[2]), sys.argv[3], *sys.argv[4:5])
+        plan(sys.argv[2], *sys.argv[3:4])
     elif command == "total":
         total(sys.argv[2])
     else:
