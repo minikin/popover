@@ -57,10 +57,16 @@ jobs:
           print(f"IPAD={pick(r'iPad Pro 1[13]-inch')}")
           EOF
 
+      - name: Build for the simulator
+        timeout-minutes: 20
+        run: flutter build ios --simulator --debug --target integration_test/popover_test.dart
+
       - name: iPhone
+        timeout-minutes: 15
         run: |
           xcrun simctl boot "$IPHONE"
           xcrun simctl bootstatus "$IPHONE" -b
+          xcrun simctl list devices booted
           status=0
           flutter drive -d "$IPHONE" $DRIVE_ARGS || status=$?
           xcrun simctl shutdown "$IPHONE"
@@ -68,6 +74,7 @@ jobs:
 
       - name: iPad
         if: ${{ !cancelled() }}
+        timeout-minutes: 15
         run: |
           xcrun simctl boot "$IPAD"
           xcrun simctl bootstatus "$IPAD" -b
@@ -75,6 +82,7 @@ jobs:
 
       - name: macOS
         if: ${{ !cancelled() }}
+        timeout-minutes: 20
         run: flutter drive -d macos $DRIVE_ARGS
 
       - name: Upload screenshots
