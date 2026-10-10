@@ -149,10 +149,11 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
+          ram-size: 4096M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: example
-          script: flutter drive -d emulator-5554 $DRIVE_ARGS
+          script: flutter drive -d emulator-5554 $DRIVE_ARGS || (adb wait-for-device && flutter drive -d emulator-5554 $DRIVE_ARGS)
 
       - name: Upload screenshots
         if: always()
