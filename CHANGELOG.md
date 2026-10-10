@@ -17,6 +17,7 @@
 - Fixed: the popover flipped and slid against the size of the first window, not the screen it is shown in. Near the right edge it could open off screen.
 - Fixed: a flipped popover drew its shadow with the arrow on the original side.
 - Added a `Mutation Test` CI workflow over `lib/` that fails below the 17% threshold in `mutation_test.xml`. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
+- Added golden tests, rendered on Linux, and an `E2E` CI workflow that runs the example's integration test on iPhone, iPad and macOS, in Chrome and on an Android emulator, with screenshots and rotation.
 
 ## [0.4.0] - 23.10.2025
 
