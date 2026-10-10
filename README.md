@@ -117,6 +117,28 @@ host OS. `arrowWidth`,
 `arrowHeight`, `radius` and `shadow` override the defaults of either style, for
 example `radius: 13` for the corners of iOS before version 26.
 
+## Background and dark mode
+
+With the `apple` shape the default background is the Liquid Glass of iOS 26
+and macOS 26: the content behind the popover shows through, blurred and
+tinted, and a light rim runs along the outline. The blur, the tint and the rim
+are fitted to native popovers captured over 22 backgrounds in light and dark
+mode, and match them within a few levels of brightness on flat colors. Native
+glass also bends the light near the outline and adapts to a wide area behind
+it. The popover does neither, so fine detail such as text behind it blurs more
+evenly than on iOS. The `triangle` shape gets white, or `Color(0xFF2C2C2E)` in
+dark mode.
+
+Light or dark follows the text color the body inherits from `context`: dark
+text gets a light background, light text a dark one. So the body stays
+readable in an app that forces a light or a dark theme. Without an inherited
+text color it follows the system setting. `brightness` overrides both, and
+`backgroundColor` replaces the glass with a solid color.
+
+iOS and macOS do not dim the screen behind a popover, so the barrier is
+transparent with the `apple` shape and dims to `Color(0x80000000)` with the
+`triangle`.
+
 ## Placement
 
 The popover is placed the way `UIPopoverPresentationController` and
@@ -151,7 +173,7 @@ opens to the right or below.
 ## Dismissing
 
 A tap on the barrier closes the popover. `barrierDismissible: false` keeps it
-open, and `barrierColor` tints the barrier. With
+open, and `barrierColor` replaces the default tint of the barrier. With
 `allowClicksOnBackground: true`, taps pass through the barrier to the widgets
 behind it and `barrierDismissible` is ignored. `onPop` runs whenever the
 route pops.
