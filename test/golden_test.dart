@@ -27,6 +27,8 @@ Future<void> _show(
   List<BoxShadow> shadow = const [
     BoxShadow(color: Color(0x1F000000), blurRadius: 5),
   ],
+  PopoverArrowStyle arrowStyle = PopoverArrowStyle.triangle,
+  Size body = const Size(160, 100),
 }) async {
   tester.view
     ..physicalSize = size
@@ -42,11 +44,12 @@ Future<void> _show(
             context: context,
             direction: direction,
             shadow: shadow,
-            bodyBuilder: (_) => const SizedBox(
+            arrowStyle: arrowStyle,
+            bodyBuilder: (_) => SizedBox(
               key: _body,
-              width: 160,
-              height: 100,
-              child: Center(child: Text('Body')),
+              width: body.width,
+              height: body.height,
+              child: const Center(child: Text('Body')),
             ),
           ),
           child: const ColoredBox(
@@ -120,6 +123,53 @@ void main() {
           );
         });
       }
+
+      for (final direction in PopoverDirection.values) {
+        final name = 'apple_${direction.name}';
+        testWidgets(name, (tester) async {
+          await _show(
+            tester,
+            app: legacyApp,
+            direction: direction,
+            arrowStyle: PopoverArrowStyle.apple,
+            shadow: const [],
+          );
+
+          await expectLater(
+            find.byKey(_screen),
+            matchesGoldenFile('goldens/$name.png'),
+          );
+        });
+      }
+
+      testWidgets('apple_squashed_corner', (tester) async {
+        await _show(
+          tester,
+          app: (launcher) =>
+              legacyApp(launcher, alignment: const Alignment(-0.98, -0.5)),
+          arrowStyle: PopoverArrowStyle.apple,
+          shadow: const [],
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/apple_squashed_corner.png'),
+        );
+      });
+
+      testWidgets('apple_tiny_body', (tester) async {
+        await _show(
+          tester,
+          app: legacyApp,
+          arrowStyle: PopoverArrowStyle.apple,
+          body: const Size(40, 20),
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/apple_tiny_body.png'),
+        );
+      });
 
       testWidgets('two_shadows', (tester) async {
         await _show(
