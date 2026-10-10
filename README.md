@@ -126,8 +126,9 @@ when it moves, scrolls or the screen rotates.
 
 `width`, `height` and `constraints` size the body and are capped by the room
 available. `arrowWidth` and `arrowHeight` size the arrow. `arrowDxOffset` and
-`arrowDyOffset` move the point the arrow aims at, and `contentDxOffset` and
-`contentDyOffset` move the body.
+`arrowDyOffset` move the point the arrow aims at. `contentDxOffset` and
+`contentDyOffset` widen and heighten the anchor, which moves a popover that
+opens to the right or below.
 
 ## Dismissing
 

@@ -10,7 +10,7 @@
   - When the body fits on neither the preferred side nor the opposite one, it takes the side with more room and shrinks to fit, so a scrollable body scrolls. On macOS it first tries the two perpendicular sides, like `NSPopover`.
   - Outside macOS, a popover on the left or the right may cover the anchor up to its center, as UIKit does.
   - `width`, `height` and `constraints` are capped by the space available.
-  - The popover follows its anchor when the anchor moves, scrolls or the screen rotates, as UIKit does for a source view.
+  - The popover follows its anchor when the anchor moves, scrolls or the screen rotates, as UIKit does for a source view. When the anchor leaves the tree while the popover is open, for example in a lazy list, the popover stays where the anchor was last seen.
   - An anchor partly or fully off screen is moved onto the screen edge first. UIKit does this below the bottom edge and beside the side edges but lets an anchor above the top edge push the popover off screen. The popover clamps on every edge.
   - The arrow stops short of the rounded corners. UIKit merges the arrow into the corner instead, which waits for the native arrow shape.
   - Flutter web follows the rules of the host OS, so it uses the macOS rules on a Mac.
