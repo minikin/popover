@@ -30,7 +30,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Mutates all of lib/ and fails below the threshold in mutation_test.xml.
       - name: Run mutation test
         run: dart run mutation_test -o build/mutation-test-report mutation_test.xml
 

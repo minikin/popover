@@ -74,8 +74,6 @@ class _PopoverItemState extends State<PopoverItem> {
                 child: child,
               );
             },
-            // Absorbs taps on empty body areas so they do not reach the
-            // barrier or the widgets behind the popover.
             child: Listener(
               behavior: HitTestBehavior.opaque,
               child: widget.child,

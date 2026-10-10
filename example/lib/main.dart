@@ -58,7 +58,6 @@ class Button extends StatelessWidget {
         onTap: () {
           showPopover(
             context: context,
-            // The body is not wrapped in Material, so add one for InkWell.
             bodyBuilder: (context) => const Material(
               type: MaterialType.transparency,
               child: ListItems(),
