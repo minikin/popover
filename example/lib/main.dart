@@ -58,7 +58,10 @@ class Button extends StatelessWidget {
         onTap: () {
           showPopover(
             context: context,
-            bodyBuilder: (context) => const ListItems(),
+            bodyBuilder: (context) => const Material(
+              type: MaterialType.transparency,
+              child: ListItems(),
+            ),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.bottom,
             backgroundColor: Colors.white,

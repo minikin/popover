@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class PopoverRoute<T> extends RawDialogRoute<T> {
   /// If true, widgets behind the barrier can receive pointer events.

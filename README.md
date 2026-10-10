@@ -1,206 +1,149 @@
-<h1 align="center">Popover</h1>
+# Popover
+
+[![pub](https://img.shields.io/pub/v/popover.svg)](https://pub.dev/packages/popover)
+[![CI](https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg)](https://github.com/minikin/popover/actions)
+[![coverage](https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ)](https://codecov.io/gh/minikin/popover)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 <p align="center">
-  <a href="https://github.com/minikin/popover/">
-    <img src="https://i.ibb.co/0DW1XQ0/popover-demo.png" alt="Popover screenshots" />
-  </a>
-<h2 align="center">Popover for Flutter</h2>
+  <img src="https://i.ibb.co/0DW1XQ0/popover-demo.png" alt="Popovers with arrows pointing at the buttons that opened them" />
 </p>
 
-<p align="center">
-
-  <a href="https://github.com/minikin/popover">
-    <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20Android%20%7C%20Linux%20%7C%20Windows%20%7C%20Web-green.svg" alt="Supported platforms" />
-  </a>
-
-   <a href="https://github.com/minikin/popover/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Popover is released under the MIT license." />
-  </a>
-
-  <a href="https://github.com/tenhobi/effective_dart">
-    <img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="Effective Dart" />
-  </a>
-
-  <a href="https://github.com/minikin/popover/blob/main/CODE_OF_CONDUCT.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
-  </a>
-
-  </br>
-
-   <a href="https://github.com/minikin/popover/actions">
-    <img src="https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg" alt="Current Build Status." />
-  </a>
-
-  <a href="https://codecov.io/gh/minikin/popover">
-    <img src="https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ"/>
-  </a>
-
-</p>
-
-# Content
-
-- [Content](#content)
-  - [Features](#features)
-  - [Requirements](#requirements)
-  - [Install](#install)
-  - [Example](#example)
-  - [Support](#support)
-  - [License](#license)
-
-## Features
-
-> A popover is a transient view that appears above other content onscreen when you tap a control or in an area. Typically, a popover includes an arrow pointing to the location from which it emerged. Popovers can be nonmodal or modal. A nonmodal popover is dismissed by tapping another part of the screen or a button on the popover. A modal popover is dismissed by tapping a Cancel or other button on the popover.
-
-Source: [Human Interface Guidelines.
-](https://developer.apple.com/design/human-interface-guidelines/ios/views/popovers/)
-
-## Requirements
-
-- Dart: 3.9.0+
-- Flutter: 3.35.0+
+A Flutter popover in the style of iOS: a box with an arrow pointing at the
+widget that opened it. `showPopover` pushes a route on the root navigator,
+measures the widget behind the `context` you pass, and places the body above,
+below or beside it. It runs on iOS, Android, macOS, Windows, Linux and the
+web, and depends only on `package:flutter/widgets.dart`.
 
 ## Install
 
-```yaml
-dependencies:
-  popover: ^0.4.0
+```bash
+flutter pub add popover
 ```
 
-## Example
+Dart 3.9 and Flutter 3.35 or newer.
 
-See `example/lib/main.dart`.
+## Quick start
+
+Call `showPopover` with the context of the widget the arrow should point at:
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 
-class PopoverExample extends StatelessWidget {
+class MenuButton extends StatelessWidget {
+  const MenuButton({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Popover Example')),
-        body: const SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Button(),
+    return TextButton(
+      onPressed: () async {
+        final choice = await showPopover<String>(
+          context: context,
+          width: 160,
+          height: 112,
+          bodyBuilder: (context) => Material(
+            type: MaterialType.transparency,
+            child: Column(
+              children: [
+                for (final item in ['Copy', 'Share'])
+                  ListTile(
+                    title: Text(item),
+                    onTap: () => Navigator.pop(context, item),
+                  ),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class Button extends StatelessWidget {
-  const Button({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      height: 40,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
-      ),
-      child: GestureDetector(
-        child: const Center(child: Text('Click Me')),
-        onTap: () {
-          showPopover(
-            context: context,
-            bodyBuilder: (context) => const ListItems(),
-            onPop: () => print('Popover was popped!'),
-            direction: PopoverDirection.bottom,
-            width: 200,
-            height: 400,
-            arrowHeight: 15,
-            arrowWidth: 30,
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ListItems extends StatelessWidget {
-  const ListItems({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: ListView(
-          padding: const EdgeInsets.all(8),
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.of(context)
-                  ..pop()
-                  ..push(
-                    MaterialPageRoute<SecondRoute>(
-                      builder: (context) => SecondRoute(),
-                    ),
-                  );
-              },
-              child: Container(
-                height: 50,
-                color: Colors.amber[100],
-                child: const Center(child: Text('Entry A')),
-              ),
-            ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[200],
-              child: const Center(child: Text('Entry B')),
-            ),
-            const Divider(),
-            Container(
-              height: 50,
-              color: Colors.amber[300],
-              child: const Center(child: Text('Entry C')),
-            ),
-          ],
-        ),
-    );
-  }
-}
-
-class SecondRoute extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second Route'),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Go back!'),
-        ),
-      ),
+        );
+        debugPrint('Picked $choice');
+      },
+      child: const Text('Menu'),
     );
   }
 }
 ```
 
-To see examples of the following package on a device or simulator:
+`showPopover` returns the value passed to `Navigator.pop`, or `null` when the
+user taps outside. `example/lib/main.dart` places nine buttons across the
+screen. Run it with `cd example && flutter run`.
 
-```sh
-cd example && flutter run
+## Material and Cupertino
+
+Flutter 3.47 moved Material and Cupertino into the
+[`material_ui`](https://pub.dev/packages/material_ui) and
+[`cupertino_ui`](https://pub.dev/packages/cupertino_ui) packages, whose classes
+differ from the ones in `package:flutter/material.dart` and
+`package:flutter/cupertino.dart`. Since 0.5.0 popover depends on none of them
+and works in a `MaterialApp` or a `CupertinoApp` from either source.
+
+The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
+`Checkbox` and the other widgets that need one throw
+`No Material widget found` unless you wrap the body in the `Material` of your
+UI library, as the quick start does.
+
+`showPopover` captures `Theme`, `DefaultTextStyle`, `IconTheme` and the other
+inherited themes at `context` and applies them to the body, as `showDialog`
+does. The body gets the text and icon style in effect where it was opened: the
+`AppBar` foreground color when opened from an `AppBar` action, and
+`MaterialApp`'s red debug style when `context` has no `Material` ancestor. A
+`Material` wrapper resets the text to the theme's `bodyMedium`. An `IconTheme`
+around the body resets the icons.
+
+Cupertino widgets such as `CupertinoListTile` need no wrapper.
+
+`barrierLabel` is the screen reader label of the barrier and defaults to
+`'Dismiss'`. For a localized one, pass
+`MaterialLocalizations.of(context).modalBarrierDismissLabel` or
+`CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
+
+## Placement
+
+`direction` picks the side: `PopoverDirection.bottom` by default, or `top`,
+`left` or `right`. When the body does not fit on that side, the popover opens
+on the opposite one.
+
+`width`, `height` and `constraints` size the body. `arrowWidth` and
+`arrowHeight` size the arrow. `arrowDxOffset` and `arrowDyOffset` move the
+point the arrow aims at, and `contentDxOffset` and `contentDyOffset` move the
+body.
+
+## Dismissing
+
+A tap on the barrier closes the popover. `barrierDismissible: false` keeps it
+open, and `barrierColor` tints the barrier. With
+`allowClicksOnBackground: true`, taps pass through the barrier to the widgets
+behind it and `barrierDismissible` is ignored. `onPop` runs whenever the
+route pops.
+
+`requestFocus: false` stops the popover from taking focus, so an open
+keyboard stays up.
+
+## Animation
+
+The popover fades in over `transitionDuration`, 200 ms by default.
+`PopoverTransition.scale`, the default, also grows the body from the arrow.
+`PopoverTransition.other` turns the scaling off. `popoverTransitionBuilder`
+replaces the fade:
+
+```dart
+showPopover(
+  context: context,
+  bodyBuilder: (context) => const Text('Hello'),
+  popoverTransitionBuilder: (animation, child) =>
+      SlideTransition(
+        position: Tween(begin: const Offset(0, -0.1), end: Offset.zero)
+            .animate(animation),
+        child: child,
+      ),
+);
 ```
 
-## Support
+## Contributing
 
-This project accepts **pull requests only.**
-
-If you've encountered a bug or have an improvement in mind, please open a PR with a
-minimal fix or a reproduction in the example app. See [CONTRIBUTING.md](https://github.com/minikin/popover/blob/main/CONTRIBUTING.md)
-for the full contribution process.
+The project accepts pull requests, not issues. Open a PR with a fix or a
+reproduction in the example app. [CONTRIBUTING.md](CONTRIBUTING.md) covers
+tests, the mutation test gate and versioning.
 
 ## License
 
-The source code of the Popover project is available under the MIT license.
-See the [LICENSE](https://github.com/minikin/popover/blob/main/LICENSE) file for more info.
+MIT. See the [LICENSE](LICENSE) file.

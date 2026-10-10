@@ -1,3 +1,12 @@
+## [0.5.0] - 10.10.2026
+
+- Breaking: the popover depends only on `package:flutter/widgets.dart` and works with `package:flutter/material.dart`, `package:flutter/cupertino.dart`, `package:material_ui` and `package:cupertino_ui`. 0.4.0 threw `No MaterialLocalizations found` in a `CupertinoApp` ([#113](https://github.com/minikin/popover/pull/113)).(thanks [@livtanong](https://github.com/livtanong)).
+  - The body is no longer wrapped in a `Material`. Wrap it in the `Material` of your UI library if it contains Material widgets that require one, such as `InkWell`, `ListTile`, `TextField`, `Checkbox` or `Switch`.
+  - `barrierLabel` defaults to `'Dismiss'` instead of `MaterialLocalizations.modalBarrierDismissLabel`. Pass a localized label if you need one.
+  - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text and icon styles are the ones in effect at `context`: the `AppBar` foreground color when opened from an `AppBar` action, and `MaterialApp`'s red debug text without a `Material` ancestor. A `Material` around the body resets the text to `textTheme.bodyMedium`.
+  - A translucent `backgroundColor` is painted once under the body instead of twice, so the body looks more transparent than before.
+- Added a `Mutation Test` CI workflow over `lib/` that fails below the 17% threshold in `mutation_test.xml`. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
+
 ## [0.4.0] - 23.10.2025
 
 - Fixed memory leak by disposing CurvedAnimation in FadeTransitionWidget ([#105](https://github.com/minikin/popover/pull/105), [#106](https://github.com/minikin/popover/pull/106)).(thanks [@ZacharyYongBB](https://github.com/ZacharyYongBB)).

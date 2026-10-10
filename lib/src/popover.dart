@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
@@ -12,9 +12,9 @@ import 'utils/popover_utils.dart';
 /// Note that when [allowClicksOnBackground] is set to true,
 /// [barrierDismissible] is ignored (will behave as if it was set to false).
 ///
-/// This function allows for customization of aspects of the dialog popup.
+/// This function allows for customization of aspects of the popover.
 ///
-/// `bodyBuilder` argument is  builder which builds body/content of popover.
+/// `bodyBuilder` argument is builder which builds body/content of popover.
 ///
 /// The `direction` is desired Popover's direction behavior.
 /// This argument defaults to `PopoverDirection.bottom`.
@@ -23,7 +23,7 @@ import 'utils/popover_utils.dart';
 /// This argument defaults to `PopoverTransition.scale`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
-/// This argument defaults to `Color(0x8FFFFFFFF)`.
+/// This argument defaults to `Color(0xFFFFFFFF)`.
 ///
 /// The `barrierColor` is barrier [Color] of screen when popover is presented.
 /// This argument defaults to `Color(0x80000000)`.
@@ -35,7 +35,7 @@ import 'utils/popover_utils.dart';
 /// The `radius` of popover's body.
 /// This argument defaults to 8.
 ///
-/// The `shadow`  is [BoxShadow] of popover body.
+/// The `shadow` is [BoxShadow] of popover body.
 /// This argument defaults to
 /// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]`.
 ///
@@ -53,12 +53,12 @@ import 'utils/popover_utils.dart';
 /// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
-/// The`contentDyOffset` offsets [Popover]s content
-/// position on Y axis. It can be positive or negative number.
+/// The `contentDyOffset` offsets the popover body on Y axis.
+/// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
-/// The`contentDxOffset` offsets [Popover]s content
-/// position on X axis. It can be positive or negative number.
+/// The `contentDxOffset` offsets the popover body on X axis.
+/// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
 /// The `barrierDismissible` argument is used to determine whether this route
@@ -67,28 +67,42 @@ import 'utils/popover_utils.dart';
 ///
 /// The `width` is popover's body/content widget width.
 ///
-/// The` height` is popover's body/content widget height.
+/// The `height` is popover's body/content widget height.
 ///
-/// The `onPop` called to veto attempts by the user to dismiss the popover.
+/// The `onPop` runs when the popover pops, by a barrier tap, a back gesture
+/// or `Navigator.pop`. It cannot cancel the dismissal.
 ///
 /// The `constraints` is popover's constraints.
 ///
 /// The `routeSettings` is data that might be useful in constructing a [Route].
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
+/// This argument defaults to 'Dismiss'. Pass a localized string, for example
+/// `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
+/// `CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
 ///
 /// The `requestFocus` controls whether the popover should request focus when
 /// presented. Set it to false to prevent dismissing any active keyboard.
 /// Defaults to [Navigator.requestFocus] if not provided
 ///
-///The `popoverBuilder` is used for transition builder
+/// The `popoverTransitionBuilder` replaces the default fade. It receives the
+/// route animation and the popover and returns the widget to show.
+///
+/// The popover depends only on `package:flutter/widgets.dart`, so it works
+/// with `package:flutter/material.dart`, `package:flutter/cupertino.dart`,
+/// `package:material_ui` and `package:cupertino_ui`. The body is not wrapped
+/// in a `Material`. Wrap it in the `Material` of your UI library when it
+/// contains widgets that require one, such as `InkWell`, `ListTile` or
+/// `TextField`.
+/// Inherited themes such as `Theme`, `DefaultTextStyle` and `IconTheme` are
+/// captured from `context` and applied to the body.
 
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
   PopoverTransition transition = PopoverTransition.scale,
-  Color backgroundColor = const Color(0x8FFFFFFFF),
+  Color backgroundColor = const Color(0xFFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
   double radius = 8,
@@ -123,7 +137,10 @@ Future<T?> showPopover<T extends Object?>({
             BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
-  return Navigator.of(context, rootNavigator: true).push<T>(
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final themes = InheritedTheme.capture(from: context, to: navigator.context);
+
+  return navigator.push<T>(
     PopoverRoute<T>(
       allowClicksOnBackground: allowClicksOnBackground,
       pageBuilder: (_, animation, __) {
@@ -131,7 +148,7 @@ Future<T?> showPopover<T extends Object?>({
           onPopInvokedWithResult: (didPop, _) => onPop?.call(),
           child: PopoverItem(
             transition: transition,
-            child: Builder(builder: bodyBuilder),
+            child: themes.wrap(Builder(builder: bodyBuilder)),
             context: context,
             backgroundColor: backgroundColor,
             direction: direction,
@@ -151,9 +168,7 @@ Future<T?> showPopover<T extends Object?>({
       },
       requestFocus: requestFocus,
       barrierDismissible: barrierDismissible,
-      barrierLabel:
-          barrierLabel ??
-          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierLabel: barrierLabel ?? _defaultBarrierLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
       settings: routeSettings,
@@ -165,6 +180,8 @@ Future<T?> showPopover<T extends Object?>({
     ),
   );
 }
+
+const _defaultBarrierLabel = 'Dismiss';
 
 class _FadeTransitionWidget extends StatefulWidget {
   const _FadeTransitionWidget({required this.child, required this.animation});

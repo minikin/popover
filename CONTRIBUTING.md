@@ -15,7 +15,11 @@ A PR with a working fix or a minimal reproduction in the example app is always w
 ## Pull Request Process
 
 1. Fork the repository and create your branch from `main`.
-2. Make sure the existing tests pass: `flutter test`.
+2. Make sure the existing tests pass: `flutter test`. Developing the package needs
+   Flutter 3.47+, because the tests also run against `material_ui` and `cupertino_ui`.
+   CI also runs a mutation test over `lib/` that fails below the threshold in
+   `mutation_test.xml`. Run it locally with
+   `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.
 3. If your change affects the public API or behavior, update `README.md` and add or
    update tests accordingly.
 4. Bump the version in `pubspec.yaml` following [SemVer](https://semver.org/) and add
