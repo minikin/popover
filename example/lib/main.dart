@@ -1,39 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 
-void main() => runApp(PopoverExample());
+import 'roadmap.dart';
 
-class PopoverExample extends StatelessWidget {
+void main() => runApp(const PopoverExample());
+
+const playgroundTab = Key('playground-tab');
+
+class PopoverExample extends StatefulWidget {
+  const PopoverExample({super.key});
+
+  @override
+  State<PopoverExample> createState() => _PopoverExampleState();
+}
+
+class _PopoverExampleState extends State<PopoverExample> {
+  var _tab = 0;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xFF5E6AD2),
+        scaffoldBackgroundColor: const Color(0xFFF7F7F8),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFF7F7F8),
+          surfaceTintColor: Colors.transparent,
+        ),
+      ),
       home: Scaffold(
-        appBar: AppBar(title: const Text('Popover Example')),
-        body: const SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [Button(), Button(), Button()],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [Button(), Button(), Button()],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [Button(), Button(), Button()],
-                ),
-              ],
+        body: IndexedStack(
+          index: _tab,
+          children: const [RoadmapPage(), PlaygroundPage()],
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _tab,
+          onDestinationSelected: (tab) => setState(() => _tab = tab),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.view_agenda_outlined),
+              label: 'Roadmap',
             ),
+            NavigationDestination(
+              key: playgroundTab,
+              icon: Icon(Icons.grid_view),
+              label: 'Playground',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Nine buttons across the screen to try how the popover flips, slides and
+/// shrinks near the edges.
+class PlaygroundPage extends StatefulWidget {
+  const PlaygroundPage({super.key});
+
+  @override
+  State<PlaygroundPage> createState() => _PlaygroundPageState();
+}
+
+class _PlaygroundPageState extends State<PlaygroundPage> {
+  var _direction = PopoverDirection.bottom;
+
+  @override
+  Widget build(BuildContext context) {
+    final row = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [for (var i = 0; i < 3; i++) Button(direction: _direction)],
+    );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Playground',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Column(
+            children: [
+              SegmentedButton<PopoverDirection>(
+                showSelectedIcon: false,
+                segments: [
+                  for (final direction in PopoverDirection.values)
+                    ButtonSegment(
+                      value: direction,
+                      label: Text(direction.name),
+                    ),
+                ],
+                selected: {_direction},
+                onSelectionChanged: (selection) =>
+                    setState(() => _direction = selection.single),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [row, row, row],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -42,104 +113,71 @@ class PopoverExample extends StatelessWidget {
 }
 
 class Button extends StatelessWidget {
-  const Button({Key? key}) : super(key: key);
+  final PopoverDirection direction;
+
+  const Button({required this.direction, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      height: 40,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        minimumSize: const Size(80, 40),
       ),
-      child: GestureDetector(
-        child: const Center(child: Text('Click Me')),
-        onTap: () {
-          showPopover(
-            context: context,
-            bodyBuilder: (context) => const Material(
-              type: MaterialType.transparency,
-              child: ListItems(),
-            ),
-            onPop: () => print('Popover was popped!'),
-            direction: PopoverDirection.bottom,
-            backgroundColor: Colors.white,
-            width: 200,
-            height: 400,
-            arrowHeight: 15,
-            arrowWidth: 30,
-          );
-        },
+      onPressed: () => showPopover(
+        context: context,
+        bodyBuilder: (context) =>
+            const Material(type: MaterialType.transparency, child: ListItems()),
+        onPop: () => debugPrint('Popover was popped'),
+        direction: direction,
+        radius: 12,
+        barrierColor: const Color(0x14000000),
+        width: 200,
+        height: 360,
+        arrowHeight: 15,
+        arrowWidth: 30,
       ),
+      child: const Text('Open'),
     );
   }
 }
 
 class ListItems extends StatelessWidget {
-  const ListItems({Key? key}) : super(key: key);
+  const ListItems({super.key});
+
+  static const _entries = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context)
+    return ListView.separated(
+      padding: const EdgeInsets.all(8),
+      itemCount: _entries.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 4),
+      itemBuilder: (context, index) => ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        tileColor: Color.lerp(
+          const Color(0xFFEEF0FC),
+          const Color(0xFFC9CDF3),
+          index / (_entries.length - 1),
+        ),
+        title: Text('Entry ${_entries[index]}'),
+        onTap: index == 0
+            ? () => Navigator.of(context)
                 ..pop()
                 ..push(
-                  MaterialPageRoute<SecondRoute>(
-                    builder: (context) => SecondRoute(),
+                  MaterialPageRoute<void>(
+                    builder: (context) => const SecondRoute(),
                   ),
-                );
-            },
-            child: Container(
-              height: 50,
-              color: Colors.amber[100],
-              child: const Center(child: Text('Entry A')),
-            ),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[200],
-            child: const Center(child: Text('Entry B')),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[300],
-            child: const Center(child: Text('Entry C')),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[400],
-            child: const Center(child: Text('Entry D')),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[500],
-            child: const Center(child: Text('Entry E')),
-          ),
-          const Divider(),
-          Container(
-            height: 50,
-            color: Colors.amber[600],
-            child: const Center(child: Text('Entry F')),
-          ),
-        ],
+                )
+            : null,
       ),
     );
   }
 }
 
 class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,7 +186,7 @@ class SecondRoute extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: Center(
-        child: ElevatedButton(
+        child: FilledButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Back'),
         ),

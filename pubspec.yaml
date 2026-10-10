@@ -15,7 +15,6 @@ dev_dependencies:
   cupertino_ui: ^1.1.2
   flutter_test:
     sdk: flutter
-  image: ^4.10.2
   leak_tracker_flutter_testing: 3.0.10
   material_ui: ^1.6.0
   mutation_test: ^1.8.1

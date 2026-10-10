@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:popover_example/main.dart';
+import 'package:popover_example/roadmap.dart';
 
 const _screen = Key('screen');
 const _arrowHeight = 15.0;
@@ -24,11 +25,15 @@ void main() {
 
   tearDownAll(() => binding.reportData = {'screenshots': _screenshots});
 
-  Future<void> start(WidgetTester tester) async {
+  Future<void> start(WidgetTester tester, {bool playground = true}) async {
     await tester.pumpWidget(
-      RepaintBoundary(key: _screen, child: PopoverExample()),
+      const RepaintBoundary(key: _screen, child: PopoverExample()),
     );
     await tester.pumpAndSettle();
+    if (playground) {
+      await tester.tap(find.byKey(playgroundTab));
+      await tester.pumpAndSettle();
+    }
   }
 
   Future<void> screenshot(WidgetTester tester, String name) async {
@@ -93,8 +98,9 @@ void main() {
   });
 
   testWidgets('demo', (tester) async {
-    await start(tester);
-    await open(tester, 1);
+    await start(tester, playground: false);
+    await tester.tap(find.byKey(demoAnchor));
+    await tester.pumpAndSettle();
     await screenshot(tester, 'demo');
   });
 
@@ -110,7 +116,7 @@ void main() {
 
     await tester.tap(find.text('Back'));
     await tester.pumpAndSettle();
-    expect(find.text('Popover Example'), findsOneWidget);
+    expect(find.byType(PlaygroundPage), findsOneWidget);
   });
 
   testWidgets('follows the button on rotation', (tester) async {

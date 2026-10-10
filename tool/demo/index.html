@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>popover demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090a;
+    --text: #f7f8f8;
+    --muted: #8a8f98;
+    --accent: #5e6ad2;
+    --ring: rgba(255, 255, 255, 0.08);
+    --shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 12px 24px rgba(0, 0, 0, 0.35);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1600px; height: 1040px; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, sans-serif;
+    position: relative;
+  }
+  .glow {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(900px 480px at 50% -80px, rgba(94, 106, 210, 0.45), transparent 70%),
+      radial-gradient(600px 400px at 12% 85%, rgba(94, 106, 210, 0.18), transparent 70%),
+      radial-gradient(600px 400px at 88% 85%, rgba(129, 77, 210, 0.16), transparent 70%);
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+  header { position: relative; text-align: center; padding-top: 44px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--ring); background: rgba(255, 255, 255, 0.04);
+    color: var(--muted); font-size: 14px; font-weight: 500;
+  }
+  .pill b { color: var(--text); font-weight: 600; }
+  h1 {
+    margin-top: 18px; font-size: 64px; line-height: 1; font-weight: 700; letter-spacing: -0.04em;
+    background: linear-gradient(180deg, #ffffff 30%, #a5abef);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { margin-top: 14px; font-size: 19px; color: var(--muted); letter-spacing: -0.01em; }
+  .platforms {
+    margin-top: 18px; display: flex; justify-content: center; gap: 8px;
+    font-size: 13px; font-weight: 500; color: #c9ccd1;
+  }
+  .platforms span {
+    padding: 4px 10px; border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--ring);
+  }
+
+  .stage { position: absolute; inset: 0; }
+  .device { position: absolute; box-shadow: var(--shadow); }
+  .device img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: right top; }
+
+  .window { border-radius: 12px; overflow: hidden; background: #fff; outline: 1px solid var(--ring); }
+  .window .shot { aspect-ratio: 16 / 9; }
+  .browser .shot { aspect-ratio: 1600 / 881; }
+  .bar { height: 32px; display: flex; align-items: center; font-size: 12px; color: #3c3c43; }
+
+  .mac .bar { background: #ececec; justify-content: center; position: relative; border-bottom: 1px solid #d9d9d9; }
+  .mac .lights { position: absolute; left: 12px; display: flex; gap: 8px; }
+  .mac .lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .mac .shot { aspect-ratio: 4 / 3; }
+
+  .win .bar { background: #f3f3f3; justify-content: space-between; padding-left: 14px; }
+  .win .controls { display: flex; height: 100%; }
+  .win .controls i { width: 46px; display: grid; place-items: center; font-style: normal; font-size: 13px; color: #555; }
+
+  .gnome .bar { background: #ebebeb; justify-content: center; position: relative; height: 38px; font-weight: 600; border-bottom: 1px solid #d6d6d6; }
+  .gnome .close { position: absolute; right: 10px; width: 22px; height: 22px; border-radius: 50%; background: #dadada; display: grid; place-items: center; font-size: 11px; }
+
+  .browser .bar { background: #dee1e6; gap: 10px; padding: 0 12px; height: 40px; }
+  .browser .url { flex: 1; height: 26px; border-radius: 13px; background: #fff; display: flex; align-items: center; padding-left: 12px; color: #5f6368; }
+  .browser .dots { display: flex; gap: 6px; }
+  .browser .dots i { width: 10px; height: 10px; border-radius: 50%; background: #b7bbc1; display: block; }
+
+  .phone { background: #0b0b0c; padding: 9px; border-radius: 46px; outline: 1px solid rgba(255, 255, 255, 0.14); }
+  .phone .shot { border-radius: 38px; overflow: hidden; aspect-ratio: 9 / 19.5; position: relative; background: #fff; }
+  .phone .island { position: absolute; top: 10px; left: 50%; width: 30%; height: 22px; transform: translateX(-50%); background: #000; border-radius: 12px; z-index: 1; }
+  .android { border-radius: 36px; }
+  .android .shot { border-radius: 28px; aspect-ratio: 9 / 20; }
+  .android .island { width: 12px; height: 12px; border-radius: 50%; top: 10px; }
+
+  .tablet { background: #0b0b0c; padding: 12px; border-radius: 30px; outline: 1px solid rgba(255, 255, 255, 0.14); }
+  .tablet .shot { border-radius: 18px; overflow: hidden; aspect-ratio: 834 / 1210; background: #fff; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="grid"></div>
+
+  <header>
+    <div class="pill"><b>popover</b> for Flutter</div>
+    <h1>One popover, every platform</h1>
+    <p class="sub">Placed the way UIKit and NSPopover place theirs.</p>
+    <div class="platforms">
+      <span>iOS</span><span>iPadOS</span><span>macOS</span><span>Android</span><span>Windows</span><span>Linux</span><span>Web</span>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="device window win" style="left: 40px; top: 280px; width: 480px; z-index: 1;" data-shot="windows">
+      <div class="bar"><span>Popover Example</span><span class="controls"><i>&#x2500;</i><i>&#x25A1;</i><i>&#x2715;</i></span></div>
+      <div class="shot"><img alt="Windows"></div>
+    </div>
+
+    <div class="device window mac" style="left: 560px; top: 262px; width: 480px; z-index: 2;" data-shot="macOS">
+      <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>Popover Example</div>
+      <div class="shot"><img alt="macOS"></div>
+    </div>
+
+    <div class="device window gnome" style="left: 1080px; top: 280px; width: 480px; z-index: 1;" data-shot="linux">
+      <div class="bar">Popover Example<span class="close">&#x2715;</span></div>
+      <div class="shot"><img alt="Linux"></div>
+    </div>
+
+    <div class="device tablet" style="left: 110px; top: 520px; width: 320px; z-index: 3;" data-shot="iOS_tablet">
+      <div class="shot"><img alt="iPad"></div>
+    </div>
+
+    <div class="device window browser" style="left: 520px; top: 600px; width: 520px; z-index: 3;" data-shot="web">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">localhost:8080</span></div>
+      <div class="shot"><img alt="Web"></div>
+    </div>
+
+    <div class="device phone" style="left: 1110px; top: 500px; width: 200px; z-index: 4;" data-shot="iOS_phone">
+      <div class="shot"><span class="island"></span><img alt="iPhone"></div>
+    </div>
+
+    <div class="device phone android" style="left: 1330px; top: 540px; width: 190px; z-index: 3;" data-shot="android_phone">
+      <div class="shot"><span class="island"></span><img alt="Android"></div>
+    </div>
+  </main>
+
+  <script>
+    const dir = new URLSearchParams(location.search).get('shots') || 'shots';
+    for (const device of document.querySelectorAll('[data-shot]')) {
+      const img = device.querySelector('img');
+      img.onerror = () => device.remove();
+      img.src = `${dir}/${device.dataset.shot}_demo.png`;
+    }
+  </script>
+</body>
+</html>

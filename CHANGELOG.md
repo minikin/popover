@@ -19,6 +19,7 @@
 - Fixed: with more than one `BoxShadow` in `shadow`, every shadow after the first was shifted by the popover's position again.
 - Added a `Mutation Test` CI workflow over `lib/` that fails below the 17% threshold in `mutation_test.xml`. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
 - Added golden tests, rendered on Linux, and an `E2E` CI workflow that runs the example's integration test on iPhone, iPad, macOS, Windows and Linux, in Chrome and on an Android emulator, with screenshots and rotation.
+- Rebuilt the example app with a Roadmap tab, an issue list with a Share menu, and a Playground tab with a direction switcher. The `E2E` workflow renders a demo image of the example on every platform.
 
 ## [0.4.0] - 23.10.2025
 
