@@ -166,3 +166,69 @@ jobs:
         with:
           name: e2e-screenshots-android
           path: example/build/screenshots
+
+  windows:
+    name: E2E Windows
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Windows
+        run: flutter drive -d windows $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-windows
+          path: example/build/screenshots
+
+  linux:
+    name: E2E Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Linux build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev xvfb
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Linux
+        run: xvfb-run -a -s "-screen 0 1600x1200x24" flutter drive -d linux $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-linux
+          path: example/build/screenshots
