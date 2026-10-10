@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
-# Renders tool/demo/index.html with the integration test screenshots to a PNG:
-#   tool/demo/render.sh <screenshots dir> <output.png> [dark|light]
+# Renders tool/demo/index.html with the integration test screenshots at 3x:
+#   tool/demo/render.sh <screenshots dir> <output.png|output.webp> [dark|light]
+# A .webp output needs cwebp.
 set -eu
 shots=$(cd "$1" && pwd)
 out=$2
@@ -16,7 +17,15 @@ for candidate in google-chrome google-chrome-stable chromium \
 done
 : "${chrome:?Chrome not found}"
 
+png=$out
+case $out in *.webp) png="${out%.webp}.png" ;; esac
+
 "$chrome" --headless=new --disable-gpu --hide-scrollbars \
-  --allow-file-access-from-files --force-device-scale-factor=2 \
+  --allow-file-access-from-files --force-device-scale-factor=3 \
   --window-size=1600,1000 --virtual-time-budget=10000 \
-  --screenshot="$out" "$page"
+  --screenshot="$png" "$page"
+
+if [ "$png" != "$out" ]; then
+  cwebp -quiet -q 90 -m 6 "$png" -o "$out"
+  rm "$png"
+fi

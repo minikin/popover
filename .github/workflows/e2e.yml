@@ -243,12 +243,15 @@ jobs:
           merge-multiple: true
           path: screenshots
 
+      - name: Install cwebp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
       - name: Render
         run: |
-          tool/demo/render.sh screenshots demo-dark.png dark
-          tool/demo/render.sh screenshots demo-light.png light
+          tool/demo/render.sh screenshots demo-dark.webp dark
+          tool/demo/render.sh screenshots demo-light.webp light
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: popover-demo
-          path: demo-*.png
+          path: demo-*.webp
