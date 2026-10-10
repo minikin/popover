@@ -59,11 +59,30 @@ Source: [Human Interface Guidelines.
 - Dart: 3.9.0+
 - Flutter: 3.35.0+
 
+## Material and material_ui
+
+Since 0.5.0 the popover depends only on `package:flutter/widgets.dart`, so it works in apps built with `package:flutter/material.dart` or with `package:material_ui`. The body is not wrapped in a `Material`. If it contains Material widgets that require one, such as `InkWell`, `ListTile`, `TextField` or `IconButton`, wrap it in the `Material` of your UI library:
+
+```dart
+showPopover(
+  context: context,
+  barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+  bodyBuilder: (context) => const Material(
+    type: MaterialType.transparency,
+    child: ListItems(),
+  ),
+);
+```
+
+`barrierLabel` defaults to `'Dismiss'`. Pass a localized label as shown above.
+
+The body inherits the themes and text style in effect at `context`. Call `showPopover` with a context under your `Scaffold` or another `Material` so the body text gets the theme's style.
+
 ## Install
 
 ```yaml
 dependencies:
-  popover: ^0.4.0
+  popover: ^0.5.0
 ```
 
 ## Example
@@ -109,7 +128,11 @@ class Button extends StatelessWidget {
         onTap: () {
           showPopover(
             context: context,
-            bodyBuilder: (context) => const ListItems(),
+            // The body is not wrapped in Material, so add one for InkWell.
+            bodyBuilder: (context) => const Material(
+              type: MaterialType.transparency,
+              child: ListItems(),
+            ),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.bottom,
             width: 200,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 extension BuildContextExtension on BuildContext {
   static Rect? getWidgetBounds(BuildContext context) {

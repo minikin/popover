@@ -15,12 +15,15 @@ void main() {
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
-          return InkWell(
-            onTap: () {
-              didDelete = true;
-              Navigator.pop(context);
-            },
-            child: const Text('Delete'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                didDelete = true;
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
           );
         },
       ),
@@ -102,11 +105,14 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
           didOpenDialog = true;
-          return InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Text('This should not happen'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Text('This should not happen'),
+            ),
           );
         },
       ),
@@ -146,11 +152,14 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
           didOpenDialog = true;
-          return InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Text('This should happen'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Text('This should happen'),
+            ),
           );
         },
       ),

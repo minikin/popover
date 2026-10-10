@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
@@ -76,12 +76,22 @@ import 'utils/popover_utils.dart';
 /// The `routeSettings` is data that might be useful in constructing a [Route].
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
+/// This argument defaults to 'Dismiss'. Pass a localized string, for example
+/// `MaterialLocalizations.of(context).modalBarrierDismissLabel`.
 ///
 /// The `requestFocus` controls whether the popover should request focus when
 /// presented. Set it to false to prevent dismissing any active keyboard.
 /// Defaults to [Navigator.requestFocus] if not provided
 ///
 ///The `popoverBuilder` is used for transition builder
+///
+/// The popover depends only on `package:flutter/widgets.dart`, so it works
+/// with both `package:flutter/material.dart` and `package:material_ui`. The
+/// body is not wrapped in a `Material`. Wrap it in the `Material` of your UI
+/// library when it contains widgets that require one, such as `InkWell`,
+/// `ListTile`, `TextField` or `IconButton`.
+/// Inherited themes such as `Theme`, `DefaultTextStyle` and `IconTheme` are
+/// captured from `context` and applied to the body.
 
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
@@ -123,7 +133,10 @@ Future<T?> showPopover<T extends Object?>({
             BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
-  return Navigator.of(context, rootNavigator: true).push<T>(
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final themes = InheritedTheme.capture(from: context, to: navigator.context);
+
+  return navigator.push<T>(
     PopoverRoute<T>(
       allowClicksOnBackground: allowClicksOnBackground,
       pageBuilder: (_, animation, __) {
@@ -131,7 +144,7 @@ Future<T?> showPopover<T extends Object?>({
           onPopInvokedWithResult: (didPop, _) => onPop?.call(),
           child: PopoverItem(
             transition: transition,
-            child: Builder(builder: bodyBuilder),
+            child: themes.wrap(Builder(builder: bodyBuilder)),
             context: context,
             backgroundColor: backgroundColor,
             direction: direction,
@@ -151,9 +164,7 @@ Future<T?> showPopover<T extends Object?>({
       },
       requestFocus: requestFocus,
       barrierDismissible: barrierDismissible,
-      barrierLabel:
-          barrierLabel ??
-          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierLabel: barrierLabel ?? _defaultBarrierLabel,
       barrierColor: barrierColor,
       transitionDuration: transitionDuration,
       settings: routeSettings,
@@ -165,6 +176,8 @@ Future<T?> showPopover<T extends Object?>({
     ),
   );
 }
+
+const _defaultBarrierLabel = 'Dismiss';
 
 class _FadeTransitionWidget extends StatefulWidget {
   const _FadeTransitionWidget({required this.child, required this.animation});

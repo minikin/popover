@@ -1,3 +1,12 @@
+## [0.5.0] - 10.10.2026
+
+- Breaking: the popover depends only on `package:flutter/widgets.dart` and works with both `package:flutter/material.dart` and `package:material_ui` ([#113](https://github.com/minikin/popover/pull/113)).(thanks [@livtanong](https://github.com/livtanong)).
+  - The body is no longer wrapped in a `Material`. Wrap it in the `Material` of your UI library if it contains Material widgets that require one, such as `InkWell`, `ListTile`, `TextField`, `IconButton`, `Checkbox` or `Switch`.
+  - `barrierLabel` defaults to `'Dismiss'` instead of `MaterialLocalizations.modalBarrierDismissLabel`. Pass a localized label if you need one.
+  - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text style is the one in effect at `context`, no longer reset to `textTheme.bodyMedium`.
+  - A translucent `backgroundColor` is painted once under the body instead of twice, so the body looks more transparent than before.
+- Added a mutation test CI job (`mutation_test`). Developing the package now needs Flutter 3.47+. The minimum Flutter version for apps is unchanged.
+
 ## [0.4.0] - 23.10.2025
 
 - Fixed memory leak by disposing CurvedAnimation in FadeTransitionWidget ([#105](https://github.com/minikin/popover/pull/105), [#106](https://github.com/minikin/popover/pull/106)).(thanks [@ZacharyYongBB](https://github.com/ZacharyYongBB)).

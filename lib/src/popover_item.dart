@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../popover.dart';
 import 'popover_context.dart';
@@ -74,7 +74,12 @@ class _PopoverItemState extends State<PopoverItem> {
                 child: child,
               );
             },
-            child: Material(child: widget.child, color: widget.backgroundColor),
+            // Absorbs taps on empty body areas so they do not reach the
+            // barrier or the widgets behind the popover.
+            child: Listener(
+              behavior: HitTestBehavior.opaque,
+              child: widget.child,
+            ),
           ),
         ),
       ],
