@@ -24,6 +24,9 @@ Future<void> _show(
   required Widget Function(WidgetBuilder launcherBuilder) app,
   Size size = const Size(360, 640),
   PopoverDirection direction = PopoverDirection.bottom,
+  List<BoxShadow> shadow = const [
+    BoxShadow(color: Color(0x1F000000), blurRadius: 5),
+  ],
 }) async {
   tester.view
     ..physicalSize = size
@@ -38,6 +41,7 @@ Future<void> _show(
           onTap: () => showPopover(
             context: context,
             direction: direction,
+            shadow: shadow,
             bodyBuilder: (_) => const SizedBox(
               key: _body,
               width: 160,
@@ -116,6 +120,27 @@ void main() {
           );
         });
       }
+
+      testWidgets('two_shadows', (tester) async {
+        await _show(
+          tester,
+          app: (launcher) =>
+              legacyApp(launcher, alignment: const Alignment(0.6, -0.6)),
+          shadow: const [
+            BoxShadow(
+              color: Color(0x40000000),
+              blurRadius: 24,
+              offset: Offset(0, 8),
+            ),
+            BoxShadow(color: Color(0x40000000), blurRadius: 2),
+          ],
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/two_shadows.png'),
+        );
+      });
 
       for (final MapEntry(key: library, value: app) in appsByLibrary.entries) {
         final name = 'library_${library.replaceAll('/', '_')}';

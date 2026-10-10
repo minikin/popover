@@ -203,18 +203,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     if (boxShadow == null) return;
     for (final boxShadow in boxShadow!) {
       final paint = boxShadow.toPaint();
-
-      arrowRect = arrowRect!
+      Rect place(Rect rect) => rect
           .shift(offset)
           .shift(boxShadow.offset)
           .inflate(boxShadow.spreadRadius);
 
-      bodyRect = bodyRect
-          .shift(offset)
-          .shift(boxShadow.offset)
-          .inflate(boxShadow.spreadRadius);
-
-      final path = PopoverPath(radius!).draw(direction, arrowRect, bodyRect);
+      final path = PopoverPath(
+        radius!,
+      ).draw(direction, place(arrowRect!), place(bodyRect));
 
       context.pushTransform(needsCompositing, offset, transform, (
         context,
