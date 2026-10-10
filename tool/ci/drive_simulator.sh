@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Runs the example's integration test on an iOS simulator. The first app launch
 # on a fresh CI simulator can hang before the VM service comes up, so each drive
-# gets 8 minutes and one retry. Run from example/.
+# gets 8 minutes, and only a timed-out drive (SIGALRM, exit 142) is retried.
+# Run from example/.
 set -u
 device=$1
 xcrun simctl boot "$device"
@@ -14,6 +15,10 @@ drive() {
     --target integration_test/popover_test.dart
 }
 status=0
-drive || drive || status=$?
+drive || status=$?
+if [ "$status" -eq 142 ]; then
+  status=0
+  drive || status=$?
+fi
 xcrun simctl shutdown "$device"
 exit $status
