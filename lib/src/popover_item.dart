@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import '../popover.dart';
 import 'popover_context.dart';
+import 'popover_glass.dart';
 import 'popover_position_widget.dart';
 import 'popover_shape.dart';
 import 'utils/build_context_extension.dart';
@@ -13,6 +14,7 @@ import 'utils/popover_utils.dart';
 class PopoverItem extends StatefulWidget {
   final Widget child;
   final Color? backgroundColor;
+  final Brightness? brightness;
   final PopoverDirection? direction;
   final double? radius;
   final List<BoxShadow>? boxShadow;
@@ -36,6 +38,7 @@ class PopoverItem extends StatefulWidget {
     required this.arrowHeight,
     this.shape = PopoverShape.triangle,
     this.backgroundColor,
+    this.brightness,
     this.direction,
     this.radius,
     this.boxShadow,
@@ -69,6 +72,12 @@ class _PopoverItemState extends State<PopoverItem> {
                 PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
             .deflateRect(Offset.zero & media.size);
     final attachRect = PopoverUtils.clampToBounds(_attachRect, bounds);
+    final brightness =
+        widget.brightness ?? MediaQuery.platformBrightnessOf(context);
+    final backgroundColor = widget.backgroundColor;
+    final glass = backgroundColor == null
+        ? PopoverGlass.of(widget.shape, brightness)
+        : null;
 
     return Stack(
       children: [
@@ -86,7 +95,12 @@ class _PopoverItemState extends State<PopoverItem> {
                 attachRect: attachRect,
                 animation: widget.animation,
                 radius: widget.radius,
-                backgroundColor: widget.backgroundColor,
+                backgroundColor:
+                    backgroundColor ??
+                    (brightness == Brightness.dark
+                        ? const Color(0xFF2C2C2E)
+                        : const Color(0xFFFFFFFF)),
+                glass: glass,
                 boxShadow: widget.boxShadow,
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,

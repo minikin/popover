@@ -26,11 +26,22 @@ import 'utils/popover_utils.dart';
 /// The `transition` is desired Popover's transition behavior.
 /// This argument defaults to `PopoverTransition.scale`.
 ///
-/// The `backgroundColor` is background [Color] of popover.
-/// This argument defaults to `Color(0xFFFFFFFF)`.
+/// The `backgroundColor` is background [Color] of popover. When it is null,
+/// the default, iOS and macOS shapes get the Liquid Glass of iOS 26 and
+/// macOS 26: the content behind is blurred and tinted. The triangle gets
+/// `Color(0xFFFFFFFF)`, or `Color(0xFF2C2C2E)` when `brightness` is dark.
+///
+/// The `brightness` picks the light or dark background. When it is null,
+/// the background contrasts with the text color the body inherits from
+/// `context`: light behind dark text, dark behind light text. Without an
+/// inherited text color it follows the system setting,
+/// [MediaQuery.platformBrightnessOf].
 ///
 /// The `barrierColor` is barrier [Color] of screen when popover is presented.
-/// This argument defaults to `Color(0x80000000)`.
+/// This argument defaults to `Color(0x80000000)` for
+/// [PopoverArrowStyle.triangle] and to transparent for
+/// [PopoverArrowStyle.apple], since iOS and macOS do not dim the screen
+/// behind a popover.
 ///
 /// The `transitionDuration` argument is used to determine how long it takes
 /// for the route to arrive on or leave off the screen. This argument defaults
@@ -120,8 +131,9 @@ Future<T?> showPopover<T extends Object?>({
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
   PopoverTransition transition = PopoverTransition.scale,
-  Color backgroundColor = const Color(0xFFFFFFFF),
-  Color barrierColor = const Color(0x80000000),
+  Color? backgroundColor,
+  Brightness? brightness,
+  Color? barrierColor,
   Duration transitionDuration = const Duration(milliseconds: 200),
   double? radius,
   List<BoxShadow>? shadow,
@@ -204,6 +216,7 @@ Future<T?> showPopover<T extends Object?>({
             child: themes.wrap(Builder(builder: bodyBuilder)),
             context: context,
             backgroundColor: backgroundColor,
+            brightness: brightness ?? _contrastWithText(context),
             direction: direction,
             radius: cornerRadius,
             boxShadow: boxShadow,
@@ -223,7 +236,11 @@ Future<T?> showPopover<T extends Object?>({
       requestFocus: requestFocus,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel ?? _defaultBarrierLabel,
-      barrierColor: barrierColor,
+      barrierColor:
+          barrierColor ??
+          (shape == PopoverShape.triangle
+              ? const Color(0x80000000)
+              : const Color(0x00000000)),
       transitionDuration: transitionDuration,
       settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
@@ -236,6 +253,15 @@ Future<T?> showPopover<T extends Object?>({
 }
 
 const _defaultBarrierLabel = 'Dismiss';
+
+/// The background brightness that keeps the text the body inherits from
+/// [context] readable, or null when no text color is inherited.
+Brightness? _contrastWithText(BuildContext context) {
+  final color = DefaultTextStyle.of(context).style.color;
+  if (color == null) return null;
+  final luminance = color.computeLuminance() + 0.05;
+  return luminance * luminance > 0.15 ? Brightness.dark : Brightness.light;
+}
 
 const _triangleShadow = [BoxShadow(color: Color(0x1F000000), blurRadius: 5)];
 
