@@ -211,7 +211,7 @@ class _RoadmapPageState extends State<RoadmapPage> {
           blurRadius: 24,
           offset: Offset(0, 8),
         ),
-        BoxShadow(color: Color(0x0F000000), blurRadius: 2),
+        BoxShadow(color: Color(0x2E000000), spreadRadius: 0.5),
       ],
       bodyBuilder: (context) => Material(
         type: MaterialType.transparency,
@@ -224,7 +224,7 @@ class _RoadmapPageState extends State<RoadmapPage> {
   }
 }
 
-class _Issue extends StatelessWidget {
+class _Issue extends StatefulWidget {
   final String id;
   final String title;
   final _Status status;
@@ -238,6 +238,13 @@ class _Issue extends StatelessWidget {
   });
 
   @override
+  State<_Issue> createState() => _IssueState();
+}
+
+class _IssueState extends State<_Issue> {
+  final _dot = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
@@ -249,22 +256,25 @@ class _Issue extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Builder(
-            builder: (context) => IconButton(
-              key: statusAnchor(id),
-              tooltip: status.label,
-              onPressed: () => onStatusTap(context),
-              icon: Icon(Icons.circle, size: 12, color: status.color),
+          IconButton(
+            key: statusAnchor(widget.id),
+            tooltip: widget.status.label,
+            onPressed: () => widget.onStatusTap(_dot.currentContext!),
+            icon: Icon(
+              Icons.circle,
+              key: _dot,
+              size: 12,
+              color: widget.status.color,
             ),
           ),
           Text(
-            id,
+            widget.id,
             style: const TextStyle(color: Color(0xFF8A8A93), fontSize: 13),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              title,
+              widget.title,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
