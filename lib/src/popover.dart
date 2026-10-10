@@ -23,7 +23,7 @@ import 'utils/popover_utils.dart';
 /// This argument defaults to `PopoverTransition.scale`.
 ///
 /// The `backgroundColor` is background [Color] of popover.
-/// This argument defaults to `Color(0x8FFFFFFFF)`.
+/// This argument defaults to `Color(0xFFFFFFFF)`.
 ///
 /// The `barrierColor` is barrier [Color] of screen when popover is presented.
 /// This argument defaults to `Color(0x80000000)`.
@@ -102,7 +102,7 @@ Future<T?> showPopover<T extends Object?>({
   required WidgetBuilder bodyBuilder,
   PopoverDirection direction = PopoverDirection.bottom,
   PopoverTransition transition = PopoverTransition.scale,
-  Color backgroundColor = const Color(0x8FFFFFFFF),
+  Color backgroundColor = const Color(0xFFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
   double radius = 8,
