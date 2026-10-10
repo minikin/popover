@@ -20,9 +20,13 @@ env:
 
 jobs:
   apple:
-    name: E2E iOS and macOS
+    name: E2E ${{ matrix.target }}
     runs-on: macos-latest
-    timeout-minutes: 100
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [iPhone, iPad, macOS]
     defaults:
       run:
         working-directory: example
@@ -39,35 +43,34 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Pick simulators
+      - name: Pick the simulator
+        if: matrix.target != 'macOS'
+        env:
+          TARGET: ${{ matrix.target }}
         run: |
           python3 - >> "$GITHUB_ENV" <<'EOF'
-          import json, re, subprocess
+          import json, os, re, subprocess
+          pattern = {"iPhone": r"iPhone \d+ Pro$", "iPad": r"iPad Pro 11-inch"}[
+              os.environ["TARGET"]]
           listing = json.loads(subprocess.check_output(
               ["xcrun", "simctl", "list", "devices", "available", "-j"]))
           runtimes = sorted(
               (r for r in listing["devices"] if ".iOS-" in r), reverse=True)
-          def pick(pattern):
-              for runtime in runtimes:
-                  for device in listing["devices"][runtime]:
-                      if re.match(pattern, device["name"]):
-                          return device["udid"]
-              raise SystemExit(f"no simulator matches {pattern}")
-          print(f"IPHONE={pick(r'iPhone \d+ Pro$')}")
-          print(f"IPAD={pick(r'iPad Pro 11-inch')}")
+          for runtime in runtimes:
+              for device in listing["devices"][runtime]:
+                  if re.match(pattern, device["name"]):
+                      print(f"DEVICE={device['udid']}")
+                      raise SystemExit
+          raise SystemExit(f"no simulator matches {pattern}")
           EOF
 
-      - name: iPhone
+      - name: Simulator
+        if: matrix.target != 'macOS'
         timeout-minutes: 30
-        run: ../tool/ci/drive_simulator.sh "$IPHONE"
-
-      - name: iPad
-        if: ${{ !cancelled() }}
-        timeout-minutes: 30
-        run: ../tool/ci/drive_simulator.sh "$IPAD"
+        run: ../tool/ci/drive_simulator.sh "$DEVICE"
 
       - name: macOS
-        if: ${{ !cancelled() }}
+        if: matrix.target == 'macOS'
         timeout-minutes: 20
         run: flutter drive -d macos $DRIVE_ARGS
 
@@ -75,7 +78,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: e2e-screenshots-apple
+          name: e2e-screenshots-${{ matrix.target }}
           path: example/build/screenshots
 
   web:

@@ -20,6 +20,8 @@ A PR with a working fix or a minimal reproduction in the example app is always w
    CI also runs a mutation test over `lib/` that fails below the threshold in
    `mutation_test.xml`. Run it locally with
    `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.
+   CI splits the same run into six parallel shards with
+   `tool/ci/mutation_shards.py` and checks the threshold on their sum.
 
    Golden tests in `test/golden_test.dart` run only on Linux, because text and
    shadows render a few pixels differently on macOS. If your change moves pixels,
