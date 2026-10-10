@@ -100,8 +100,16 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               const SizedBox(height: 8),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [row, row, row],
+                  children: [
+                    for (final alignment in const [
+                      Alignment.topCenter,
+                      Alignment.center,
+                      Alignment.bottomCenter,
+                    ])
+                      Expanded(
+                        child: Align(alignment: alignment, child: row),
+                      ),
+                  ],
                 ),
               ),
             ],
