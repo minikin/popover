@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 
@@ -197,22 +198,26 @@ class _RoadmapPageState extends State<RoadmapPage> {
     required Widget child,
     PopoverDirection direction = PopoverDirection.bottom,
   }) {
+    final platform = defaultTargetPlatform;
+    final native =
+        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
     showPopover(
       context: context,
       width: width,
       direction: direction,
-      radius: 12,
-      arrowWidth: 22,
-      arrowHeight: 11,
       barrierColor: const Color(0x00000000),
-      shadow: const [
-        BoxShadow(
-          color: Color(0x1A000000),
-          blurRadius: 24,
-          offset: Offset(0, 8),
-        ),
-        BoxShadow(color: Color(0x2E000000), spreadRadius: 0.5),
-      ],
+      // The native shape brings its own shadow. The triangle gets a hairline
+      // outline so its arrow shows on the white rows.
+      shadow: native
+          ? null
+          : const [
+              BoxShadow(
+                color: Color(0x1A000000),
+                blurRadius: 24,
+                offset: Offset(0, 8),
+              ),
+              BoxShadow(color: Color(0x2E000000), spreadRadius: 0.5),
+            ],
       bodyBuilder: (context) => Material(
         type: MaterialType.transparency,
         child: Padding(

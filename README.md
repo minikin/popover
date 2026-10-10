@@ -99,6 +99,24 @@ Cupertino widgets such as `CupertinoListTile` need no wrapper.
 `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
 `CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
 
+## Arrow style
+
+`arrowStyle` picks the shape. `PopoverArrowStyle.apple` draws the native
+outline. On iOS that is the iOS 26 popover: Apple's continuous corners with a
+34 point radius and a 26 by 13 arrow whose tip is rounded and whose sides flow
+into the body. On macOS it is the macOS 26 `NSPopover`: 20 point corners and an
+arrow with an arc for a tip. Next to a corner the arrow merges into it, as on
+the native platforms. The outlines repeat the mask paths UIKit and AppKit draw,
+checked against paths dumped from an iOS simulator and from macOS, and the
+default shadows are measured from both.
+
+`PopoverArrowStyle.triangle` is the sharp triangle with 8 point corners from
+earlier versions. `PopoverArrowStyle.adaptive`, the default, picks `apple` on
+iOS, iPadOS and macOS and `triangle` everywhere else, on the web by the
+host OS. `arrowWidth`,
+`arrowHeight`, `radius` and `shadow` override the defaults of either style, for
+example `radius: 13` for the corners of iOS before version 26.
+
 ## Placement
 
 The popover is placed the way `UIPopoverPresentationController` and
@@ -114,7 +132,7 @@ and the body shrinks to fit, so a scrollable body scrolls.
 
 The popover stays inside the safe area and above the keyboard, with Apple's
 margins: 10 on iPhone, 19 at the sides, 30 at the top and 10 at the bottom on
-iPad, 12 on macOS. Android, Windows, Linux and the web use the iPhone margin.
+iPad, 13 on macOS. Android, Windows, Linux and the web use the iPhone margin.
 Flutter web picks the rules of the host OS, so it gets the macOS rules on a
 Mac.
 

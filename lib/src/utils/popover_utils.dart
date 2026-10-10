@@ -4,10 +4,10 @@ import '../popover_direction.dart';
 
 abstract class PopoverUtils {
   /// The gap Apple keeps between a popover and the safe area: 10 on iPhone,
-  /// 19 at the sides, 30 at the top and 10 at the bottom on iPad, 12 on
+  /// 19 at the sides, 30 at the top and 10 at the bottom on iPad, 13 on
   /// macOS. Other platforms use the iPhone gap.
   static EdgeInsets screenMargin(TargetPlatform platform, Size screenSize) {
-    if (platform == TargetPlatform.macOS) return const EdgeInsets.all(12);
+    if (platform == TargetPlatform.macOS) return const EdgeInsets.all(13);
     if (platform == TargetPlatform.iOS && screenSize.shortestSide >= 600) {
       return const EdgeInsets.fromLTRB(19, 30, 19, 10);
     }

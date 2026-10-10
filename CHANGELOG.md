@@ -6,18 +6,22 @@
   - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text and icon styles are the ones in effect at `context`: the `AppBar` foreground color when opened from an `AppBar` action, and `MaterialApp`'s red debug text without a `Material` ancestor. A `Material` around the body resets the text to `textTheme.bodyMedium`.
   - A translucent `backgroundColor` is painted once under the body instead of twice, so the body looks more transparent than before.
 - Breaking: the popover is placed the way iOS, iPadOS and macOS place theirs. The rules come from `UIPopoverPresentationController` and `NSPopover` measured on iOS 26 simulators and macOS 26.
-  - It stays inside the safe area and above the keyboard. The margin is 10 on iPhone, Android, web, Windows and Linux. On iPad it is 19 at the sides, 30 at the top and 10 at the bottom, and on macOS 12.
+  - It stays inside the safe area and above the keyboard. The margin is 10 on iPhone, Android, web, Windows and Linux. On iPad it is 19 at the sides, 30 at the top and 10 at the bottom, and on macOS 13.
   - When the body fits on neither the preferred side nor the opposite one, it takes the side with more room and shrinks to fit, so a scrollable body scrolls. On macOS it first tries the two perpendicular sides, like `NSPopover`.
   - Outside macOS, a popover on the left or the right may cover the anchor up to its center, as UIKit does.
   - `width`, `height` and `constraints` are capped by the space available.
   - The popover follows its anchor when the anchor moves, scrolls or the screen rotates, as UIKit does for a source view. When the anchor leaves the tree while the popover is open, for example in a lazy list, the popover stays where the anchor was last seen.
   - An anchor partly or fully off screen is moved onto the screen edge first. UIKit does this below the bottom edge and beside the side edges but lets an anchor above the top edge push the popover off screen. The popover clamps on every edge.
-  - The arrow stops short of the rounded corners. UIKit merges the arrow into the corner instead, which waits for the native arrow shape.
+  - The `triangle` arrow stops short of the rounded corners. The `apple` arrow merges into a nearby corner, as UIKit and AppKit do.
   - Flutter web follows the rules of the host OS, so it uses the macOS rules on a Mac.
+- Breaking: on iOS, iPadOS and macOS the popover has the native shape by default. The new `arrowStyle` parameter takes `PopoverArrowStyle.apple`, `triangle` or `adaptive`, the default, which is `apple` on Apple platforms and `triangle` elsewhere. Flutter web follows the host OS here too, so Safari on a Mac or an iPhone gets the `apple` shape.
+  - On iOS the `apple` outline repeats the mask path of `UIPopoverPresentationController` on iOS 26 element for element: continuous corners with a 34 point radius, a 26 by 13 arrow with a rounded tip and filleted sides, and the corner next to the arrow merging into it. A test compares it with 31 paths dumped from a simulator. Its default shadow, `BoxShadow(color: Color(0x6B000000), blurRadius: 210)`, matches the iOS shadow within one level of brightness.
+  - On macOS it repeats the `NSPopover` outline of macOS 26: 20 point corners, a 25.42 by 13 arrow with an arc for a tip, and AppKit's blend of the arrow into a nearby corner. A test compares it with 171 paths dumped from macOS. The default shadow, `BoxShadow(color: Color(0x40000000), blurRadius: 12, offset: Offset(0, 3.6))`, is fitted to a screenshot of `NSPopover`.
+  - `arrowWidth`, `arrowHeight`, `radius` and `shadow` are now nullable and default per style. Pass `arrowStyle: PopoverArrowStyle.triangle` for the previous look.
 - Fixed: the popover flipped and slid against the size of the first window, not the screen it is shown in. Near the right edge it could open off screen.
 - Fixed: a flipped popover drew its shadow with the arrow on the original side.
 - Fixed: with more than one `BoxShadow` in `shadow`, every shadow after the first was shifted by the popover's position again.
-- Added a `Mutation Test` CI workflow over `lib/` that fails below the 75% threshold in `mutation_test.xml`. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
+- Added a `Mutation Test` CI workflow over `lib/` that fails below the 75% threshold in `mutation_test.xml`. It runs in parallel shards and, on a pull request, mutates only the changed declarations. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
 - Added golden tests, rendered on Linux, and an `E2E` CI workflow that runs the example's integration test on iPhone, iPad, macOS, Windows and Linux, in Chrome and on an Android emulator, with screenshots and rotation.
 - Rebuilt the example app with a Roadmap tab, an issue list with a Share menu, and a Playground tab with a direction switcher. The `E2E` workflow renders a demo image of the example on every platform.
 
