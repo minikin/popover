@@ -1,3 +1,5 @@
+import 'package:cupertino_ui/cupertino_ui.dart' as cui;
+import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as legacy;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,6 +34,32 @@ Widget _materialUiApp(WidgetBuilder launcherBuilder) {
   );
 }
 
+Widget _cupertinoApp(WidgetBuilder launcherBuilder) {
+  return cupertino.CupertinoApp(
+    theme: const cupertino.CupertinoThemeData(
+      textTheme: cupertino.CupertinoTextThemeData(
+        textStyle: TextStyle(color: _bodyColor),
+      ),
+    ),
+    home: cupertino.CupertinoPageScaffold(
+      child: Center(child: Builder(builder: launcherBuilder)),
+    ),
+  );
+}
+
+Widget _cupertinoUiApp(WidgetBuilder launcherBuilder) {
+  return cui.CupertinoApp(
+    theme: const cui.CupertinoThemeData(
+      textTheme: cui.CupertinoTextThemeData(
+        textStyle: TextStyle(color: _bodyColor),
+      ),
+    ),
+    home: cui.CupertinoPageScaffold(
+      child: Center(child: Builder(builder: launcherBuilder)),
+    ),
+  );
+}
+
 Future<void> _open(
   WidgetTester tester,
   _AppBuilder app, {
@@ -58,6 +86,8 @@ void main() {
   final apps = <String, _AppBuilder>{
     'flutter/material': _legacyApp,
     'material_ui': _materialUiApp,
+    'flutter/cupertino': _cupertinoApp,
+    'cupertino_ui': _cupertinoUiApp,
   };
 
   for (final MapEntry(key: name, value: app) in apps.entries) {
@@ -138,6 +168,27 @@ void main() {
       _materialUiApp,
       bodyBuilder: (_) =>
           const mui.Material(child: mui.ListTile(title: Text('Tile'))),
+    );
+
+    expect(find.text('Tile'), findsOneWidget);
+  });
+
+  testWidgets('flutter/cupertino CupertinoListTile works', (tester) async {
+    await _open(
+      tester,
+      _cupertinoApp,
+      bodyBuilder: (_) =>
+          const cupertino.CupertinoListTile(title: Text('Tile')),
+    );
+
+    expect(find.text('Tile'), findsOneWidget);
+  });
+
+  testWidgets('cupertino_ui CupertinoListTile works', (tester) async {
+    await _open(
+      tester,
+      _cupertinoUiApp,
+      bodyBuilder: (_) => const cui.CupertinoListTile(title: Text('Tile')),
     );
 
     expect(find.text('Tile'), findsOneWidget);

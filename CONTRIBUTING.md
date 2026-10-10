@@ -16,7 +16,7 @@ A PR with a working fix or a minimal reproduction in the example app is always w
 
 1. Fork the repository and create your branch from `main`.
 2. Make sure the existing tests pass: `flutter test`. Developing the package needs
-   Flutter 3.47+, because the tests also run against `package:material_ui`.
+   Flutter 3.47+, because the tests also run against `material_ui` and `cupertino_ui`.
    CI also runs a mutation test over `lib/` that fails below the threshold in
    `mutation_test.xml`. Run it locally with
    `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.

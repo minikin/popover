@@ -86,7 +86,8 @@ import 'utils/popover_utils.dart';
 ///The `popoverBuilder` is used for transition builder
 ///
 /// The popover depends only on `package:flutter/widgets.dart`, so it works
-/// with both `package:flutter/material.dart` and `package:material_ui`. The
+/// with `package:flutter/material.dart`, `package:flutter/cupertino.dart`,
+/// `package:material_ui` and `package:cupertino_ui`. The
 /// body is not wrapped in a `Material`. Wrap it in the `Material` of your UI
 /// library when it contains widgets that require one, such as `InkWell`,
 /// `ListTile`, `TextField` or `IconButton`.

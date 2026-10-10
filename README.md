@@ -67,13 +67,14 @@ class MenuButton extends StatelessWidget {
 user taps outside. `example/lib/main.dart` places nine buttons across the
 screen. Run it with `cd example && flutter run`.
 
-## Material and material_ui
+## Material and Cupertino
 
-Flutter 3.47 moved Material into the
-[`material_ui`](https://pub.dev/packages/material_ui) package, and its
-`Material` and `MaterialLocalizations` are different classes from the ones in
-`package:flutter/material.dart`. Since 0.5.0 popover uses neither, so it works
-with both.
+Flutter 3.47 moved Material and Cupertino into the
+[`material_ui`](https://pub.dev/packages/material_ui) and
+[`cupertino_ui`](https://pub.dev/packages/cupertino_ui) packages, whose classes
+differ from the ones in `package:flutter/material.dart` and
+`package:flutter/cupertino.dart`. Since 0.5.0 popover depends on none of them
+and works in a `MaterialApp` or a `CupertinoApp` from either source.
 
 The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
 `IconButton` and the other widgets that need one throw
@@ -85,9 +86,12 @@ inherited themes at `context` and applies them to the body. Call it with a
 context under a `Scaffold` or another `Material`, or the body text falls back
 to the app's default style.
 
+Cupertino widgets such as `CupertinoListTile` need no wrapper.
+
 `barrierLabel` is the screen reader label of the barrier and defaults to
 `'Dismiss'`. For a localized one, pass
-`MaterialLocalizations.of(context).modalBarrierDismissLabel`.
+`MaterialLocalizations.of(context).modalBarrierDismissLabel` or
+`CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
 
 ## Placement
 
