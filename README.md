@@ -77,17 +77,17 @@ differ from the ones in `package:flutter/material.dart` and
 and works in a `MaterialApp` or a `CupertinoApp` from either source.
 
 The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
-`IconButton` and the other widgets that need one throw
+`Checkbox` and the other widgets that need one throw
 `No Material widget found` unless you wrap the body in the `Material` of your
 UI library, as the quick start does.
 
 `showPopover` captures `Theme`, `DefaultTextStyle`, `IconTheme` and the other
 inherited themes at `context` and applies them to the body, as `showDialog`
-does. The body gets the text and icon style in effect where it was opened:
-white when opened from an action on a colored `AppBar`, and `MaterialApp`'s
-red debug style when `context` has no `Material` ancestor. A `Material`
-wrapper resets the text to the theme's `bodyMedium`. An `IconTheme` around the
-body resets the icons.
+does. The body gets the text and icon style in effect where it was opened: the
+`AppBar` foreground color when opened from an `AppBar` action, and
+`MaterialApp`'s red debug style when `context` has no `Material` ancestor. A
+`Material` wrapper resets the text to the theme's `bodyMedium`. An `IconTheme`
+around the body resets the icons.
 
 Cupertino widgets such as `CupertinoListTile` need no wrapper.
 

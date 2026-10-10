@@ -12,9 +12,9 @@ import 'utils/popover_utils.dart';
 /// Note that when [allowClicksOnBackground] is set to true,
 /// [barrierDismissible] is ignored (will behave as if it was set to false).
 ///
-/// This function allows for customization of aspects of the dialog popup.
+/// This function allows for customization of aspects of the popover.
 ///
-/// `bodyBuilder` argument is  builder which builds body/content of popover.
+/// `bodyBuilder` argument is builder which builds body/content of popover.
 ///
 /// The `direction` is desired Popover's direction behavior.
 /// This argument defaults to `PopoverDirection.bottom`.
@@ -35,7 +35,7 @@ import 'utils/popover_utils.dart';
 /// The `radius` of popover's body.
 /// This argument defaults to 8.
 ///
-/// The `shadow`  is [BoxShadow] of popover body.
+/// The `shadow` is [BoxShadow] of popover body.
 /// This argument defaults to
 /// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]`.
 ///
@@ -53,12 +53,12 @@ import 'utils/popover_utils.dart';
 /// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
-/// The`contentDyOffset` offsets [Popover]s content
-/// position on Y axis. It can be positive or negative number.
+/// The `contentDyOffset` offsets the popover body on Y axis.
+/// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
-/// The`contentDxOffset` offsets [Popover]s content
-/// position on X axis. It can be positive or negative number.
+/// The `contentDxOffset` offsets the popover body on X axis.
+/// It can be positive or negative number.
 /// This argument defaults to 0.
 ///
 /// The `barrierDismissible` argument is used to determine whether this route
@@ -67,9 +67,10 @@ import 'utils/popover_utils.dart';
 ///
 /// The `width` is popover's body/content widget width.
 ///
-/// The` height` is popover's body/content widget height.
+/// The `height` is popover's body/content widget height.
 ///
-/// The `onPop` called to veto attempts by the user to dismiss the popover.
+/// The `onPop` runs when the popover pops, by a barrier tap, a back gesture
+/// or `Navigator.pop`. It cannot cancel the dismissal.
 ///
 /// The `constraints` is popover's constraints.
 ///
@@ -77,20 +78,22 @@ import 'utils/popover_utils.dart';
 ///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
 /// This argument defaults to 'Dismiss'. Pass a localized string, for example
-/// `MaterialLocalizations.of(context).modalBarrierDismissLabel`.
+/// `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
+/// `CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
 ///
 /// The `requestFocus` controls whether the popover should request focus when
 /// presented. Set it to false to prevent dismissing any active keyboard.
 /// Defaults to [Navigator.requestFocus] if not provided
 ///
-///The `popoverBuilder` is used for transition builder
+/// The `popoverTransitionBuilder` replaces the default fade. It receives the
+/// route animation and the popover and returns the widget to show.
 ///
 /// The popover depends only on `package:flutter/widgets.dart`, so it works
 /// with `package:flutter/material.dart`, `package:flutter/cupertino.dart`,
-/// `package:material_ui` and `package:cupertino_ui`. The
-/// body is not wrapped in a `Material`. Wrap it in the `Material` of your UI
-/// library when it contains widgets that require one, such as `InkWell`,
-/// `ListTile`, `TextField` or `IconButton`.
+/// `package:material_ui` and `package:cupertino_ui`. The body is not wrapped
+/// in a `Material`. Wrap it in the `Material` of your UI library when it
+/// contains widgets that require one, such as `InkWell`, `ListTile` or
+/// `TextField`.
 /// Inherited themes such as `Theme`, `DefaultTextStyle` and `IconTheme` are
 /// captured from `context` and applied to the body.
 
