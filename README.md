@@ -2,7 +2,7 @@
 
 [![pub](https://img.shields.io/pub/v/popover.svg)](https://pub.dev/packages/popover)
 [![CI](https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg)](https://github.com/minikin/popover/actions)
-[![codecov](https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ)](https://codecov.io/gh/minikin/popover)
+[![coverage](https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ)](https://codecov.io/gh/minikin/popover)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 <p align="center">
