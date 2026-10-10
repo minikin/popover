@@ -20,9 +20,11 @@ A PR with a working fix or a minimal reproduction in the example app is always w
    CI also runs a mutation test over `lib/` that fails below the threshold in
    `mutation_test.xml`. Run it locally with
    `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.
-   CI splits the run into six parallel shards with `tool/ci/mutation_shards.py`
-   and checks the threshold on their sum. On a pull request only the methods
-   that touch changed lines in `lib/` are mutated, on `main` all of `lib/`.
+   In CI, `tool/ci/mutation_shards.py` counts the mutants and packs them into up
+   to ten parallel shards of about 50 each, and the threshold applies to their
+   sum. On a pull request only the declarations that contain changed lines in
+   `lib/` are mutated, on `main` all of `lib/`. A pull request without changes
+   in `lib/` runs no shards.
 
    Golden tests in `test/golden_test.dart` run only on Linux, because text and
    shadows render a few pixels differently on macOS. If your change moves pixels,
