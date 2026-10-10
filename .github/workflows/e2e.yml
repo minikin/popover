@@ -54,7 +54,7 @@ jobs:
                           return device["udid"]
               raise SystemExit(f"no simulator matches {pattern}")
           print(f"IPHONE={pick(r'iPhone \d+ Pro$')}")
-          print(f"IPAD={pick(r'iPad Pro 1[13]-inch')}")
+          print(f"IPAD={pick(r'iPad Pro 11-inch')}")
           EOF
 
       - name: iPhone

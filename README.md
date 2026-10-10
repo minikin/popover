@@ -6,7 +6,10 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 <p align="center">
-  <img src="https://i.ibb.co/0DW1XQ0/popover-demo.png" alt="Popovers with arrows pointing at the buttons that opened them" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/minikin/popover/main/assets/demo-dark.webp">
+    <img src="https://raw.githubusercontent.com/minikin/popover/main/assets/demo-light.webp" alt="The example app with open popovers on macOS, iPad, iPhone, Android, Windows, Linux and the web" />
+  </picture>
 </p>
 
 A Flutter popover in the style of iOS: a box with an arrow pointing at the
