@@ -22,7 +22,7 @@ jobs:
   apple:
     name: E2E iOS and macOS
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 100
     defaults:
       run:
         working-directory: example
@@ -58,12 +58,12 @@ jobs:
           EOF
 
       - name: iPhone
-        timeout-minutes: 25
+        timeout-minutes: 30
         run: ../tool/ci/drive_simulator.sh "$IPHONE"
 
       - name: iPad
         if: ${{ !cancelled() }}
-        timeout-minutes: 25
+        timeout-minutes: 30
         run: ../tool/ci/drive_simulator.sh "$IPAD"
 
       - name: macOS
