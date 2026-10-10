@@ -3,7 +3,7 @@
 - Breaking: the popover depends only on `package:flutter/widgets.dart` and works with `package:flutter/material.dart`, `package:flutter/cupertino.dart`, `package:material_ui` and `package:cupertino_ui`. 0.4.0 threw `No MaterialLocalizations found` in a `CupertinoApp` ([#113](https://github.com/minikin/popover/pull/113)).(thanks [@livtanong](https://github.com/livtanong)).
   - The body is no longer wrapped in a `Material`. Wrap it in the `Material` of your UI library if it contains Material widgets that require one, such as `InkWell`, `ListTile`, `TextField`, `IconButton`, `Checkbox` or `Switch`.
   - `barrierLabel` defaults to `'Dismiss'` instead of `MaterialLocalizations.modalBarrierDismissLabel`. Pass a localized label if you need one.
-  - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text style is the one in effect at `context`, no longer reset to `textTheme.bodyMedium`.
+  - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text and icon styles are the ones in effect at `context`: white when opened from an action on a colored `AppBar`, and `MaterialApp`'s red debug text without a `Material` ancestor. A `Material` around the body resets the text to `textTheme.bodyMedium`.
   - A translucent `backgroundColor` is painted once under the body instead of twice, so the body looks more transparent than before.
 - Added a mutation test CI job (`mutation_test`). Developing the package now needs Flutter 3.47+. The minimum Flutter version for apps is unchanged.
 

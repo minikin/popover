@@ -6,17 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart' as mui;
 import 'package:popover/popover.dart';
 
-const _bodyColor = Color(0xFFAA0000);
+const _callerColor = Color(0xFF00AA00);
 
 typedef _AppBuilder = Widget Function(WidgetBuilder launcherBuilder);
 
 Widget _legacyApp(WidgetBuilder launcherBuilder) {
   return legacy.MaterialApp(
-    theme: legacy.ThemeData(
-      textTheme: const legacy.TextTheme(
-        bodyMedium: TextStyle(color: _bodyColor),
-      ),
-    ),
     home: legacy.Scaffold(
       body: Center(child: Builder(builder: launcherBuilder)),
     ),
@@ -25,9 +20,6 @@ Widget _legacyApp(WidgetBuilder launcherBuilder) {
 
 Widget _materialUiApp(WidgetBuilder launcherBuilder) {
   return mui.MaterialApp(
-    theme: mui.ThemeData(
-      textTheme: const mui.TextTheme(bodyMedium: TextStyle(color: _bodyColor)),
-    ),
     home: mui.Scaffold(
       body: Center(child: Builder(builder: launcherBuilder)),
     ),
@@ -36,11 +28,6 @@ Widget _materialUiApp(WidgetBuilder launcherBuilder) {
 
 Widget _cupertinoApp(WidgetBuilder launcherBuilder) {
   return cupertino.CupertinoApp(
-    theme: const cupertino.CupertinoThemeData(
-      textTheme: cupertino.CupertinoTextThemeData(
-        textStyle: TextStyle(color: _bodyColor),
-      ),
-    ),
     home: cupertino.CupertinoPageScaffold(
       child: Center(child: Builder(builder: launcherBuilder)),
     ),
@@ -49,11 +36,6 @@ Widget _cupertinoApp(WidgetBuilder launcherBuilder) {
 
 Widget _cupertinoUiApp(WidgetBuilder launcherBuilder) {
   return cui.CupertinoApp(
-    theme: const cui.CupertinoThemeData(
-      textTheme: cui.CupertinoTextThemeData(
-        textStyle: TextStyle(color: _bodyColor),
-      ),
-    ),
     home: cui.CupertinoPageScaffold(
       child: Center(child: Builder(builder: launcherBuilder)),
     ),
@@ -68,13 +50,18 @@ Future<void> _open(
 }) async {
   await tester.pumpWidget(
     app(
-      (context) => GestureDetector(
-        onTap: () => showPopover(
-          context: context,
-          bodyBuilder: bodyBuilder,
-          barrierLabel: barrierLabel,
+      (context) => DefaultTextStyle.merge(
+        style: const TextStyle(color: _callerColor),
+        child: Builder(
+          builder: (context) => GestureDetector(
+            onTap: () => showPopover(
+              context: context,
+              bodyBuilder: bodyBuilder,
+              barrierLabel: barrierLabel,
+            ),
+            child: const Text('Go'),
+          ),
         ),
-        child: const Text('Go'),
       ),
     ),
   );
@@ -142,7 +129,7 @@ void main() {
           },
         );
 
-        expect(bodyStyle.color, _bodyColor);
+        expect(bodyStyle.color, _callerColor);
       });
     });
   }

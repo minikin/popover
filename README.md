@@ -82,9 +82,12 @@ The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
 UI library, as the quick start does.
 
 `showPopover` captures `Theme`, `DefaultTextStyle`, `IconTheme` and the other
-inherited themes at `context` and applies them to the body. Call it with a
-context under a `Scaffold` or another `Material`, or the body text falls back
-to the app's default style.
+inherited themes at `context` and applies them to the body, as `showDialog`
+does. The body gets the text and icon style in effect where it was opened:
+white when opened from an action on a colored `AppBar`, and `MaterialApp`'s
+red debug style when `context` has no `Material` ancestor. A `Material`
+wrapper resets the text to the theme's `bodyMedium`. An `IconTheme` around the
+body resets the icons.
 
 Cupertino widgets such as `CupertinoListTile` need no wrapper.
 
