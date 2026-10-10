@@ -22,7 +22,7 @@ jobs:
   apple:
     name: E2E iOS and macOS
     runs-on: macos-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: example
@@ -57,28 +57,14 @@ jobs:
           print(f"IPAD={pick(r'iPad Pro 1[13]-inch')}")
           EOF
 
-      - name: Build for the simulator
-        timeout-minutes: 20
-        run: flutter build ios --simulator --debug --target integration_test/popover_test.dart
-
       - name: iPhone
-        timeout-minutes: 15
-        run: |
-          xcrun simctl boot "$IPHONE"
-          xcrun simctl bootstatus "$IPHONE" -b
-          xcrun simctl list devices booted
-          status=0
-          flutter drive -d "$IPHONE" $DRIVE_ARGS || status=$?
-          xcrun simctl shutdown "$IPHONE"
-          exit $status
+        timeout-minutes: 25
+        run: ../tool/ci/drive_simulator.sh "$IPHONE"
 
       - name: iPad
         if: ${{ !cancelled() }}
-        timeout-minutes: 15
-        run: |
-          xcrun simctl boot "$IPAD"
-          xcrun simctl bootstatus "$IPAD" -b
-          flutter drive -d "$IPAD" $DRIVE_ARGS
+        timeout-minutes: 25
+        run: ../tool/ci/drive_simulator.sh "$IPAD"
 
       - name: macOS
         if: ${{ !cancelled() }}
