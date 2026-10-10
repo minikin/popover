@@ -70,8 +70,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   double? get scale => _scale;
   set scale(double? value) {
+    if (_scale == value) return;
     _scale = value;
-    markNeedsLayout();
+    markNeedsPaint();
   }
 
   /// The side [PopoverPositionRenderObject] picked, or [direction] when laid
