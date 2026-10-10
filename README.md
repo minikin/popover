@@ -98,14 +98,33 @@ Cupertino widgets such as `CupertinoListTile` need no wrapper.
 
 ## Placement
 
-`direction` picks the side: `PopoverDirection.bottom` by default, or `top`,
-`left` or `right`. When the body does not fit on that side, the popover opens
-on the opposite one.
+The popover is placed the way `UIPopoverPresentationController` and
+`NSPopover` place theirs. The rules were measured on iOS 26 simulators and
+macOS 26.
 
-`width`, `height` and `constraints` size the body. `arrowWidth` and
-`arrowHeight` size the arrow. `arrowDxOffset` and `arrowDyOffset` move the
-point the arrow aims at, and `contentDxOffset` and `contentDyOffset` move the
-body.
+`direction` is the preferred side: `PopoverDirection.bottom` by default, or
+`top`, `left` or `right`. Left and right stay physical in right-to-left apps.
+When the popover does not fit there, it opens on the opposite side. On macOS
+it then tries the two perpendicular sides, like `NSPopover`. When it fits
+nowhere, it takes the preferred or the opposite side, whichever has more room,
+and the body shrinks to fit, so a scrollable body scrolls.
+
+The popover stays inside the safe area and above the keyboard, with Apple's
+margins: 10 on iPhone, 19 at the sides, 30 at the top and 10 at the bottom on
+iPad, 12 on macOS. Android, Windows, Linux and the web use the iPhone margin.
+Flutter web picks the rules of the host OS, so it gets the macOS rules on a
+Mac.
+
+Along the side it opens on, the body centers on the anchor and slides to stay
+on screen. Outside macOS, a popover on the left or the right may cover the
+anchor up to its center, as UIKit does. An anchor that is partly or fully off
+screen is moved onto the screen edge first. The popover follows the anchor
+when it moves, scrolls or the screen rotates.
+
+`width`, `height` and `constraints` size the body and are capped by the room
+available. `arrowWidth` and `arrowHeight` size the arrow. `arrowDxOffset` and
+`arrowDyOffset` move the point the arrow aims at, and `contentDxOffset` and
+`contentDyOffset` move the body.
 
 ## Dismissing
 
