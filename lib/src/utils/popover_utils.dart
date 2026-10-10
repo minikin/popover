@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../popover_direction.dart';
@@ -9,6 +8,7 @@ abstract class PopoverUtils {
     Size size,
     double arrowHeight,
     PopoverDirection? direction,
+    Size bounds,
   ) {
     switch (direction) {
       case PopoverDirection.top:
@@ -16,8 +16,7 @@ abstract class PopoverUtils {
             ? PopoverDirection.bottom
             : PopoverDirection.top;
       case PopoverDirection.bottom:
-        return physicalSize.height >
-                attachRect.bottom + size.height + arrowHeight
+        return bounds.height > attachRect.bottom + size.height + arrowHeight
             ? PopoverDirection.bottom
             : PopoverDirection.top;
       case PopoverDirection.left:
@@ -25,17 +24,13 @@ abstract class PopoverUtils {
             ? PopoverDirection.right
             : PopoverDirection.left;
       case PopoverDirection.right:
-        return physicalSize.width > attachRect.right + size.width + arrowHeight
+        return bounds.width > attachRect.right + size.width + arrowHeight
             ? PopoverDirection.right
             : PopoverDirection.left;
       default:
         return PopoverDirection.bottom;
     }
   }
-
-  static Size get physicalSize =>
-      PlatformDispatcher.instance.views.first.physicalSize /
-      PlatformDispatcher.instance.views.first.devicePixelRatio;
 }
 
 typedef PopoverTransitionBuilder =

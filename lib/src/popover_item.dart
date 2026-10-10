@@ -55,6 +55,7 @@ class _PopoverItemState extends State<PopoverItem> {
       children: [
         PopoverPositionWidget(
           attachRect: _attachRect,
+          bounds: MediaQuery.sizeOf(context),
           constraints: _constraints,
           direction: widget.direction,
           arrowHeight: widget.arrowHeight,
@@ -63,6 +64,7 @@ class _PopoverItemState extends State<PopoverItem> {
             builder: (context, child) {
               return PopoverContext(
                 attachRect: _attachRect,
+                bounds: MediaQuery.sizeOf(context),
                 animation: widget.animation,
                 radius: widget.radius,
                 backgroundColor: widget.backgroundColor,

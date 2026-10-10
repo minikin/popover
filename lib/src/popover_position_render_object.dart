@@ -5,6 +5,7 @@ import 'utils/popover_utils.dart';
 
 final class PopoverPositionRenderObject extends RenderShiftedBox {
   late Rect _attachRect;
+  late Size _bounds;
   double arrowHeight;
   BoxConstraints? _additionalConstraints;
   PopoverDirection? _direction;
@@ -12,11 +13,13 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
   PopoverPositionRenderObject({
     required this.arrowHeight,
     required Rect attachRect,
+    required Size bounds,
     RenderBox? child,
     BoxConstraints? constraints,
     PopoverDirection? direction,
   }) : super(child) {
     _attachRect = attachRect;
+    _bounds = bounds;
     _additionalConstraints = constraints;
     _direction = direction;
   }
@@ -35,6 +38,13 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
     markNeedsLayout();
   }
 
+  Size get bounds => _bounds;
+  set bounds(Size value) {
+    if (_bounds == value) return;
+    _bounds = value;
+    markNeedsLayout();
+  }
+
   PopoverDirection? get direction => _direction;
   set direction(PopoverDirection? value) {
     if (_direction == value) return;
@@ -48,6 +58,7 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
       size,
       arrowHeight,
       direction,
+      bounds,
     );
 
     if (_direction == PopoverDirection.top ||
@@ -97,12 +108,12 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
     var offset = 0.0;
 
     if (attachRect.left > size.width / 2 &&
-        PopoverUtils.physicalSize.width - attachRect.right > size.width / 2) {
+        bounds.width - attachRect.right > size.width / 2) {
       offset = attachRect.left + attachRect.width / 2 - size.width / 2;
     } else if (attachRect.left < size.width / 2) {
       offset = arrowHeight;
     } else {
-      offset = PopoverUtils.physicalSize.width - arrowHeight - size.width;
+      offset = bounds.width - arrowHeight - size.width;
     }
     return offset;
   }
@@ -111,13 +122,12 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
     var offset = 0.0;
 
     if (attachRect.top > size.height / 2 &&
-        PopoverUtils.physicalSize.height - attachRect.bottom >
-            size.height / 2) {
+        bounds.height - attachRect.bottom > size.height / 2) {
       offset = attachRect.top + attachRect.height / 2 - size.height / 2;
     } else if (attachRect.top < size.height / 2) {
       offset = arrowHeight;
     } else {
-      offset = PopoverUtils.physicalSize.height - arrowHeight - size.height;
+      offset = bounds.height - arrowHeight - size.height;
     }
     return offset;
   }

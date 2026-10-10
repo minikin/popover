@@ -6,6 +6,7 @@ import 'utils/popover_utils.dart';
 
 final class PopoverRenderShiftedBox extends RenderShiftedBox {
   late Rect _attachRect;
+  late Size _bounds;
   double? arrowWidth;
   double arrowHeight;
   PopoverDirection? _direction;
@@ -16,6 +17,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
+    required Size bounds,
     required this.arrowHeight,
     this.arrowWidth,
     RenderBox? child,
@@ -26,6 +28,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     PopoverDirection? direction,
   }) : super(child) {
     _attachRect = attachRect;
+    _bounds = bounds;
     _color = color;
     _boxShadow = boxShadow;
     _scale = scale;
@@ -37,6 +40,13 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   set attachRect(Rect value) {
     if (_attachRect == value) return;
     _attachRect = value;
+    markNeedsLayout();
+  }
+
+  Size get bounds => _bounds;
+  set bounds(Size value) {
+    if (_bounds == value) return;
+    _bounds = value;
     markNeedsLayout();
   }
 
@@ -83,6 +93,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
       size,
       arrowHeight,
       direction,
+      bounds,
     );
     final bodyRect = childParentData.offset & child!.size;
 
@@ -170,6 +181,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
       size,
       arrowHeight,
       direction,
+      bounds,
     );
 
     final childParentData = child!.parentData as BoxParentData?;
@@ -213,7 +225,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
           .shift(boxShadow.offset)
           .inflate(boxShadow.spreadRadius);
 
-      final path = PopoverPath(radius!).draw(_direction, arrowRect, bodyRect);
+      final path = PopoverPath(radius!).draw(direction, arrowRect, bodyRect);
 
       context.pushTransform(needsCompositing, offset, transform, (
         context,
