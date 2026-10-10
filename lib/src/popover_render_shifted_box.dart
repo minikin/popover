@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'apple_popover_path.dart';
 import 'popover_direction.dart';
 import 'popover_path.dart';
+import 'popover_shape.dart';
 import 'utils/popover_utils.dart';
 
 final class PopoverRenderShiftedBox extends RenderShiftedBox {
@@ -14,7 +15,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   List<BoxShadow>? _boxShadow;
   double? _scale;
   double? _radius;
-  bool _appleShape;
+  PopoverShape _shape;
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
@@ -26,8 +27,8 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     double? scale,
     double? radius,
     PopoverDirection? direction,
-    bool appleShape = false,
-  }) : _appleShape = appleShape,
+    PopoverShape shape = PopoverShape.triangle,
+  }) : _shape = shape,
        super(child) {
     _attachRect = attachRect;
     _color = color;
@@ -37,12 +38,10 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     _direction = direction;
   }
 
-  /// Whether to draw the outline of [ApplePopoverPath] instead of a
-  /// triangle and plain rounded corners.
-  bool get appleShape => _appleShape;
-  set appleShape(bool value) {
-    if (_appleShape == value) return;
-    _appleShape = value;
+  PopoverShape get shape => _shape;
+  set shape(PopoverShape value) {
+    if (_shape == value) return;
+    _shape = value;
     markNeedsPaint();
   }
 
@@ -103,7 +102,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     final childParentData = child!.parentData as BoxParentData;
     final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
-    if (appleShape) {
+    if (shape != PopoverShape.triangle) {
       _paintApple(context, offset, transform, _direction);
       return;
     }
@@ -174,20 +173,24 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     final target = vertical
         ? attachRect.center.dx - offset.dx
         : attachRect.center.dy - offset.dy;
-    final halfBase = arrowWidth! / 2;
-    final tip = extent < arrowWidth!
+    // UIKit keeps the tip half an arrow base from the body edge, AppKit 0.75.
+    final inset = shape == PopoverShape.macos ? 0.75 : arrowWidth! / 2;
+    final tip = extent < 2 * inset
         ? extent / 2
-        : target.clamp(halfBase, extent - halfBase);
-    final shape = ApplePopoverPath(
-      arrowWidth: arrowWidth!,
-      arrowHeight: arrowHeight,
-      radius: radius ?? 0,
-    );
-    final path = shape.toPath(
-      frame: Offset.zero & size,
-      direction: direction,
-      tip: tip,
-    );
+        : target.clamp(inset, extent - inset);
+    Path outline(Rect frame, double tip) => switch (shape) {
+      PopoverShape.macos => MacPopoverPath(
+        arrowWidth: arrowWidth!,
+        arrowHeight: arrowHeight,
+        radius: radius ?? 0,
+      ).toPath(frame: frame, direction: direction, tip: tip),
+      _ => ApplePopoverPath(
+        arrowWidth: arrowWidth!,
+        arrowHeight: arrowHeight,
+        radius: radius ?? 0,
+      ).toPath(frame: frame, direction: direction, tip: tip),
+    };
+    final path = outline(Offset.zero & size, tip);
 
     _transform(transform, switch (direction) {
       PopoverDirection.bottom => Offset(tip, 0),
@@ -198,12 +201,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
     for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
       final shift = offset + boxShadow.offset;
-      final shadow = shape.toPath(
-        frame: (Offset.zero & size)
-            .inflate(boxShadow.spreadRadius)
-            .shift(shift),
-        direction: direction,
-        tip: tip + (vertical ? shift.dx : shift.dy),
+      final shadow = outline(
+        (Offset.zero & size).inflate(boxShadow.spreadRadius).shift(shift),
+        tip + (vertical ? shift.dx : shift.dy),
       );
       context.pushTransform(needsCompositing, offset, transform, (context, _) {
         context.canvas.drawPath(shadow, boxShadow.toPaint());

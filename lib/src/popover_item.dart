@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import '../popover.dart';
 import 'popover_context.dart';
 import 'popover_position_widget.dart';
+import 'popover_shape.dart';
 import 'utils/build_context_extension.dart';
 import 'utils/popover_utils.dart';
 
@@ -18,7 +19,7 @@ class PopoverItem extends StatefulWidget {
   final Animation<double> animation;
   final double? arrowWidth;
   final double arrowHeight;
-  final bool appleShape;
+  final PopoverShape shape;
   final BoxConstraints? constraints;
   final BuildContext context;
   final double arrowDxOffset;
@@ -33,7 +34,7 @@ class PopoverItem extends StatefulWidget {
     required this.transition,
     required this.animation,
     required this.arrowHeight,
-    this.appleShape = false,
+    this.shape = PopoverShape.triangle,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -90,7 +91,7 @@ class _PopoverItemState extends State<PopoverItem> {
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
                 arrowHeight: widget.arrowHeight,
-                appleShape: widget.appleShape,
+                shape: widget.shape,
                 transition: widget.transition,
                 child: child,
               );

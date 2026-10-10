@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'popover_direction.dart';
 import 'popover_render_shifted_box.dart';
+import 'popover_shape.dart';
 import 'popover_transition.dart';
 
 final class PopoverContext extends SingleChildRenderObjectWidget {
@@ -14,14 +15,14 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverDirection? direction;
   final double? arrowWidth;
   final double arrowHeight;
-  final bool appleShape;
+  final PopoverShape shape;
 
   const PopoverContext({
     required this.transition,
     required this.animation,
     required this.attachRect,
     required this.arrowHeight,
-    this.appleShape = false,
+    this.shape = PopoverShape.triangle,
     super.child,
     this.backgroundColor,
     this.boxShadow,
@@ -41,7 +42,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       radius: radius,
       arrowWidth: arrowWidth,
       arrowHeight: arrowHeight,
-      appleShape: appleShape,
+      shape: shape,
     );
   }
 
@@ -59,6 +60,6 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       ..radius = radius
       ..arrowWidth = arrowWidth
       ..arrowHeight = arrowHeight
-      ..appleShape = appleShape;
+      ..shape = shape;
   }
 }
