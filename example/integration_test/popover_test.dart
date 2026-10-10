@@ -99,7 +99,12 @@ void main() {
 
   testWidgets('demo', (tester) async {
     await start(tester, playground: false);
-    await tester.tap(find.byKey(demoAnchor));
+    final anchor = switch (_device(tester)) {
+      'macOS' || 'web' => shareAnchor,
+      'iOS_phone' || 'windows' => statusAnchor('POP-116'),
+      _ => filterAnchor,
+    };
+    await tester.tap(find.byKey(anchor));
     await tester.pumpAndSettle();
     await screenshot(tester, 'demo');
   });
