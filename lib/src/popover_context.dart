@@ -14,12 +14,14 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverDirection? direction;
   final double? arrowWidth;
   final double arrowHeight;
+  final bool appleShape;
 
   const PopoverContext({
     required this.transition,
     required this.animation,
     required this.attachRect,
     required this.arrowHeight,
+    this.appleShape = false,
     super.child,
     this.backgroundColor,
     this.boxShadow,
@@ -39,6 +41,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       radius: radius,
       arrowWidth: arrowWidth,
       arrowHeight: arrowHeight,
+      appleShape: appleShape,
     );
   }
 
@@ -55,6 +58,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth
-      ..arrowHeight = arrowHeight;
+      ..arrowHeight = arrowHeight
+      ..appleShape = appleShape;
   }
 }

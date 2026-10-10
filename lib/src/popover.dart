@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'popover_arrow_style.dart';
 import 'popover_direction.dart';
 import 'popover_item.dart';
 import 'popover_route.dart';
@@ -34,17 +36,27 @@ import 'utils/popover_utils.dart';
 /// to 200 milliseconds.
 ///
 /// The `radius` of popover's body.
-/// This argument defaults to 8.
+/// This argument defaults to 8 for [PopoverArrowStyle.triangle] and 34 for
+/// [PopoverArrowStyle.apple], the corner radius of iOS 26 popovers.
 ///
 /// The `shadow` is [BoxShadow] of popover body.
 /// This argument defaults to
-/// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]`.
+/// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]` for
+/// [PopoverArrowStyle.triangle] and to the wide, soft iOS shadow
+/// `[BoxShadow(color: Color(0x6B000000), blurRadius: 210)]` for
+/// [PopoverArrowStyle.apple].
 ///
 /// The `arrowWidth` is width of arrow.
-/// This argument defaults to 24.
+/// This argument defaults to 24 for [PopoverArrowStyle.triangle] and 26 for
+/// [PopoverArrowStyle.apple].
 ///
 /// The `arrowHeight` is height of arrow.
-/// This argument defaults to 12.
+/// This argument defaults to 12 for [PopoverArrowStyle.triangle] and 13 for
+/// [PopoverArrowStyle.apple].
+///
+/// The `arrowStyle` picks the shape of the arrow and the corners. It defaults
+/// to [PopoverArrowStyle.adaptive]: the native iOS shape on iOS, iPadOS and
+/// macOS, a triangle elsewhere.
 ///
 /// The `arrowDxOffset` offsets arrow position on X axis.
 /// It can be positive or negative number.
@@ -109,12 +121,10 @@ Future<T?> showPopover<T extends Object?>({
   Color backgroundColor = const Color(0xFFFFFFFF),
   Color barrierColor = const Color(0x80000000),
   Duration transitionDuration = const Duration(milliseconds: 200),
-  double radius = 8,
-  List<BoxShadow> shadow = const [
-    BoxShadow(color: Color(0x1F000000), blurRadius: 5),
-  ],
-  double arrowWidth = 24,
-  double arrowHeight = 12,
+  double? radius,
+  List<BoxShadow>? shadow,
+  double? arrowWidth,
+  double? arrowHeight,
   double arrowDxOffset = 0,
   double arrowDyOffset = 0,
   double contentDyOffset = 0,
@@ -135,11 +145,26 @@ Future<T?> showPopover<T extends Object?>({
   PopoverTransitionBuilder? popoverTransitionBuilder,
   Key? key,
   bool allowClicksOnBackground = false,
+  PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
             BoxConstraints.tightFor(width: width, height: height)
       : constraints;
+
+  final platform = defaultTargetPlatform;
+  final appleShape = switch (arrowStyle) {
+    PopoverArrowStyle.apple => true,
+    PopoverArrowStyle.triangle => false,
+    PopoverArrowStyle.adaptive =>
+      platform == TargetPlatform.iOS || platform == TargetPlatform.macOS,
+  };
+  final arrowSize = Size(
+    arrowWidth ?? (appleShape ? 26 : 24),
+    arrowHeight ?? (appleShape ? 13 : 12),
+  );
+  final cornerRadius = radius ?? (appleShape ? 34 : 8);
+  final boxShadow = shadow ?? (appleShape ? _appleShadow : _triangleShadow);
 
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
@@ -156,11 +181,12 @@ Future<T?> showPopover<T extends Object?>({
             context: context,
             backgroundColor: backgroundColor,
             direction: direction,
-            radius: radius,
-            boxShadow: shadow,
+            radius: cornerRadius,
+            boxShadow: boxShadow,
             animation: animation,
-            arrowWidth: arrowWidth,
-            arrowHeight: arrowHeight,
+            arrowWidth: arrowSize.width,
+            arrowHeight: arrowSize.height,
+            appleShape: appleShape,
             constraints: constraints,
             arrowDxOffset: arrowDxOffset,
             arrowDyOffset: arrowDyOffset,
@@ -186,6 +212,11 @@ Future<T?> showPopover<T extends Object?>({
 }
 
 const _defaultBarrierLabel = 'Dismiss';
+
+const _triangleShadow = [BoxShadow(color: Color(0x1F000000), blurRadius: 5)];
+
+/// The wide, soft shadow of iOS 26 popovers, measured from a simulator.
+const _appleShadow = [BoxShadow(color: Color(0x6B000000), blurRadius: 210)];
 
 class _FadeTransitionWidget extends StatefulWidget {
   const _FadeTransitionWidget({required this.child, required this.animation});

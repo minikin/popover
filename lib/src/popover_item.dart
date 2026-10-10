@@ -18,6 +18,7 @@ class PopoverItem extends StatefulWidget {
   final Animation<double> animation;
   final double? arrowWidth;
   final double arrowHeight;
+  final bool appleShape;
   final BoxConstraints? constraints;
   final BuildContext context;
   final double arrowDxOffset;
@@ -32,6 +33,7 @@ class PopoverItem extends StatefulWidget {
     required this.transition,
     required this.animation,
     required this.arrowHeight,
+    this.appleShape = false,
     this.backgroundColor,
     this.direction,
     this.radius,
@@ -88,6 +90,7 @@ class _PopoverItemState extends State<PopoverItem> {
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
                 arrowHeight: widget.arrowHeight,
+                appleShape: widget.appleShape,
                 transition: widget.transition,
                 child: child,
               );
