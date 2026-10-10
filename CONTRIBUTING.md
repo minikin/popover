@@ -20,6 +20,22 @@ A PR with a working fix or a minimal reproduction in the example app is always w
    CI also runs a mutation test over `lib/` that fails below the threshold in
    `mutation_test.xml`. Run it locally with
    `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.
+
+   Golden tests in `test/golden_test.dart` run only on Linux, because text and
+   shadows render a few pixels differently on macOS. If your change moves pixels,
+   regenerate them in Docker with `tool/update_goldens.sh` and look at the diff of
+   `test/goldens/`. `test/apple_placement_test.dart` holds popover frames measured
+   on UIKit and NSPopover. Do not change an expected frame without measuring it on
+   a simulator.
+
+   The integration test opens popovers in the example app on a device and saves
+   screenshots to `example/build/screenshots/`:
+
+   ```bash
+   cd example
+   flutter drive -d <device> --driver test_driver/integration_test.dart \
+     --target integration_test/popover_test.dart
+   ```
 3. If your change affects the public API or behavior, update `README.md` and add or
    update tests accordingly.
 4. Bump the version in `pubspec.yaml` following [SemVer](https://semver.org/) and add

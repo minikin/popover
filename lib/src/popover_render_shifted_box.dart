@@ -70,27 +70,35 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   double? get scale => _scale;
   set scale(double? value) {
+    if (_scale == value) return;
     _scale = value;
-    markNeedsLayout();
+    markNeedsPaint();
+  }
+
+  /// The side [PopoverPositionRenderObject] picked, or [direction] when laid
+  /// out on its own.
+  PopoverDirection get _resolvedDirection {
+    final constraints = this.constraints;
+    return constraints is PopoverConstraints
+        ? constraints.direction
+        : direction ?? PopoverDirection.bottom;
   }
 
   @override
   void paint(PaintingContext context, Offset offset) {
     final transform = Matrix4.identity();
     final childParentData = child!.parentData as BoxParentData;
-    final _direction = PopoverUtils.popoverDirection(
-      attachRect,
-      size,
-      arrowHeight,
-      direction,
-    );
+    final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
 
-    final arrowLeft =
-        attachRect.left + attachRect.width / 2 - arrowWidth! / 2 - offset.dx;
-
-    final arrowTop =
-        attachRect.top + attachRect.height / 2 - arrowWidth! / 2 - offset.dy;
+    final arrowLeft = _arrowStart(
+      attachRect.center.dx - offset.dx,
+      child!.size.width,
+    );
+    final arrowTop = _arrowStart(
+      attachRect.center.dy - offset.dy,
+      child!.size.height,
+    );
 
     late Rect arrowRect;
     late Offset translation;
@@ -138,6 +146,15 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     );
   }
 
+  /// Where the arrow base starts along a body side of [extent] so the arrow
+  /// points at [target] without running into a rounded corner.
+  double _arrowStart(double target, double extent) {
+    final min = radius ?? 0;
+    final max = extent - min - arrowWidth!;
+    if (max < min) return (extent - arrowWidth!) / 2;
+    return (target - arrowWidth! / 2).clamp(min, max);
+  }
+
   @override
   void performLayout() {
     assert(constraints.maxHeight.isFinite);
@@ -148,29 +165,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _configureChildConstrains() {
-    BoxConstraints childConstraints;
-
-    if (direction == PopoverDirection.top ||
-        direction == PopoverDirection.bottom) {
-      childConstraints = BoxConstraints(
-        maxHeight: constraints.maxHeight - arrowHeight,
-      ).enforce(constraints);
-    } else {
-      childConstraints = BoxConstraints(
-        maxWidth: constraints.maxWidth - arrowHeight,
-      ).enforce(constraints);
-    }
-
-    child!.layout(childConstraints, parentUsesSize: true);
+    final arrow = PopoverUtils.isVertical(_resolvedDirection)
+        ? EdgeInsets.only(bottom: arrowHeight)
+        : EdgeInsets.only(right: arrowHeight);
+    child!.layout(constraints.deflate(arrow), parentUsesSize: true);
   }
 
   void _configureChildOffset() {
-    final _direction = PopoverUtils.popoverDirection(
-      attachRect,
-      size,
-      arrowHeight,
-      direction,
-    );
+    final _direction = _resolvedDirection;
 
     final childParentData = child!.parentData as BoxParentData?;
     if (_direction == PopoverDirection.bottom) {
@@ -183,12 +185,12 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _configureChildSize() {
-    if (direction == PopoverDirection.top ||
-        direction == PopoverDirection.bottom) {
-      size = Size(child!.size.width, child!.size.height + arrowHeight);
-    } else {
-      size = Size(child!.size.width + arrowHeight, child!.size.height);
-    }
+    final arrow = PopoverUtils.isVertical(_resolvedDirection)
+        ? Size(0, arrowHeight)
+        : Size(arrowHeight, 0);
+    size = constraints.constrain(
+      child!.size + Offset(arrow.width, arrow.height),
+    );
   }
 
   void _paintShadows(
@@ -202,18 +204,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     if (boxShadow == null) return;
     for (final boxShadow in boxShadow!) {
       final paint = boxShadow.toPaint();
-
-      arrowRect = arrowRect!
+      Rect place(Rect rect) => rect
           .shift(offset)
           .shift(boxShadow.offset)
           .inflate(boxShadow.spreadRadius);
 
-      bodyRect = bodyRect
-          .shift(offset)
-          .shift(boxShadow.offset)
-          .inflate(boxShadow.spreadRadius);
-
-      final path = PopoverPath(radius!).draw(_direction, arrowRect, bodyRect);
+      final path = PopoverPath(
+        radius!,
+      ).draw(direction, place(arrowRect!), place(bodyRect));
 
       context.pushTransform(needsCompositing, offset, transform, (
         context,

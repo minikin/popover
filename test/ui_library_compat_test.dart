@@ -6,45 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart' as mui;
 import 'package:popover/popover.dart';
 
+import 'helpers/apps.dart';
+
 const _callerColor = Color(0xFF00AA00);
-
-typedef _AppBuilder = Widget Function(WidgetBuilder launcherBuilder);
-
-Widget _legacyApp(WidgetBuilder launcherBuilder) {
-  return legacy.MaterialApp(
-    home: legacy.Scaffold(
-      body: Center(child: Builder(builder: launcherBuilder)),
-    ),
-  );
-}
-
-Widget _materialUiApp(WidgetBuilder launcherBuilder) {
-  return mui.MaterialApp(
-    home: mui.Scaffold(
-      body: Center(child: Builder(builder: launcherBuilder)),
-    ),
-  );
-}
-
-Widget _cupertinoApp(WidgetBuilder launcherBuilder) {
-  return cupertino.CupertinoApp(
-    home: cupertino.CupertinoPageScaffold(
-      child: Center(child: Builder(builder: launcherBuilder)),
-    ),
-  );
-}
-
-Widget _cupertinoUiApp(WidgetBuilder launcherBuilder) {
-  return cui.CupertinoApp(
-    home: cui.CupertinoPageScaffold(
-      child: Center(child: Builder(builder: launcherBuilder)),
-    ),
-  );
-}
 
 Future<void> _open(
   WidgetTester tester,
-  _AppBuilder app, {
+  AppBuilder app, {
   required WidgetBuilder bodyBuilder,
   String? barrierLabel,
 }) async {
@@ -70,14 +38,7 @@ Future<void> _open(
 }
 
 void main() {
-  final apps = <String, _AppBuilder>{
-    'flutter/material': _legacyApp,
-    'material_ui': _materialUiApp,
-    'flutter/cupertino': _cupertinoApp,
-    'cupertino_ui': _cupertinoUiApp,
-  };
-
-  for (final MapEntry(key: name, value: app) in apps.entries) {
+  for (final MapEntry(key: name, value: app) in appsByLibrary.entries) {
     group('$name app', () {
       testWidgets('opens without barrierLabel', (tester) async {
         await _open(tester, app, bodyBuilder: (_) => const Text('Body'));
@@ -139,7 +100,7 @@ void main() {
   ) async {
     await _open(
       tester,
-      _legacyApp,
+      legacyApp,
       bodyBuilder: (_) =>
           const legacy.Material(child: legacy.ListTile(title: Text('Tile'))),
     );
@@ -152,7 +113,7 @@ void main() {
   ) async {
     await _open(
       tester,
-      _materialUiApp,
+      materialUiApp,
       bodyBuilder: (_) =>
           const mui.Material(child: mui.ListTile(title: Text('Tile'))),
     );
@@ -163,7 +124,7 @@ void main() {
   testWidgets('flutter/cupertino CupertinoListTile works', (tester) async {
     await _open(
       tester,
-      _cupertinoApp,
+      cupertinoApp,
       bodyBuilder: (_) =>
           const cupertino.CupertinoListTile(title: Text('Tile')),
     );
@@ -174,7 +135,7 @@ void main() {
   testWidgets('cupertino_ui CupertinoListTile works', (tester) async {
     await _open(
       tester,
-      _cupertinoUiApp,
+      cupertinoUiApp,
       bodyBuilder: (_) => const cui.CupertinoListTile(title: Text('Tile')),
     );
 

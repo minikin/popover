@@ -16,7 +16,8 @@ import 'utils/popover_utils.dart';
 ///
 /// `bodyBuilder` argument is builder which builds body/content of popover.
 ///
-/// The `direction` is desired Popover's direction behavior.
+/// The `direction` is the preferred side of the popover. It opens on another
+/// side when it does not fit, the way iOS and macOS popovers do.
 /// This argument defaults to `PopoverDirection.bottom`.
 ///
 /// The `transition` is desired Popover's transition behavior.
@@ -68,6 +69,9 @@ import 'utils/popover_utils.dart';
 /// The `width` is popover's body/content widget width.
 ///
 /// The `height` is popover's body/content widget height.
+///
+/// `width`, `height` and `constraints` are capped by the room on the side the
+/// popover opens on. See the README for how the side is picked.
 ///
 /// The `onPop` runs when the popover pops, by a barrier tap, a back gesture
 /// or `Navigator.pop`. It cannot cancel the dismissal.

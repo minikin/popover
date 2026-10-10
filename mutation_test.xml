@@ -6,7 +6,7 @@
   <commands>
     <command group="test" expected-return="0" timeout="300">flutter test --no-pub</command>
   </commands>
-  <threshold failure="17">
+  <threshold failure="75">
     <rating over="80" name="A"/>
     <rating over="60" name="B"/>
     <rating over="40" name="C"/>

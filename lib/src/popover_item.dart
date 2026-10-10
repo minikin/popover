@@ -1,9 +1,13 @@
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../popover.dart';
 import 'popover_context.dart';
 import 'popover_position_widget.dart';
 import 'utils/build_context_extension.dart';
+import 'utils/popover_utils.dart';
 
 class PopoverItem extends StatefulWidget {
   final Widget child;
@@ -47,22 +51,36 @@ class PopoverItem extends StatefulWidget {
 
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
-  late BoxConstraints _constraints;
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final obscured = EdgeInsets.fromLTRB(
+      math.max(media.padding.left, media.viewInsets.left),
+      math.max(media.padding.top, media.viewInsets.top),
+      math.max(media.padding.right, media.viewInsets.right),
+      math.max(media.padding.bottom, media.viewInsets.bottom),
+    );
+    final bounds =
+        (obscured +
+                PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
+            .deflateRect(Offset.zero & media.size);
+    final attachRect = PopoverUtils.clampToBounds(_attachRect, bounds);
+
     return Stack(
       children: [
         PopoverPositionWidget(
-          attachRect: _attachRect,
-          constraints: _constraints,
+          attachRect: attachRect,
+          bounds: bounds,
+          constraints: widget.constraints,
+          platform: defaultTargetPlatform,
           direction: widget.direction,
           arrowHeight: widget.arrowHeight,
           child: AnimatedBuilder(
             animation: widget.animation,
             builder: (context, child) {
               return PopoverContext(
-                attachRect: _attachRect,
+                attachRect: attachRect,
                 animation: widget.animation,
                 radius: widget.radius,
                 backgroundColor: widget.backgroundColor,
@@ -85,68 +103,36 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   @override
-  void didChangeDependencies() {
-    _configureConstraints();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => setState(_configureRect),
-    );
-
-    super.didChangeDependencies();
-  }
-
-  @override
   void initState() {
-    _configureRect();
     super.initState();
+    _attachRect = _anchorRect() ?? Rect.zero;
+    _followAnchor();
   }
 
-  void _configureConstraints() {
-    final size = MediaQuery.of(context).size;
-    var constraints = BoxConstraints.loose(size);
-
-    if (widget.constraints != null) {
-      constraints = constraints.copyWith(
-        minWidth: widget.constraints!.minWidth.isFinite
-            ? widget.constraints!.minWidth
-            : null,
-        minHeight: widget.constraints!.minHeight.isFinite
-            ? widget.constraints!.minHeight
-            : null,
-        maxWidth: widget.constraints!.maxWidth.isFinite
-            ? widget.constraints!.maxWidth
-            : null,
-        maxHeight: widget.constraints!.maxHeight.isFinite
-            ? widget.constraints!.maxHeight
-            : null,
-      );
-    }
-
-    if (widget.direction == PopoverDirection.top ||
-        widget.direction == PopoverDirection.bottom) {
-      final maxHeight = constraints.maxHeight + widget.arrowHeight;
-      constraints = constraints.copyWith(maxHeight: maxHeight);
-    } else {
-      constraints = constraints.copyWith(
-        maxHeight: constraints.maxHeight + widget.arrowHeight,
-        maxWidth: constraints.maxWidth + widget.arrowWidth!,
-      );
-    }
-
-    _constraints = constraints;
+  /// Re-places the popover after every frame in which the anchor moved, like
+  /// `UIPopoverPresentationController` does for its source view.
+  void _followAnchor() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final rect = _anchorRect();
+      if (rect != null && rect != _attachRect) {
+        setState(() => _attachRect = rect);
+      }
+      _followAnchor();
+    });
   }
 
-  void _configureRect() {
-    if (!widget.context.mounted) return;
+  Rect? _anchorRect() {
+    if (!widget.context.mounted) return null;
     final offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
     final bounds = BuildContextExtension.getWidgetBounds(widget.context);
+    if (offset == null || bounds == null) return null;
 
-    if (offset != null && bounds != null) {
-      _attachRect = Rect.fromLTWH(
-        offset.dx + (widget.arrowDxOffset),
-        offset.dy + (widget.arrowDyOffset),
-        bounds.width + (widget.contentDxOffset),
-        bounds.height + (widget.contentDyOffset),
-      );
-    }
+    return Rect.fromLTWH(
+      offset.dx + widget.arrowDxOffset,
+      offset.dy + widget.arrowDyOffset,
+      bounds.width + widget.contentDxOffset,
+      bounds.height + widget.contentDyOffset,
+    );
   }
 }
