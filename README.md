@@ -112,7 +112,8 @@ default shadows are measured from both.
 
 `PopoverArrowStyle.triangle` is the sharp triangle with 8 point corners from
 earlier versions. `PopoverArrowStyle.adaptive`, the default, picks `apple` on
-iOS, iPadOS and macOS and `triangle` everywhere else. `arrowWidth`,
+iOS, iPadOS and macOS and `triangle` everywhere else, on the web by the
+host OS. `arrowWidth`,
 `arrowHeight`, `radius` and `shadow` override the defaults of either style, for
 example `radius: 13` for the corners of iOS before version 26.
 

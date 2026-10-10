@@ -8,6 +8,7 @@ enum PopoverArrowStyle {
   /// platform the iOS one.
   apple,
 
-  /// [apple] on iOS, iPadOS and macOS, [triangle] everywhere else.
+  /// [apple] on iOS, iPadOS and macOS, [triangle] everywhere else. Flutter
+  /// web follows the host OS, so a browser on a Mac or an iPhone gets [apple].
   adaptive,
 }
