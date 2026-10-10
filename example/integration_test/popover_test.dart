@@ -42,7 +42,7 @@ void main() {
       image.dispose();
       return bytes!.buffer.asUint8List();
     });
-    _screenshots['${_platform}_$name'] = base64Encode(png!);
+    _screenshots['${_device(tester)}_$name'] = base64Encode(png!);
   }
 
   Future<void> open(WidgetTester tester, int button) async {
@@ -92,6 +92,12 @@ void main() {
     }
   });
 
+  testWidgets('demo', (tester) async {
+    await start(tester);
+    await open(tester, 1);
+    await screenshot(tester, 'demo');
+  });
+
   testWidgets('item tap closes the popover and opens a route', (tester) async {
     await start(tester);
     await open(tester, 4);
@@ -109,11 +115,10 @@ void main() {
 
   testWidgets('follows the button on rotation', (tester) async {
     addTearDown(() => SystemChrome.setPreferredOrientations([]));
-    final view = tester.view;
-    final tablet =
-        view.physicalSize.shortestSide / view.devicePixelRatio >= 600;
     // Android 16 ignores orientation requests on screens of 600 dp and wider.
-    if (defaultTargetPlatform == TargetPlatform.android && tablet) return;
+    if (defaultTargetPlatform == TargetPlatform.android && _isTablet(tester)) {
+      return;
+    }
     await start(tester);
     await open(tester, 7);
 
@@ -127,7 +132,19 @@ void main() {
   }, skip: !_canRotate);
 }
 
-String get _platform => kIsWeb ? 'web' : defaultTargetPlatform.name;
+/// The platform, plus phone or tablet on iOS and Android, so iPhone and iPad
+/// screenshots do not overwrite each other.
+String _device(WidgetTester tester) {
+  if (kIsWeb) return 'web';
+  final platform = defaultTargetPlatform.name;
+  if (!_canRotate) return platform;
+  return '${platform}_${_isTablet(tester) ? 'tablet' : 'phone'}';
+}
+
+bool _isTablet(WidgetTester tester) {
+  final view = tester.view;
+  return view.physicalSize.shortestSide / view.devicePixelRatio >= 600;
+}
 
 Future<void> _rotate(WidgetTester tester, {required bool landscape}) async {
   await SystemChrome.setPreferredOrientations([

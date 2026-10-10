@@ -7,6 +7,7 @@ class PopoverExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: const Text('Popover Example')),
         body: const SafeArea(
