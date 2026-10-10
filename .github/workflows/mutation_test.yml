@@ -26,6 +26,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
 
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
@@ -36,14 +38,22 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # Pull requests mutate only the code they change, main mutates all of lib/.
       - name: Plan shards
-        run: python3 tool/ci/mutation_shards.py plan 6 build/mutation
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: python3 tool/ci/mutation_shards.py plan 6 build/mutation $BASE
 
       - name: Run mutation test
         env:
           SHARD: ${{ matrix.shard }}
         run: |
           set -o pipefail
+          mkdir -p build/mutation
+          if [ ! -f "build/mutation/shard_$SHARD.xml" ]; then
+            echo "Nothing to mutate in this shard" | tee "build/mutation/shard_$SHARD.log"
+            exit 0
+          fi
           dart run mutation_test -o "build/mutation-test-report/shard-$SHARD" \
             "build/mutation/shard_$SHARD.xml" | tee "build/mutation/shard_$SHARD.log"
 

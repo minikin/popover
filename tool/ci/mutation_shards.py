@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Splits the mutation test into shards of about the same number of mutants.
 
-    python3 tool/ci/mutation_shards.py plan <shards> <out dir>
-        Writes <out dir>/shard_<i>.xml for i in 0..shards-1. Every file in lib/
-        is cut into chunks of about CHUNK lines, a dry run counts the mutants of each
-        chunk, and the chunks are packed into shards of about the same size.
+    python3 tool/ci/mutation_shards.py plan <shards> <out dir> [<base ref>]
+        Writes <out dir>/shard_<i>.xml for every shard with mutants. Every file
+        in lib/ is cut into chunks of about CHUNK lines, a dry run counts the
+        mutants of each chunk, and the chunks are packed into shards of about
+        the same size. With a base ref, only the chunks that touch lines changed
+        since that ref are mutated.
 
     python3 tool/ci/mutation_shards.py total <results dir>
         Sums the "Total tests" and "Undetected Mutations" lines of every
@@ -53,8 +55,37 @@ def file_xml(path, begin, end):
     return f'<file>{path}<lines begin="{begin}" end="{end}"/></file>'
 
 
-def plan(shards, out):
+def changed_lines(base):
+    """Line numbers in lib/ added or changed since [base], by file. A deletion
+    counts as a change of the line after it."""
+    diff = subprocess.run(
+        ["git", "diff", "--unified=0", f"{base}...HEAD", "--", "lib/"],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    changed, path = {}, None
+    for line in diff.splitlines():
+        if line.startswith("+++ "):
+            path = line[6:] if line.startswith("+++ b/") else None
+        hunk = re.match(r"@@ -\S+ \+(\d+)(?:,(\d+))? @@", line)
+        if hunk and path:
+            start, count = int(hunk.group(1)), int(hunk.group(2) or 1)
+            changed.setdefault(path, set()).update(
+                range(start, start + max(count, 1)))
+    return changed
+
+
+def plan(shards, out, base=None):
     parts = list(chunks())
+    if base:
+        changed = changed_lines(base)
+        parts = [
+            (path, begin, end) for path, begin, end in parts
+            if any(begin <= n <= end for n in changed.get(path, ()))
+        ]
+    os.makedirs(out, exist_ok=True)
+    if not parts:
+        print("no Dart changes in lib/ to mutate")
+        return
     with tempfile.TemporaryDirectory() as tmp:
         inputs = []
         for i, part in enumerate(parts):
@@ -72,7 +103,6 @@ def plan(shards, out):
 
     total = sum(counts)
     target = total / shards
-    os.makedirs(out, exist_ok=True)
     # Largest chunks first, each into the lightest shard so far.
     files = [[] for _ in range(shards)]
     sizes = [0] * shards
@@ -82,7 +112,8 @@ def plan(shards, out):
             files[shard].append(file_xml(*part))
             sizes[shard] += count
     for shard, shard_files in enumerate(files):
-        write(out, shard, shard_files)
+        if shard_files:
+            write(out, shard, shard_files)
     print(f"{total} mutants in {shards} shards of about {round(target)}")
 
 
@@ -101,7 +132,10 @@ def total(results):
             int(n) for n in re.findall(r"Undetected Mutations: (\d+)", content))
     with open(CONFIG) as config:
         threshold = float(re.search(r'failure="(\d+)"', config.read()).group(1))
-    detected = 100 * (tests - undetected) / tests if tests else 0
+    if not tests:
+        print("no mutants to test")
+        return
+    detected = 100 * (tests - undetected) / tests
     print(f"{tests - undetected} of {tests} mutants detected, {detected:.2f}%, "
           f"threshold {threshold:g}%")
     if detected < threshold:
@@ -111,7 +145,7 @@ def total(results):
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "plan":
-        plan(int(sys.argv[2]), sys.argv[3])
+        plan(int(sys.argv[2]), sys.argv[3], *sys.argv[4:5])
     elif command == "total":
         total(sys.argv[2])
     else:
