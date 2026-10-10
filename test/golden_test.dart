@@ -142,6 +142,24 @@ void main() {
         });
       }
 
+      for (final (name, alignment) in [
+        ('macos_center', Alignment.center),
+        ('macos_near_corner', const Alignment(-0.98, -0.5)),
+      ]) {
+        testWidgets(name, (tester) async {
+          await _show(
+            tester,
+            app: (launcher) => legacyApp(launcher, alignment: alignment),
+            arrowStyle: PopoverArrowStyle.apple,
+          );
+
+          await expectLater(
+            find.byKey(_screen),
+            matchesGoldenFile('goldens/$name.png'),
+          );
+        }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+      }
+
       testWidgets('apple_squashed_corner', (tester) async {
         await _show(
           tester,
