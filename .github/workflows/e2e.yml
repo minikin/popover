@@ -153,7 +153,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: example
-          script: flutter drive -d emulator-5554 $DRIVE_ARGS || (adb wait-for-device && flutter drive -d emulator-5554 $DRIVE_ARGS)
+          script: flutter drive -d emulator-5554 --no-enable-impeller $DRIVE_ARGS
 
       - name: Upload screenshots
         if: always()
