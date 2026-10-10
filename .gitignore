@@ -75,3 +75,6 @@ build/
 
 #
 coverage/
+
+# Golden test failures
+**/failures/
