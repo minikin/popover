@@ -8,7 +8,6 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   final PopoverTransition transition;
   final Animation<double> animation;
   final Rect attachRect;
-  final Size bounds;
   final Color? backgroundColor;
   final List<BoxShadow>? boxShadow;
   final double? radius;
@@ -20,7 +19,6 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
     required this.transition,
     required this.animation,
     required this.attachRect,
-    required this.bounds,
     required this.arrowHeight,
     super.child,
     this.backgroundColor,
@@ -34,7 +32,6 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   RenderObject createRenderObject(BuildContext context) {
     return PopoverRenderShiftedBox(
       attachRect: attachRect,
-      bounds: bounds,
       color: backgroundColor,
       boxShadow: boxShadow,
       scale: animation.value,
@@ -52,7 +49,6 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   ) {
     renderObject
       ..attachRect = attachRect
-      ..bounds = bounds
       ..color = backgroundColor
       ..boxShadow = boxShadow
       ..scale = transition == PopoverTransition.scale ? animation.value : 1.0

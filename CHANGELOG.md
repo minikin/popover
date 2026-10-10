@@ -5,6 +5,13 @@
   - `barrierLabel` defaults to `'Dismiss'` instead of `MaterialLocalizations.modalBarrierDismissLabel`. Pass a localized label if you need one.
   - Inherited themes (`Theme`, `DefaultTextStyle`, `IconTheme` and others) are captured from the calling `context` and applied to the body. The body text and icon styles are the ones in effect at `context`: the `AppBar` foreground color when opened from an `AppBar` action, and `MaterialApp`'s red debug text without a `Material` ancestor. A `Material` around the body resets the text to `textTheme.bodyMedium`.
   - A translucent `backgroundColor` is painted once under the body instead of twice, so the body looks more transparent than before.
+- Breaking: the popover is placed the way iOS, iPadOS and macOS place theirs. The rules come from `UIPopoverPresentationController` and `NSPopover` measured on iOS 26 simulators and macOS 26.
+  - It stays inside the safe area and above the keyboard. The margin is 10 on iPhone, Android, web, Windows and Linux. On iPad it is 19 at the sides, 30 at the top and 10 at the bottom, and on macOS 12.
+  - When the body fits on neither the preferred side nor the opposite one, it takes the side with more room and shrinks to fit, so a scrollable body scrolls. On macOS it first tries the two perpendicular sides, like `NSPopover`.
+  - Outside macOS, a popover on the left or the right may cover the anchor up to its center, as UIKit does.
+  - `width`, `height` and `constraints` are capped by the space available.
+- Fixed: the popover flipped and slid against the size of the first window, not the screen it is shown in. Near the right edge it could open off screen.
+- Fixed: a flipped popover drew its shadow with the arrow on the original side.
 - Added a `Mutation Test` CI workflow over `lib/` that fails below the 17% threshold in `mutation_test.xml`. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
 
 ## [0.4.0] - 23.10.2025

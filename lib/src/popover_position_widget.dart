@@ -5,16 +5,18 @@ import 'popover_position_render_object.dart';
 
 final class PopoverPositionWidget extends SingleChildRenderObjectWidget {
   final Rect attachRect;
-  final Size bounds;
+  final Rect bounds;
   final double arrowHeight;
   final BoxConstraints? constraints;
   final PopoverDirection? direction;
+  final TargetPlatform platform;
 
   const PopoverPositionWidget({
     required this.arrowHeight,
     required this.attachRect,
     required this.bounds,
     this.constraints,
+    required this.platform,
     this.direction,
     Widget? child,
   }) : super(child: child);
@@ -27,6 +29,7 @@ final class PopoverPositionWidget extends SingleChildRenderObjectWidget {
       direction: direction,
       constraints: constraints,
       arrowHeight: arrowHeight,
+      platform: platform,
     );
   }
 
@@ -39,6 +42,8 @@ final class PopoverPositionWidget extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..bounds = bounds
       ..direction = direction
-      ..additionalConstraints = constraints;
+      ..additionalConstraints = constraints
+      ..arrowHeight = arrowHeight
+      ..platform = platform;
   }
 }

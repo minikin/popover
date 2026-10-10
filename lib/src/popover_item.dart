@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../popover.dart';
 import 'popover_context.dart';
 import 'popover_position_widget.dart';
 import 'utils/build_context_extension.dart';
+import 'utils/popover_utils.dart';
 
 class PopoverItem extends StatefulWidget {
   final Widget child;
@@ -47,16 +49,23 @@ class PopoverItem extends StatefulWidget {
 
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
-  late BoxConstraints _constraints;
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final bounds =
+        (media.padding +
+                media.viewInsets +
+                PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
+            .deflateRect(Offset.zero & media.size);
+
     return Stack(
       children: [
         PopoverPositionWidget(
           attachRect: _attachRect,
-          bounds: MediaQuery.sizeOf(context),
-          constraints: _constraints,
+          bounds: bounds,
+          constraints: widget.constraints,
+          platform: defaultTargetPlatform,
           direction: widget.direction,
           arrowHeight: widget.arrowHeight,
           child: AnimatedBuilder(
@@ -64,7 +73,6 @@ class _PopoverItemState extends State<PopoverItem> {
             builder: (context, child) {
               return PopoverContext(
                 attachRect: _attachRect,
-                bounds: MediaQuery.sizeOf(context),
                 animation: widget.animation,
                 radius: widget.radius,
                 backgroundColor: widget.backgroundColor,
@@ -88,7 +96,6 @@ class _PopoverItemState extends State<PopoverItem> {
 
   @override
   void didChangeDependencies() {
-    _configureConstraints();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => setState(_configureRect),
     );
@@ -100,41 +107,6 @@ class _PopoverItemState extends State<PopoverItem> {
   void initState() {
     _configureRect();
     super.initState();
-  }
-
-  void _configureConstraints() {
-    final size = MediaQuery.of(context).size;
-    var constraints = BoxConstraints.loose(size);
-
-    if (widget.constraints != null) {
-      constraints = constraints.copyWith(
-        minWidth: widget.constraints!.minWidth.isFinite
-            ? widget.constraints!.minWidth
-            : null,
-        minHeight: widget.constraints!.minHeight.isFinite
-            ? widget.constraints!.minHeight
-            : null,
-        maxWidth: widget.constraints!.maxWidth.isFinite
-            ? widget.constraints!.maxWidth
-            : null,
-        maxHeight: widget.constraints!.maxHeight.isFinite
-            ? widget.constraints!.maxHeight
-            : null,
-      );
-    }
-
-    if (widget.direction == PopoverDirection.top ||
-        widget.direction == PopoverDirection.bottom) {
-      final maxHeight = constraints.maxHeight + widget.arrowHeight;
-      constraints = constraints.copyWith(maxHeight: maxHeight);
-    } else {
-      constraints = constraints.copyWith(
-        maxHeight: constraints.maxHeight + widget.arrowHeight,
-        maxWidth: constraints.maxWidth + widget.arrowWidth!,
-      );
-    }
-
-    _constraints = constraints;
   }
 
   void _configureRect() {

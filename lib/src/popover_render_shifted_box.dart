@@ -6,7 +6,6 @@ import 'utils/popover_utils.dart';
 
 final class PopoverRenderShiftedBox extends RenderShiftedBox {
   late Rect _attachRect;
-  late Size _bounds;
   double? arrowWidth;
   double arrowHeight;
   PopoverDirection? _direction;
@@ -17,7 +16,6 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
-    required Size bounds,
     required this.arrowHeight,
     this.arrowWidth,
     RenderBox? child,
@@ -28,7 +26,6 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     PopoverDirection? direction,
   }) : super(child) {
     _attachRect = attachRect;
-    _bounds = bounds;
     _color = color;
     _boxShadow = boxShadow;
     _scale = scale;
@@ -40,13 +37,6 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   set attachRect(Rect value) {
     if (_attachRect == value) return;
     _attachRect = value;
-    markNeedsLayout();
-  }
-
-  Size get bounds => _bounds;
-  set bounds(Size value) {
-    if (_bounds == value) return;
-    _bounds = value;
     markNeedsLayout();
   }
 
@@ -84,17 +74,20 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     markNeedsLayout();
   }
 
+  /// The side [PopoverPositionRenderObject] picked, or [direction] when laid
+  /// out on its own.
+  PopoverDirection get _resolvedDirection {
+    final constraints = this.constraints;
+    return constraints is PopoverConstraints
+        ? constraints.direction
+        : direction ?? PopoverDirection.bottom;
+  }
+
   @override
   void paint(PaintingContext context, Offset offset) {
     final transform = Matrix4.identity();
     final childParentData = child!.parentData as BoxParentData;
-    final _direction = PopoverUtils.popoverDirection(
-      attachRect,
-      size,
-      arrowHeight,
-      direction,
-      bounds,
-    );
+    final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
 
     final arrowLeft =
@@ -159,30 +152,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _configureChildConstrains() {
-    BoxConstraints childConstraints;
-
-    if (direction == PopoverDirection.top ||
-        direction == PopoverDirection.bottom) {
-      childConstraints = BoxConstraints(
-        maxHeight: constraints.maxHeight - arrowHeight,
-      ).enforce(constraints);
-    } else {
-      childConstraints = BoxConstraints(
-        maxWidth: constraints.maxWidth - arrowHeight,
-      ).enforce(constraints);
-    }
-
-    child!.layout(childConstraints, parentUsesSize: true);
+    final arrow = PopoverUtils.isVertical(_resolvedDirection)
+        ? EdgeInsets.only(bottom: arrowHeight)
+        : EdgeInsets.only(right: arrowHeight);
+    child!.layout(constraints.deflate(arrow), parentUsesSize: true);
   }
 
   void _configureChildOffset() {
-    final _direction = PopoverUtils.popoverDirection(
-      attachRect,
-      size,
-      arrowHeight,
-      direction,
-      bounds,
-    );
+    final _direction = _resolvedDirection;
 
     final childParentData = child!.parentData as BoxParentData?;
     if (_direction == PopoverDirection.bottom) {
@@ -195,8 +172,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _configureChildSize() {
-    if (direction == PopoverDirection.top ||
-        direction == PopoverDirection.bottom) {
+    if (PopoverUtils.isVertical(_resolvedDirection)) {
       size = Size(child!.size.width, child!.size.height + arrowHeight);
     } else {
       size = Size(child!.size.width + arrowHeight, child!.size.height);
