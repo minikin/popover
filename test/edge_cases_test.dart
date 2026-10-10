@@ -72,27 +72,34 @@ void main() {
     expect(body.top, anchor.bottom + 12);
   });
 
-  testWidgets('keeps left and right physical in a right-to-left app', (
-    tester,
-  ) async {
-    await _open(
+  for (final direction in [PopoverDirection.left, PopoverDirection.right]) {
+    testWidgets('keeps ${direction.name} physical in a right-to-left app', (
       tester,
-      app: (anchor) => _at(
-        const Rect.fromLTWH(40, 380, 80, 40),
-        anchor,
-        textDirection: TextDirection.rtl,
-      ),
-      direction: PopoverDirection.right,
-    );
+    ) async {
+      await _open(
+        tester,
+        app: (anchor) => _at(
+          const Rect.fromLTWH(160, 380, 80, 40),
+          anchor,
+          textDirection: TextDirection.rtl,
+        ),
+        direction: direction,
+        body: const Size(120, 100),
+      );
 
-    final anchor = tester.getRect(find.byKey(_anchor));
-    final body = tester.getRect(find.byKey(_body));
-    expect(
-      Directionality.of(tester.element(find.byKey(_body))),
-      TextDirection.rtl,
-    );
-    expect(body.left, greaterThanOrEqualTo(anchor.right));
-  });
+      final anchor = tester.getRect(find.byKey(_anchor));
+      final body = tester.getRect(find.byKey(_body));
+      expect(
+        Directionality.of(tester.element(find.byKey(_body))),
+        TextDirection.rtl,
+      );
+      if (direction == PopoverDirection.right) {
+        expect(body.left, greaterThanOrEqualTo(anchor.right));
+      } else {
+        expect(body.right, lessThanOrEqualTo(anchor.left));
+      }
+    });
+  }
 
   testWidgets('re-places the popover when the window shrinks', (tester) async {
     await _open(
