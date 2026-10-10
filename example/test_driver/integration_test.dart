@@ -5,6 +5,7 @@ import 'package:integration_test/integration_test_driver.dart';
 
 Future<void> main() {
   return integrationDriver(
+    writeResponseOnFailure: true,
     responseDataCallback: (data) async {
       final screenshots =
           (data?['screenshots'] ?? <String, dynamic>{}) as Map<String, dynamic>;

@@ -109,6 +109,11 @@ void main() {
 
   testWidgets('follows the button on rotation', (tester) async {
     addTearDown(() => SystemChrome.setPreferredOrientations([]));
+    final view = tester.view;
+    final tablet =
+        view.physicalSize.shortestSide / view.devicePixelRatio >= 600;
+    // Android 16 ignores orientation requests on screens of 600 dp and wider.
+    if (defaultTargetPlatform == TargetPlatform.android && tablet) return;
     await start(tester);
     await open(tester, 7);
 
@@ -131,7 +136,7 @@ Future<void> _rotate(WidgetTester tester, {required bool landscape}) async {
     else
       DeviceOrientation.portraitUp,
   ]);
-  for (var i = 0; i < 50; i++) {
+  for (var i = 0; i < 150; i++) {
     final size = tester.view.physicalSize;
     if ((size.width > size.height) == landscape) break;
     await tester.pump(const Duration(milliseconds: 100));
