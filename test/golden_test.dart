@@ -24,9 +24,7 @@ Future<void> _show(
   required Widget Function(WidgetBuilder launcherBuilder) app,
   Size size = const Size(360, 640),
   PopoverDirection direction = PopoverDirection.bottom,
-  List<BoxShadow> shadow = const [
-    BoxShadow(color: Color(0x1F000000), blurRadius: 5),
-  ],
+  List<BoxShadow>? shadow,
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.triangle,
   Size body = const Size(160, 100),
 }) async {
@@ -159,6 +157,19 @@ void main() {
           );
         }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
       }
+
+      testWidgets('apple_default_shadow', (tester) async {
+        await _show(
+          tester,
+          app: legacyApp,
+          arrowStyle: PopoverArrowStyle.apple,
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/apple_default_shadow.png'),
+        );
+      });
 
       testWidgets('apple_squashed_corner', (tester) async {
         await _show(
