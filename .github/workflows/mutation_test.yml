@@ -1,0 +1,42 @@
+name: Mutation Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      - "*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mutation-test:
+    name: Mutation test
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Mutates all of lib/ and fails below the threshold in mutation_test.xml.
+      - name: Run mutation test
+        run: dart run mutation_test -o build/mutation-test-report mutation_test.xml
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutation-test-report
+          path: build/mutation-test-report

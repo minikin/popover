@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mutations version="1.2">
+  <files>
+    <file>lib/**.dart</file>
+  </files>
+  <commands>
+    <command group="test" expected-return="0" timeout="300">flutter test --no-pub</command>
+  </commands>
+  <threshold failure="17">
+    <rating over="80" name="A"/>
+    <rating over="60" name="B"/>
+    <rating over="40" name="C"/>
+    <rating over="0" name="F"/>
+  </threshold>
+</mutations>
