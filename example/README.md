@@ -11,4 +11,4 @@ flutter run
 ```
 
 `integration_test/popover_test.dart` opens every button, taps an item and
-rotates the device. CONTRIBUTING.md in the repository root shows how to run it.
+rotates the device on phones and tablets. CONTRIBUTING.md in the repository root shows how to run it.
