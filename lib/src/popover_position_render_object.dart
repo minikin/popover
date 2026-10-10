@@ -84,7 +84,10 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
     );
     final room = PopoverUtils.room(attachRect, resolved, bounds, platform);
     child!.layout(
-      _popoverConstraints(resolved, room: room < 0 ? 0 : room),
+      _popoverConstraints(
+        resolved,
+        room: room < arrowHeight ? arrowHeight : room,
+      ),
       parentUsesSize: true,
     );
 

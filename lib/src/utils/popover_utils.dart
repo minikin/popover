@@ -81,6 +81,20 @@ abstract class PopoverUtils {
     };
   }
 
+  /// Moves the parts of [rect] outside [bounds] onto its edges, so a popover
+  /// for an anchor that is partly or fully off screen stays on screen. UIKit
+  /// does this for anchors below the bottom edge and beside the side edges.
+  static Rect clampToBounds(Rect rect, Rect bounds) {
+    double clamp(double value, double min, double max) =>
+        max < min ? min : value.clamp(min, max);
+    return Rect.fromLTRB(
+      clamp(rect.left, bounds.left, bounds.right),
+      clamp(rect.top, bounds.top, bounds.bottom),
+      clamp(rect.right, bounds.left, bounds.right),
+      clamp(rect.bottom, bounds.top, bounds.bottom),
+    );
+  }
+
   static bool isVertical(PopoverDirection? direction) {
     return direction == null ||
         direction == PopoverDirection.top ||

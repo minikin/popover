@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -53,16 +55,22 @@ class _PopoverItemState extends State<PopoverItem> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
+    final obscured = EdgeInsets.fromLTRB(
+      math.max(media.padding.left, media.viewInsets.left),
+      math.max(media.padding.top, media.viewInsets.top),
+      math.max(media.padding.right, media.viewInsets.right),
+      math.max(media.padding.bottom, media.viewInsets.bottom),
+    );
     final bounds =
-        (media.padding +
-                media.viewInsets +
+        (obscured +
                 PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
             .deflateRect(Offset.zero & media.size);
+    final attachRect = PopoverUtils.clampToBounds(_attachRect, bounds);
 
     return Stack(
       children: [
         PopoverPositionWidget(
-          attachRect: _attachRect,
+          attachRect: attachRect,
           bounds: bounds,
           constraints: widget.constraints,
           platform: defaultTargetPlatform,
@@ -72,7 +80,7 @@ class _PopoverItemState extends State<PopoverItem> {
             animation: widget.animation,
             builder: (context, child) {
               return PopoverContext(
-                attachRect: _attachRect,
+                attachRect: attachRect,
                 animation: widget.animation,
                 radius: widget.radius,
                 backgroundColor: widget.backgroundColor,
@@ -95,32 +103,36 @@ class _PopoverItemState extends State<PopoverItem> {
   }
 
   @override
-  void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => setState(_configureRect),
-    );
-
-    super.didChangeDependencies();
-  }
-
-  @override
   void initState() {
-    _configureRect();
     super.initState();
+    _attachRect = _anchorRect() ?? Rect.zero;
+    _followAnchor();
   }
 
-  void _configureRect() {
-    if (!widget.context.mounted) return;
+  /// Re-places the popover after every frame in which the anchor moved, like
+  /// `UIPopoverPresentationController` does for its source view.
+  void _followAnchor() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final rect = _anchorRect();
+      if (rect != null && rect != _attachRect) {
+        setState(() => _attachRect = rect);
+      }
+      _followAnchor();
+    });
+  }
+
+  Rect? _anchorRect() {
+    if (!widget.context.mounted) return null;
     final offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
     final bounds = BuildContextExtension.getWidgetBounds(widget.context);
+    if (offset == null || bounds == null) return null;
 
-    if (offset != null && bounds != null) {
-      _attachRect = Rect.fromLTWH(
-        offset.dx + (widget.arrowDxOffset),
-        offset.dy + (widget.arrowDyOffset),
-        bounds.width + (widget.contentDxOffset),
-        bounds.height + (widget.contentDyOffset),
-      );
-    }
+    return Rect.fromLTWH(
+      offset.dx + widget.arrowDxOffset,
+      offset.dy + widget.arrowDyOffset,
+      bounds.width + widget.contentDxOffset,
+      bounds.height + widget.contentDyOffset,
+    );
   }
 }

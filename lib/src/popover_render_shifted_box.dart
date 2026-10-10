@@ -90,11 +90,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
 
-    final arrowLeft =
-        attachRect.left + attachRect.width / 2 - arrowWidth! / 2 - offset.dx;
-
-    final arrowTop =
-        attachRect.top + attachRect.height / 2 - arrowWidth! / 2 - offset.dy;
+    final arrowLeft = _arrowStart(
+      attachRect.center.dx - offset.dx,
+      child!.size.width,
+    );
+    final arrowTop = _arrowStart(
+      attachRect.center.dy - offset.dy,
+      child!.size.height,
+    );
 
     late Rect arrowRect;
     late Offset translation;
@@ -142,6 +145,15 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     );
   }
 
+  /// Where the arrow base starts along a body side of [extent] so the arrow
+  /// points at [target] without running into a rounded corner.
+  double _arrowStart(double target, double extent) {
+    final min = radius ?? 0;
+    final max = extent - min - arrowWidth!;
+    if (max < min) return (extent - arrowWidth!) / 2;
+    return (target - arrowWidth! / 2).clamp(min, max);
+  }
+
   @override
   void performLayout() {
     assert(constraints.maxHeight.isFinite);
@@ -172,11 +184,12 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   void _configureChildSize() {
-    if (PopoverUtils.isVertical(_resolvedDirection)) {
-      size = Size(child!.size.width, child!.size.height + arrowHeight);
-    } else {
-      size = Size(child!.size.width + arrowHeight, child!.size.height);
-    }
+    final arrow = PopoverUtils.isVertical(_resolvedDirection)
+        ? Size(0, arrowHeight)
+        : Size(arrowHeight, 0);
+    size = constraints.constrain(
+      child!.size + Offset(arrow.width, arrow.height),
+    );
   }
 
   void _paintShadows(
