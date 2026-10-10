@@ -96,9 +96,13 @@ class _PopoverItemState extends State<PopoverItem> {
                 child: child,
               );
             },
-            child: Listener(
-              behavior: HitTestBehavior.opaque,
-              child: widget.child,
+            // The body repaints on its own layer, so scrolling or a blinking
+            // cursor inside it does not repaint the outline and its shadow.
+            child: RepaintBoundary(
+              child: Listener(
+                behavior: HitTestBehavior.opaque,
+                child: widget.child,
+              ),
             ),
           ),
         ),
