@@ -59,7 +59,11 @@ class _RoadmapPageState extends State<RoadmapPage> {
           Builder(
             builder: (context) => OutlinedButton.icon(
               key: filterAnchor,
-              style: OutlinedButton.styleFrom(backgroundColor: Colors.white),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerLowest,
+              ),
               onPressed: () => _showFilters(context),
               icon: const Icon(Icons.filter_list, size: 18),
               label: const Text('Filter'),
@@ -255,9 +259,13 @@ class _IssueState extends State<_Issue> {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE6E6EA)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFE6E6EA)
+              : const Color(0xFF2A2A30),
+        ),
       ),
       child: Row(
         children: [
@@ -307,7 +315,7 @@ class _MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = destructive
         ? const Color(0xFFE5484D)
-        : const Color(0xFF1C1C21);
+        : Theme.of(context).colorScheme.onSurface;
     return InkWell(
       onTap: () => Navigator.pop(context),
       child: Padding(
