@@ -161,33 +161,37 @@ class _RoadmapPageState extends State<RoadmapPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (final status in _Status.values)
-            InkWell(
-              onTap: () {
-                setState(() => _issues[index] = (id, title, status));
-                Navigator.pop(context);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 9,
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.circle, size: 10, color: status.color),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        status.label,
-                        style: const TextStyle(fontSize: 14),
+            Builder(
+              builder: (body) => InkWell(
+                onTap: () {
+                  setState(() => _issues[index] = (id, title, status));
+                  // The popover's own context: the anchor may sit under
+                  // another navigator than the one the popover is on.
+                  Navigator.pop(body);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 9,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.circle, size: 10, color: status.color),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          status.label,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                       ),
-                    ),
-                    if (status == current)
-                      const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Color(0xFF5E6AD2),
-                      ),
-                  ],
+                      if (status == current)
+                        const Icon(
+                          Icons.check,
+                          size: 16,
+                          color: Color(0xFF5E6AD2),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

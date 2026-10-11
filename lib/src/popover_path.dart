@@ -7,25 +7,19 @@ final class PopoverPath {
 
   const PopoverPath(this.radius);
 
-  Path draw(PopoverDirection? direction, Rect? arrowRect, Rect bodyRect) {
+  Path draw(PopoverDirection direction, Rect arrowRect, Rect bodyRect) {
     final path = Path();
-
-    if (arrowRect != null) {
-      if (direction == PopoverDirection.top) {
+    switch (direction) {
+      case PopoverDirection.top:
         _drawTopElement(path, arrowRect, bodyRect);
-      } else if (direction == PopoverDirection.right) {
+      case PopoverDirection.right:
         _drawRightElement(path, arrowRect, bodyRect);
-      } else if (direction == PopoverDirection.left) {
+      case PopoverDirection.left:
         _drawLeftElement(path, arrowRect, bodyRect);
-      } else {
+      case PopoverDirection.bottom:
         _drawBottomElement(path, arrowRect, bodyRect);
-      }
-      path.close();
-      return path;
-    } else {
-      path.close();
-      return path;
     }
+    return path..close();
   }
 
   void _drawBottomElement(Path path, Rect arrowRect, Rect bodyRect) {

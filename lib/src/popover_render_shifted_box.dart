@@ -26,6 +26,13 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   PopoverGlass? _glass;
   double _opacity;
   final _backdrop = LayerHandle<BackdropFilterLayer>();
+  final _shadowLayer = LayerHandle<TransformLayer>();
+  final _bodyLayer = LayerHandle<TransformLayer>();
+  final _clipLayer = LayerHandle<ClipPathLayer>();
+
+  /// The scale about the arrow tip of the last paint, which hit testing and
+  /// [applyPaintTransform] use too.
+  Matrix4? _paintTransform;
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
@@ -88,7 +95,31 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   @override
   void dispose() {
     _backdrop.layer = null;
+    _shadowLayer.layer = null;
+    _bodyLayer.layer = null;
+    _clipLayer.layer = null;
     super.dispose();
+  }
+
+  @override
+  void applyPaintTransform(RenderBox child, Matrix4 transform) {
+    final paintTransform = _paintTransform;
+    if (paintTransform != null) transform.multiply(paintTransform);
+    super.applyPaintTransform(child, transform);
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    final paintTransform = _paintTransform;
+    if (paintTransform == null) {
+      return super.hitTestChildren(result, position: position);
+    }
+    return result.addWithPaintTransform(
+      transform: paintTransform,
+      position: position,
+      hitTest: (result, position) =>
+          super.hitTestChildren(result, position: position),
+    );
   }
 
   double? get arrowWidth => _arrowWidth;
@@ -270,37 +301,43 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
       PopoverDirection.left => Offset(size.width, tip),
     });
 
-    for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
-      final shift = offset + boxShadow.offset;
-      final shadow = outline(
-        body.inflate(boxShadow.spreadRadius).shift(shift),
-        tip + (vertical ? shift.dx : shift.dy),
-      );
-      context.pushTransform(needsCompositing, offset, transform, (context, _) {
-        final canvas = context.canvas;
-        // Glass blurs what is behind it, so the shadow stays outside, as on
-        // iOS and macOS.
-        if (glass != null) {
-          canvas
-            ..save()
-            ..clipPath(
-              Path()
-                ..fillType = PathFillType.evenOdd
-                ..addRect(shadow.getBounds().inflate(boxShadow.blurSigma * 3))
-                ..addPath(path, offset),
-            );
-        }
-        final faded = glass == null
-            ? boxShadow
-            : boxShadow.copyWith(
-                color: boxShadow.color.withValues(
-                  alpha: boxShadow.color.a * opacity,
-                ),
+    _shadowLayer.layer = context.pushTransform(
+      needsCompositing,
+      offset,
+      transform,
+      (context, _) {
+        for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
+          final shift = offset + boxShadow.offset;
+          final shadow = outline(
+            body.inflate(boxShadow.spreadRadius).shift(shift),
+            tip + (vertical ? shift.dx : shift.dy),
+          );
+          final canvas = context.canvas;
+          // Glass blurs what is behind it, so the shadow stays outside, as on
+          // iOS and macOS.
+          if (glass != null) {
+            canvas
+              ..save()
+              ..clipPath(
+                Path()
+                  ..fillType = PathFillType.evenOdd
+                  ..addRect(shadow.getBounds().inflate(boxShadow.blurSigma * 3))
+                  ..addPath(path, offset),
               );
-        canvas.drawPath(shadow, faded.toPaint());
-        if (glass != null) canvas.restore();
-      });
-    }
+          }
+          final faded = glass == null
+              ? boxShadow
+              : boxShadow.copyWith(
+                  color: boxShadow.color.withValues(
+                    alpha: boxShadow.color.a * opacity,
+                  ),
+                );
+          canvas.drawPath(shadow, faded.toPaint());
+          if (glass != null) canvas.restore();
+        }
+      },
+      oldLayer: _shadowLayer.layer,
+    );
 
     _pushClipPath(context, offset, path, transform);
   }
@@ -379,28 +416,30 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Matrix4 transform,
     Offset offset,
     PopoverDirection direction,
-    Rect? arrowRect,
+    Rect arrowRect,
     Rect bodyRect,
   ) {
-    if (boxShadow == null) return;
-    for (final boxShadow in boxShadow!) {
-      final paint = boxShadow.toPaint();
-      Rect place(Rect rect) => rect
-          .shift(offset)
-          .shift(boxShadow.offset)
-          .inflate(boxShadow.spreadRadius);
-
-      final path = PopoverPath(
-        radius!,
-      ).draw(direction, place(arrowRect!), place(bodyRect));
-
-      context.pushTransform(needsCompositing, offset, transform, (
-        context,
-        offset,
-      ) {
-        context.canvas.drawPath(path, paint);
-      });
-    }
+    final shadows = boxShadow ?? const <BoxShadow>[];
+    _shadowLayer.layer = context.pushTransform(
+      needsCompositing,
+      offset,
+      transform,
+      (context, _) {
+        for (final boxShadow in shadows) {
+          Rect place(Rect rect) => rect
+              .shift(offset)
+              .shift(boxShadow.offset)
+              .inflate(boxShadow.spreadRadius);
+          context.canvas.drawPath(
+            PopoverPath(
+              radius!,
+            ).draw(direction, place(arrowRect), place(bodyRect)),
+            boxShadow.toPaint(),
+          );
+        }
+      },
+      oldLayer: _shadowLayer.layer,
+    );
   }
 
   void _pushClipPath(
@@ -410,47 +449,55 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Matrix4 transform,
   ) {
     final bounds = (Offset.zero & size).expandToInclude(path.getBounds());
+    _paintTransform = transform;
     // Scaled before it is clipped, so a glass backdrop, which fills the whole
     // clip, grows with the body during the scale transition.
-    context.pushTransform(needsCompositing, offset, transform, (
-      context,
+    _bodyLayer.layer = context.pushTransform(
+      needsCompositing,
       offset,
-    ) {
-      context.pushClipPath(needsCompositing, offset, bounds, path, (
-        context,
-        offset,
-      ) {
-        final glass = this.glass;
-        if (glass == null) {
-          context.canvas.drawRect(
-            bounds.shift(offset),
-            Paint()..color = color!,
-          );
-          super.paint(context, offset);
-          return;
-        }
-        _backdrop.layer = (_backdrop.layer ?? BackdropFilterLayer())
-          ..filter = glass.filter(opacity);
-        context.pushLayer(_backdrop.layer!, (context, offset) {
-          context.canvas.drawPath(
-            path.shift(offset),
-            Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 2
-              ..color = glass.rim.withValues(alpha: glass.rim.a * opacity),
-          );
-          if (opacity < 1) {
-            context.pushOpacity(
-              offset,
-              Color.getAlphaFromOpacity(opacity),
-              super.paint,
-            );
-          } else {
-            super.paint(context, offset);
-          }
-        }, offset);
-      });
-    });
+      transform,
+      (context, offset) {
+        _clipLayer.layer = context.pushClipPath(
+          needsCompositing,
+          offset,
+          bounds,
+          path,
+          (context, offset) {
+            final glass = this.glass;
+            if (glass == null) {
+              context.canvas.drawRect(
+                bounds.shift(offset),
+                Paint()..color = color!,
+              );
+              super.paint(context, offset);
+              return;
+            }
+            _backdrop.layer = (_backdrop.layer ?? BackdropFilterLayer())
+              ..filter = glass.filter(opacity);
+            context.pushLayer(_backdrop.layer!, (context, offset) {
+              context.canvas.drawPath(
+                path.shift(offset),
+                Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 2
+                  ..color = glass.rim.withValues(alpha: glass.rim.a * opacity),
+              );
+              if (opacity < 1) {
+                context.pushOpacity(
+                  offset,
+                  Color.getAlphaFromOpacity(opacity),
+                  super.paint,
+                );
+              } else {
+                super.paint(context, offset);
+              }
+            }, offset);
+          },
+          oldLayer: _clipLayer.layer,
+        );
+      },
+      oldLayer: _bodyLayer.layer,
+    );
   }
 
   void _transform(Matrix4 transform, Offset translation) {

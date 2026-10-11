@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
@@ -130,4 +131,43 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(PopoverContext), findsOneWidget);
   });
+
+  testWidgets('taps and geometry follow the scale while the popover opens', (
+    tester,
+  ) async {
+    var bodyTaps = 0;
+    const anchor = SizedBox(key: _anchor, width: 80, height: 40);
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: Center(child: anchor)),
+      ),
+    );
+    showPopover(
+      context: tester.element(find.byKey(_anchor)),
+      bodyBuilder: (_) => GestureDetector(
+        key: const Key('body'),
+        behavior: HitTestBehavior.opaque,
+        onTap: () => bodyTaps++,
+        child: const SizedBox(width: 200, height: 200),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+
+    final box = _box(tester);
+    final scale = box.scale!;
+    expect(scale, inExclusiveRange(0.1, 0.95));
+    final painted = tester.getRect(find.byKey(const Key('body')));
+    expect(painted.width, moreOrLessEquals(200 * scale, epsilon: 0.5));
+
+    // Inside the unscaled body, outside the painted one.
+    final unscaledCorner = box.localToGlobal(
+      (box.child!.parentData! as BoxParentData).offset + const Offset(195, 195),
+    );
+    expect(painted.contains(unscaledCorner), isFalse);
+    await tester.tapAt(painted.center);
+    expect(bodyTaps, 1);
+    await tester.tapAt(unscaledCorner);
+    expect(bodyTaps, 1);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 }
