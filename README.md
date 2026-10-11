@@ -190,7 +190,9 @@ keyboard stays up.
 The popover fades in over `transitionDuration`, 200 ms by default.
 `PopoverTransition.scale`, the default, also grows the body from the arrow.
 `PopoverTransition.other` turns the scaling off. `popoverTransitionBuilder`
-replaces the fade:
+replaces the fade. Avoid `Opacity` and `FadeTransition` in it with the glass
+background: Impeller gives a backdrop filter inside an opacity layer nothing
+to blur, so the glass shows as a flat tint until the fade ends.
 
 ```dart
 showPopover(
