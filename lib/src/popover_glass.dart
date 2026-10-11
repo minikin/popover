@@ -29,10 +29,31 @@ final class PopoverGlass {
   /// The light along the inside of the outline, one logical pixel wide.
   final Color rim;
 
-  ImageFilter get filter => ImageFilter.compose(
-    outer: ColorFilter.matrix(matrix),
-    inner: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
-  );
+  /// The filter for the backdrop, faded toward no filter at all as
+  /// [opacity] goes to 0.
+  ///
+  /// Impeller gives a backdrop filter inside an opacity layer an empty
+  /// backdrop, so the glass cannot fade with an `Opacity` around it.
+  ImageFilter filter([double opacity = 1]) {
+    final sigma = this.sigma * opacity;
+    return ImageFilter.compose(
+      outer: ColorFilter.matrix(matrixAt(opacity)),
+      inner: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
+    );
+  }
+
+  /// [matrix] blended with the identity, all of it at an [opacity] of 1.
+  List<double> matrixAt(double opacity) => [
+    for (var i = 0; i < 20; i++)
+      _identity[i] + (matrix[i] - _identity[i]) * opacity,
+  ];
+
+  static const _identity = <double>[
+    1, 0, 0, 0, 0, //
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+  ];
 
   /// The glass of [shape] in [brightness], or null for
   /// [PopoverShape.triangle], which has none.

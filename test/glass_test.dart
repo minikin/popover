@@ -140,13 +140,80 @@ void main() {
         expect(glass.matrix, hasLength(20));
         expect(glass.matrix.sublist(15), [0, 0, 0, 0, 255]);
         expect(glass.sigma, greaterThan(0));
-        expect(glass.filter, isA<ImageFilter>());
+        expect(glass.filter(), isA<ImageFilter>());
       }
       expect(PopoverGlass.iosDark.matrix[4], lessThan(50));
       expect(PopoverGlass.iosLight.matrix[4], greaterThan(150));
       expect(PopoverGlass.macosDark.matrix[4], lessThan(50));
       expect(PopoverGlass.macosLight.matrix[4], greaterThan(150));
     });
+  });
+
+  group('fading glass', () {
+    test('blends the matrix with the identity', () {
+      const glass = PopoverGlass.iosLight;
+      for (final (i, value) in glass.matrixAt(1).indexed) {
+        expect(value, moreOrLessEquals(glass.matrix[i]));
+      }
+      expect(glass.matrixAt(0), [
+        1, 0, 0, 0, 0, //
+        0, 1, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        0, 0, 0, 1, 0,
+      ]);
+      expect(glass.matrixAt(0.5)[4], moreOrLessEquals(glass.matrix[4] / 2));
+      expect(
+        glass.matrixAt(0.5)[0],
+        moreOrLessEquals((1 + glass.matrix[0]) / 2),
+      );
+      expect(glass.matrixAt(0.5)[18], 0.5);
+      expect(glass.matrixAt(0.5)[19], 127.5);
+    });
+
+    testWidgets('fades in the render object, not in an Opacity', (
+      tester,
+    ) async {
+      final box = await _open(tester, settle: false);
+
+      expect(box.opacity, inExclusiveRange(0, 1));
+      expect(
+        find.ancestor(
+          of: find.byType(PopoverContext),
+          matching: find.byType(FadeTransition),
+        ),
+        findsNothing,
+      );
+      expect(tester.layers.whereType<OpacityLayer>(), isNotEmpty);
+
+      await tester.pumpAndSettle();
+      expect(box.opacity, 1);
+    }, variant: _apple);
+
+    testWidgets('leaves a solid background to the route fade', (tester) async {
+      final box = await _open(
+        tester,
+        backgroundColor: const Color(0xFF123456),
+        settle: false,
+      );
+
+      expect(box.opacity, 1);
+      expect(
+        find.ancestor(
+          of: find.byType(PopoverContext),
+          matching: find.byType(FadeTransition),
+        ),
+        findsOneWidget,
+      );
+    }, variant: _ios);
+
+    testWidgets('paints nothing at an opacity of 0', (tester) async {
+      final box = await _open(tester);
+
+      box.opacity = 0;
+      await tester.pump();
+
+      expect(tester.layers.whereType<BackdropFilterLayer>(), isEmpty);
+    }, variant: _ios);
   });
 
   group('the default background', () {

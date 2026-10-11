@@ -203,6 +203,11 @@ Future<T?> showPopover<T extends Object?>({
         PopoverShape.macos => _macosShadow,
       };
 
+  final fadesGlass =
+      popoverTransitionBuilder == null &&
+      backgroundColor == null &&
+      shape != PopoverShape.triangle;
+
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
 
@@ -225,6 +230,7 @@ Future<T?> showPopover<T extends Object?>({
             arrowWidth: arrowSize.width,
             arrowHeight: arrowSize.height,
             shape: shape,
+            fadesGlass: fadesGlass,
             constraints: constraints,
             arrowDxOffset: arrowDxOffset,
             arrowDyOffset: arrowDyOffset,
@@ -245,9 +251,12 @@ Future<T?> showPopover<T extends Object?>({
       transitionDuration: transitionDuration,
       settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
-        return popoverTransitionBuilder == null
-            ? _FadeTransitionWidget(child: child, animation: animation)
-            : popoverTransitionBuilder(animation, child);
+        if (popoverTransitionBuilder != null) {
+          return popoverTransitionBuilder(animation, child);
+        }
+        return fadesGlass
+            ? child
+            : _FadeTransitionWidget(child: child, animation: animation);
       },
     ),
   );

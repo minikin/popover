@@ -18,6 +18,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   double? _radius;
   PopoverShape _shape;
   PopoverGlass? _glass;
+  double _opacity;
   final _backdrop = LayerHandle<BackdropFilterLayer>();
 
   PopoverRenderShiftedBox({
@@ -32,8 +33,10 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     PopoverDirection? direction,
     PopoverShape shape = PopoverShape.triangle,
     PopoverGlass? glass,
+    double opacity = 1,
   }) : _shape = shape,
        _glass = glass,
+       _opacity = opacity,
        super(child) {
     _attachRect = attachRect;
     _color = color;
@@ -57,6 +60,15 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     _glass = value;
     if (value == null) _backdrop.layer = null;
     markNeedsCompositingBitsUpdate();
+    markNeedsPaint();
+  }
+
+  /// Fades the glass, its shadows and the body, which an `Opacity` around a
+  /// backdrop filter cannot do on Impeller. Only used with [glass].
+  double get opacity => _opacity;
+  set opacity(double value) {
+    if (_opacity == value) return;
+    _opacity = value;
     markNeedsPaint();
   }
 
@@ -127,6 +139,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
     if (shape != PopoverShape.triangle) {
+      if (glass != null && opacity <= 0) return;
       _paintApple(context, offset, transform, _direction);
       return;
     }
@@ -243,7 +256,14 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
                 ..addPath(path, offset),
             );
         }
-        canvas.drawPath(shadow, boxShadow.toPaint());
+        final faded = glass == null
+            ? boxShadow
+            : boxShadow.copyWith(
+                color: boxShadow.color.withValues(
+                  alpha: boxShadow.color.a * opacity,
+                ),
+              );
+        canvas.drawPath(shadow, faded.toPaint());
         if (glass != null) canvas.restore();
       });
     }
@@ -354,16 +374,24 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
           return;
         }
         _backdrop.layer = (_backdrop.layer ?? BackdropFilterLayer())
-          ..filter = glass.filter;
+          ..filter = glass.filter(opacity);
         context.pushLayer(_backdrop.layer!, (context, offset) {
           context.canvas.drawPath(
             path.shift(offset),
             Paint()
               ..style = PaintingStyle.stroke
               ..strokeWidth = 2
-              ..color = glass.rim,
+              ..color = glass.rim.withValues(alpha: glass.rim.a * opacity),
           );
-          super.paint(context, offset);
+          if (opacity < 1) {
+            context.pushOpacity(
+              offset,
+              Color.getAlphaFromOpacity(opacity),
+              super.paint,
+            );
+          } else {
+            super.paint(context, offset);
+          }
         }, offset);
       });
     });

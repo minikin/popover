@@ -18,6 +18,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   final double arrowHeight;
   final PopoverShape shape;
   final PopoverGlass? glass;
+  final double opacity;
 
   const PopoverContext({
     required this.transition,
@@ -26,6 +27,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
     required this.arrowHeight,
     this.shape = PopoverShape.triangle,
     this.glass,
+    this.opacity = 1,
     super.child,
     this.backgroundColor,
     this.boxShadow,
@@ -47,6 +49,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       arrowHeight: arrowHeight,
       shape: shape,
       glass: glass,
+      opacity: opacity,
     );
   }
 
@@ -65,6 +68,7 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       ..arrowWidth = arrowWidth
       ..arrowHeight = arrowHeight
       ..shape = shape
-      ..glass = glass;
+      ..glass = glass
+      ..opacity = opacity;
   }
 }
