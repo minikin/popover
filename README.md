@@ -286,6 +286,24 @@ showPopover(
 );
 ```
 
+## Using with AI agents
+
+The package ships a skill that teaches coding agents how to use it: which API
+to pick, the anchor context, the `Material` wrapper, the native defaults and
+the pitfalls. Install it into your app with the `skills` tool:
+
+```sh
+dart run skills@ get --package popover
+```
+
+It lands in `.agents/skills/`, or in `.claude/skills/` with `--agent claude`.
+For the analyzer, pub.dev search and hot reload, add the Dart and Flutter MCP
+server, which comes with the Dart SDK:
+
+```sh
+claude mcp add dart -- dart mcp-server
+```
+
 ## Migrating from 0.4
 
 0.5.0 changes how the popover looks and behaves on iOS, iPadOS and macOS, and
