@@ -23,7 +23,7 @@ Future<PopoverShape> _shapeFor(
   } else {
     showPopover(
       context: context,
-      arrowStyle: style,
+      style: PopoverStyle(arrowStyle: style),
       bodyBuilder: (_) => const SizedBox(),
     );
   }

@@ -44,10 +44,12 @@ Future<void> _show(
           onTap: () => showPopover(
             context: context,
             direction: direction,
-            shadow: shadow,
-            arrowStyle: arrowStyle,
-            brightness: brightness,
-            backgroundColor: backgroundColor,
+            style: PopoverStyle(
+              shadow: shadow,
+              arrowStyle: arrowStyle,
+              brightness: brightness,
+              backgroundColor: backgroundColor,
+            ),
             bodyBuilder: (_) => SizedBox(
               key: _body,
               width: body.width,

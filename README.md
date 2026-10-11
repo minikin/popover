@@ -145,6 +145,31 @@ Cupertino widgets such as `CupertinoListTile` need no wrapper.
 `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
 `CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
 
+## Style and theme
+
+`PopoverStyle` holds how a popover looks and moves: `arrowStyle`,
+`backgroundColor`, `brightness`, `barrierColor`, `radius`, `shadow`,
+`arrowWidth`, `arrowHeight`, `transition` and `transitionDuration`. Every
+field is optional, and a field left null falls back to the native default of
+the platform, described in the sections below. Pass a style per popover with
+`style:`, or set one for a whole subtree with `PopoverTheme`:
+
+```dart
+PopoverTheme(
+  data: const PopoverStyle(radius: 16),
+  child: MaterialApp(home: const HomePage()),
+);
+
+showPopover(
+  context: context,
+  style: const PopoverStyle(arrowStyle: PopoverArrowStyle.triangle),
+  bodyBuilder: (context) => const Text('Hello'),
+);
+```
+
+The style at the call is merged on top of the theme, so its non-null fields
+win. Popovers opened from inside a popover see the same theme.
+
 ## Arrow style
 
 `arrowStyle` picks the shape. `PopoverArrowStyle.apple` draws the native
@@ -159,9 +184,9 @@ default shadows are measured from both.
 `PopoverArrowStyle.triangle` is the sharp triangle with 8 point corners from
 earlier versions. `PopoverArrowStyle.adaptive`, the default, picks `apple` on
 iOS, iPadOS and macOS and `triangle` everywhere else, on the web by the
-host OS. `arrowWidth`,
-`arrowHeight`, `radius` and `shadow` override the defaults of either style, for
-example `radius: 13` for the corners of iOS before version 26.
+host OS. `arrowWidth`, `arrowHeight`, `radius` and `shadow` override the
+defaults of either shape, for example `PopoverStyle(radius: 13)` for the
+corners of iOS before version 26.
 
 ## Background and dark mode
 
@@ -214,7 +239,7 @@ screen is moved onto the screen edge first. The popover follows the anchor
 when it moves, scrolls or the screen rotates.
 
 `width`, `height` and `constraints` size the body and are capped by the room
-available. `arrowWidth` and `arrowHeight` size the arrow. `arrowDxOffset` and
+available. `arrowDxOffset` and
 `arrowDyOffset` move the point the arrow aims at. `contentDxOffset` and
 `contentDyOffset` widen and heighten the anchor, which moves a popover that
 opens to the right or below.
@@ -222,7 +247,7 @@ opens to the right or below.
 ## Dismissing
 
 A tap on the barrier closes the popover. `barrierDismissible: false` keeps it
-open, and `barrierColor` replaces the default tint of the barrier. With
+open, and the style's `barrierColor` replaces the default tint. With
 `allowClicksOnBackground: true`, taps pass through the barrier to the widgets
 behind it and `barrierDismissible` is ignored. `onPop` runs whenever the
 route pops.
@@ -255,8 +280,9 @@ showPopover(
 
 ## Animation
 
-The popover fades in over `transitionDuration`, 200 ms by default.
-`PopoverTransition.scale`, the default, also grows the body from the arrow.
+The popover fades in over the style's `transitionDuration`, 200 ms by
+default. `PopoverTransition.scale`, the default `transition`, also grows the
+body from the arrow.
 With the `apple` shape on iOS it moves like an iOS 26 popover instead: it
 scales up from the arrow tip while its outline grows from 100 points to its
 full height, on the spring UIKit uses, and closes on UIKit's softer closing
@@ -322,17 +348,49 @@ how its body is built everywhere.
 - On Apple platforms the defaults are native: the `apple` outline, Liquid
   Glass, no dimming behind the popover and the native springs. Dark mode
   follows the text color the body inherits.
+- The look moved into `PopoverStyle`: `transition`, `backgroundColor`,
+  `barrierColor`, `transitionDuration`, `radius`, `shadow`, `arrowWidth` and
+  `arrowHeight` go into `style:` instead of `showPopover`. `PopoverTheme`
+  sets them for a whole subtree.
+- `key` and the deprecated `isParentAlive` are gone from `showPopover`.
 
-To keep the look of 0.4 everywhere, pass these:
+Before and after:
 
 ```dart
+// 0.4
 showPopover(
   context: context,
-  arrowStyle: PopoverArrowStyle.triangle,
-  backgroundColor: const Color(0xFFFFFFFF),
-  bodyBuilder: (context) => Material(child: MyBody()),
+  radius: 12,
+  arrowHeight: 15,
+  backgroundColor: Colors.white,
+  bodyBuilder: (context) => const MyBody(),
+);
+
+// 0.5
+showPopover(
+  context: context,
+  style: const PopoverStyle(
+    radius: 12,
+    arrowHeight: 15,
+    backgroundColor: Colors.white,
+  ),
+  bodyBuilder: (context) => const MyBody(),
 );
 ```
+
+To keep the look of 0.4 everywhere, set it once at the root:
+
+```dart
+PopoverTheme(
+  data: const PopoverStyle(
+    arrowStyle: PopoverArrowStyle.triangle,
+    backgroundColor: Color(0xFFFFFFFF),
+  ),
+  child: MaterialApp(home: const HomePage()),
+);
+```
+
+and wrap bodies in a `Material` where they need one.
 
 With the `triangle` style the barrier still dims to `Color(0x80000000)` and
 the popover still fades and scales in over 200 ms.

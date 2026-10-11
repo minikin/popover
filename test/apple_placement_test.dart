@@ -316,7 +316,7 @@ Future<Rect> _popoverRect(WidgetTester tester, _Case c) async {
   showPopover(
     context: tester.element(find.byKey(_anchor)),
     direction: c.direction,
-    arrowHeight: _arrowHeight,
+    style: const PopoverStyle(arrowHeight: _arrowHeight),
     bodyBuilder: (_) => SizedBox.fromSize(key: _body, size: c.body),
   );
   await tester.pumpAndSettle();

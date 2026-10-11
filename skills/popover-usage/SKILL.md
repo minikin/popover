@@ -31,16 +31,22 @@ popover by default. It depends only on `package:flutter/widgets.dart`.
   body.
 - Pick the side with `direction` (`PopoverDirection.bottom` by default). It
   is a preference: the popover opens on the other side when it does not fit.
-- Keep the native defaults on Apple platforms unless the user asks
-  otherwise: `arrowStyle: PopoverArrowStyle.adaptive`, a null
-  `backgroundColor` (Liquid Glass), a null `barrierColor` (no dimming) and a
-  null `transitionDuration` (the native springs). Elsewhere the defaults are
-  a triangle arrow, a white or dark gray body and a dimmed barrier.
-- For the look of 0.4 everywhere, pass
-  `arrowStyle: PopoverArrowStyle.triangle` and a `backgroundColor`.
+- Put the look in a `PopoverStyle` passed as `style:`: `arrowStyle`,
+  `backgroundColor`, `brightness`, `barrierColor`, `radius`, `shadow`,
+  `arrowWidth`, `arrowHeight`, `transition`, `transitionDuration`. They are
+  not arguments of `showPopover` or `Popover`. For app-wide defaults, wrap
+  the app in `PopoverTheme(data: PopoverStyle(...), child: ...)`. The style
+  at the call wins over the theme.
+- Leave style fields null to keep the native defaults on Apple platforms:
+  the Apple outline, Liquid Glass, no dimming and the native springs.
+  Elsewhere the defaults are a triangle arrow, a white or dark gray body and
+  a dimmed barrier.
+- For the look of 0.4 everywhere, set
+  `PopoverStyle(arrowStyle: PopoverArrowStyle.triangle, backgroundColor: ...)`
+  in a `PopoverTheme`.
 - Light or dark follows the text color the body inherits from `context`.
-  Pass `brightness` when the popover opens from a place with a different
-  text color than its body, such as a colored `AppBar`.
+  Set the style's `brightness` when the popover opens from a place with a
+  different text color than its body, such as a colored `AppBar`.
 - In a `popoverTransitionBuilder`, do not use `Opacity` or `FadeTransition`
   with the glass background. Impeller gives a backdrop filter inside an
   opacity layer nothing to blur.
