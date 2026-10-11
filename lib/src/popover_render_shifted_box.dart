@@ -269,28 +269,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Matrix4 transform,
     PopoverDirection direction,
   ) {
-    final vertical = PopoverUtils.isVertical(direction);
-    final extent = vertical ? size.width : size.height;
-    final target = vertical
-        ? attachRect.center.dx - offset.dx
-        : attachRect.center.dy - offset.dy;
-    // UIKit keeps the tip half an arrow base from the body edge, AppKit 0.75.
-    final inset = shape == PopoverShape.macos ? 0.75 : arrowWidth! / 2;
-    final tip = extent < 2 * inset
-        ? extent / 2
-        : target.clamp(inset, extent - inset);
-    Path outline(Rect frame, double tip) => switch (shape) {
-      PopoverShape.macos => MacPopoverPath(
-        arrowWidth: arrowWidth!,
-        arrowHeight: arrowHeight,
-        radius: radius ?? 0,
-      ).toPath(frame: frame, direction: direction, tip: tip),
-      _ => ApplePopoverPath(
-        arrowWidth: arrowWidth!,
-        arrowHeight: arrowHeight,
-        radius: radius ?? 0,
-      ).toPath(frame: frame, direction: direction, tip: tip),
-    };
+    final tip = _appleTip(direction, offset);
+    Path outline(Rect frame, double tip) =>
+        _appleOutline(direction, frame, tip);
     final body = revealed(direction, tip);
     final path = outline(body, tip);
 
@@ -301,6 +282,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
       PopoverDirection.left => Offset(size.width, tip),
     });
 
+    final vertical = PopoverUtils.isVertical(direction);
     _shadowLayer.layer = context.pushTransform(
       needsCompositing,
       offset,
@@ -308,38 +290,84 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
       (context, _) {
         for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
           final shift = offset + boxShadow.offset;
-          final shadow = outline(
-            body.inflate(boxShadow.spreadRadius).shift(shift),
-            tip + (vertical ? shift.dx : shift.dy),
+          _paintAppleShadow(
+            context.canvas,
+            boxShadow,
+            outline(
+              body.inflate(boxShadow.spreadRadius).shift(shift),
+              tip + (vertical ? shift.dx : shift.dy),
+            ),
+            path.shift(offset),
           );
-          final canvas = context.canvas;
-          // Glass blurs what is behind it, so the shadow stays outside, as on
-          // iOS and macOS.
-          if (glass != null) {
-            canvas
-              ..save()
-              ..clipPath(
-                Path()
-                  ..fillType = PathFillType.evenOdd
-                  ..addRect(shadow.getBounds().inflate(boxShadow.blurSigma * 3))
-                  ..addPath(path, offset),
-              );
-          }
-          final faded = glass == null
-              ? boxShadow
-              : boxShadow.copyWith(
-                  color: boxShadow.color.withValues(
-                    alpha: boxShadow.color.a * opacity,
-                  ),
-                );
-          canvas.drawPath(shadow, faded.toPaint());
-          if (glass != null) canvas.restore();
         }
       },
       oldLayer: _shadowLayer.layer,
     );
 
     _pushClipPath(context, offset, path, transform);
+  }
+
+  /// Where the arrow tip sits along the side it is on, clamped as UIKit and
+  /// AppKit clamp it.
+  double _appleTip(PopoverDirection direction, Offset offset) {
+    final vertical = PopoverUtils.isVertical(direction);
+    final extent = vertical ? size.width : size.height;
+    final target = vertical
+        ? attachRect.center.dx - offset.dx
+        : attachRect.center.dy - offset.dy;
+    // UIKit keeps the tip half an arrow base from the body edge, AppKit 0.75.
+    final inset = shape == PopoverShape.macos ? 0.75 : arrowWidth! / 2;
+    return extent < 2 * inset
+        ? extent / 2
+        : target.clamp(inset, extent - inset);
+  }
+
+  Path _appleOutline(PopoverDirection direction, Rect frame, double tip) =>
+      switch (shape) {
+        PopoverShape.macos => MacPopoverPath(
+          arrowWidth: arrowWidth!,
+          arrowHeight: arrowHeight,
+          radius: radius ?? 0,
+        ).toPath(frame: frame, direction: direction, tip: tip),
+        _ => ApplePopoverPath(
+          arrowWidth: arrowWidth!,
+          arrowHeight: arrowHeight,
+          radius: radius ?? 0,
+        ).toPath(frame: frame, direction: direction, tip: tip),
+      };
+
+  /// Draws one [boxShadow] along [shadow]. With glass the shadow stays
+  /// outside [outline], as on iOS and macOS, since glass blurs what is
+  /// behind it, and it fades with the popover.
+  void _paintAppleShadow(
+    Canvas canvas,
+    BoxShadow boxShadow,
+    Path shadow,
+    Path outline,
+  ) {
+    if (glass == null) {
+      canvas.drawPath(shadow, boxShadow.toPaint());
+      return;
+    }
+    canvas
+      ..save()
+      ..clipPath(
+        Path()
+          ..fillType = PathFillType.evenOdd
+          ..addRect(shadow.getBounds().inflate(boxShadow.blurSigma * 3))
+          ..addPath(outline, Offset.zero),
+      )
+      ..drawPath(
+        shadow,
+        boxShadow
+            .copyWith(
+              color: boxShadow.color.withValues(
+                alpha: boxShadow.color.a * opacity,
+              ),
+            )
+            .toPaint(),
+      )
+      ..restore();
   }
 
   /// The outline's frame while it grows: [reveal] of the way from
