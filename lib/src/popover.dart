@@ -111,6 +111,9 @@ import 'utils/popover_utils.dart';
 ///
 /// The `routeSettings` is data that might be useful in constructing a [Route].
 ///
+/// The `semanticsLabel` names the popover for screen readers, which announce
+/// it when the popover opens, the way they announce the title of a dialog.
+///
 /// The `barrierLabel` is semantic label used for a dismissible barrier.
 /// This argument defaults to 'Dismiss'. Pass a localized string, for example
 /// `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
@@ -163,6 +166,7 @@ Future<T?> showPopover<T extends Object?>({
   BoxConstraints? constraints,
   RouteSettings? routeSettings,
   String? barrierLabel,
+  String? semanticsLabel,
   PopoverTransitionBuilder? popoverTransitionBuilder,
   Key? key,
   bool allowClicksOnBackground = false,
@@ -232,7 +236,16 @@ Future<T?> showPopover<T extends Object?>({
           onPopInvokedWithResult: (didPop, _) => onPop?.call(),
           child: PopoverItem(
             transition: transition,
-            child: themes.wrap(Builder(builder: bodyBuilder)),
+            child: themes.wrap(
+              semanticsLabel == null
+                  ? Builder(builder: bodyBuilder)
+                  : Semantics(
+                      namesRoute: true,
+                      explicitChildNodes: true,
+                      label: semanticsLabel,
+                      child: Builder(builder: bodyBuilder),
+                    ),
+            ),
             context: context,
             backgroundColor: backgroundColor,
             brightness: resolvedBrightness,
