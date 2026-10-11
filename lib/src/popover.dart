@@ -122,7 +122,8 @@ import 'utils/popover_utils.dart';
 /// `package:material_ui` and `package:cupertino_ui`. The body is not wrapped
 /// in a `Material`. Wrap it in the `Material` of your UI library when it
 /// contains widgets that require one, such as `InkWell`, `ListTile` or
-/// `TextField`.
+/// `TextField`. Use `MaterialType.transparency`, since an opaque `Material`
+/// covers the glass background.
 /// Inherited themes such as `Theme`, `DefaultTextStyle` and `IconTheme` are
 /// captured from `context` and applied to the body.
 

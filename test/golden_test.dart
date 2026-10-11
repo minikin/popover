@@ -28,6 +28,7 @@ Future<void> _show(
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.triangle,
   Brightness? brightness,
   Size body = const Size(160, 100),
+  Duration? openFor,
 }) async {
   tester.view
     ..physicalSize = size
@@ -62,7 +63,12 @@ Future<void> _show(
     ),
   );
   await tester.tap(find.byKey(_launcher));
-  await tester.pumpAndSettle();
+  if (openFor == null) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(openFor);
+  }
 }
 
 /// Stripes behind the popover, so the goldens show what the glass blurs.
@@ -250,6 +256,20 @@ void main() {
           }, variant: TargetPlatformVariant.only(platform));
         }
       }
+
+      testWidgets('glass_opening', (tester) async {
+        await _show(
+          tester,
+          app: _stripedApp,
+          arrowStyle: PopoverArrowStyle.apple,
+          openFor: const Duration(milliseconds: 100),
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/glass_opening.png'),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
       testWidgets('triangle_dark', (tester) async {
         await _show(tester, app: _stripedApp, brightness: Brightness.dark);

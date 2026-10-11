@@ -55,6 +55,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   set glass(PopoverGlass? value) {
     if (_glass == value) return;
     _glass = value;
+    if (value == null) _backdrop.layer = null;
     markNeedsCompositingBitsUpdate();
     markNeedsPaint();
   }
@@ -333,11 +334,13 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Matrix4 transform,
   ) {
     final bounds = (Offset.zero & size).expandToInclude(path.getBounds());
-    context.pushClipPath(needsCompositing, offset, bounds, path, (
+    // Scaled before it is clipped, so a glass backdrop, which fills the whole
+    // clip, grows with the body during the scale transition.
+    context.pushTransform(needsCompositing, offset, transform, (
       context,
       offset,
     ) {
-      context.pushTransform(needsCompositing, offset, transform, (
+      context.pushClipPath(needsCompositing, offset, bounds, path, (
         context,
         offset,
       ) {

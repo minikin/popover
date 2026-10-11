@@ -55,32 +55,42 @@ Future<PopoverRenderShiftedBox> _open(
   Color? backgroundColor,
   Color? barrierColor,
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
+  Color? textColor,
+  bool settle = true,
 }) async {
   tester.platformDispatcher.platformBrightnessTestValue = system;
   addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
   await tester.pumpWidget(
     app(
       theme,
-      Center(
-        child: Builder(
-          builder: (context) => GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => showPopover(
-              context: context,
-              brightness: brightness,
-              backgroundColor: backgroundColor,
-              barrierColor: barrierColor,
-              arrowStyle: arrowStyle,
-              bodyBuilder: (_) => const SizedBox(width: 120, height: 80),
+      DefaultTextStyle.merge(
+        style: TextStyle(color: textColor),
+        child: Center(
+          child: Builder(
+            builder: (context) => GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => showPopover(
+                context: context,
+                brightness: brightness,
+                backgroundColor: backgroundColor,
+                barrierColor: barrierColor,
+                arrowStyle: arrowStyle,
+                bodyBuilder: (_) => const SizedBox(width: 120, height: 80),
+              ),
+              child: const SizedBox(key: _launcher, width: 80, height: 40),
             ),
-            child: const SizedBox(key: _launcher, width: 80, height: 40),
           ),
         ),
       ),
     ),
   );
   await tester.tap(find.byKey(_launcher));
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+  }
   return tester.renderObject(find.byType(PopoverContext));
 }
 
@@ -177,6 +187,23 @@ void main() {
       }
     }, variant: _apple);
 
+    for (final (text, expected) in [
+      (const Color(0xFF767676), Brightness.light),
+      (const Color(0xFFA0A0A0), Brightness.dark),
+    ]) {
+      testWidgets('is ${expected.name} behind $text text', (tester) async {
+        final box = await _open(
+          tester,
+          textColor: text,
+          system: expected == Brightness.light
+              ? Brightness.dark
+              : Brightness.light,
+        );
+
+        expect(box.glass, same(PopoverGlass.of(PopoverShape.ios, expected)));
+      }, variant: _ios);
+    }
+
     testWidgets('takes brightness over the theme and the system', (
       tester,
     ) async {
@@ -234,6 +261,21 @@ void main() {
         lessThan(layers.indexOf(backdrop)),
       );
     }, variant: _apple);
+
+    testWidgets('scales before it clips while the popover opens', (
+      tester,
+    ) async {
+      await _open(tester, settle: false);
+
+      Layer? layer = tester.layers.whereType<BackdropFilterLayer>().single;
+      final ancestors = <Type>[];
+      for (; layer != null; layer = layer.parent) {
+        ancestors.add(layer.runtimeType);
+      }
+      final clip = ancestors.indexOf(ClipPathLayer);
+      expect(clip, greaterThan(0));
+      expect(ancestors.indexOf(TransformLayer, clip), greaterThan(clip));
+    }, variant: _ios);
 
     testWidgets('drops the backdrop layer for a solid color', (tester) async {
       final box = await _open(tester);

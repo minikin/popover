@@ -82,7 +82,8 @@ and works in a `MaterialApp` or a `CupertinoApp` from either source.
 The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
 `Checkbox` and the other widgets that need one throw
 `No Material widget found` unless you wrap the body in the `Material` of your
-UI library, as the quick start does.
+UI library, as the quick start does. Use `MaterialType.transparency`, since an
+opaque `Material` covers the glass background.
 
 `showPopover` captures `Theme`, `DefaultTextStyle`, `IconTheme` and the other
 inherited themes at `context` and applies them to the body, as `showDialog`
@@ -133,7 +134,10 @@ Light or dark follows the text color the body inherits from `context`: dark
 text gets a light background, light text a dark one. So the body stays
 readable in an app that forces a light or a dark theme. Without an inherited
 text color it follows the system setting. `brightness` overrides both, and
-`backgroundColor` replaces the glass with a solid color.
+`backgroundColor` replaces the glass with a solid color. A `Material` around
+the body resets its text to the theme's `bodyMedium`, so pass `brightness`
+when you open the popover from a place with a different text color, such as
+an `AppBar` with a colored background.
 
 iOS and macOS do not dim the screen behind a popover, so the barrier is
 transparent with the `apple` shape and dims to `Color(0x80000000)` with the
