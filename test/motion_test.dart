@@ -4,6 +4,7 @@ import 'package:popover/popover.dart';
 import 'package:popover/src/popover_context.dart';
 import 'package:popover/src/popover_motion.dart';
 import 'package:popover/src/popover_render_shifted_box.dart';
+import 'package:popover/src/popover_shape.dart';
 
 import 'helpers/apps.dart';
 
@@ -50,11 +51,11 @@ List<double> _samples(Curve curve) => [
 final _ios = TargetPlatformVariant.only(TargetPlatform.iOS);
 
 void main() {
-  group('IosPopoverMotion', () {
+  group('PopoverMotion.ios', () {
     test('starts at 0 and ends at 1', () {
       for (final curve in [
-        IosPopoverMotion.present,
-        IosPopoverMotion.dismiss,
+        PopoverMotion.ios.present,
+        PopoverMotion.ios.dismiss,
       ]) {
         expect(curve.transform(0), 0);
         expect(curve.transform(1), 1);
@@ -65,12 +66,12 @@ void main() {
     // -0.0063 while dismissing, sampled once a frame on an iOS 26 simulator.
     test('overshoots like the measured springs', () {
       expect(
-        _samples(IosPopoverMotion.present).reduce((a, b) => a > b ? a : b),
+        _samples(PopoverMotion.ios.present).reduce((a, b) => a > b ? a : b),
         moreOrLessEquals(1.0151, epsilon: 0.001),
       );
       expect(
         _samples(
-          IosPopoverMotion.dismiss.flipped,
+          PopoverMotion.ios.dismiss.flipped,
         ).reduce((a, b) => a < b ? a : b),
         moreOrLessEquals(-0.0063, epsilon: 0.001),
       );
@@ -79,8 +80,8 @@ void main() {
     // UIKit's presented opacity, 82 and 182 milliseconds after the first
     // sample of the spring at 0.0011.
     test('follows the measured presentation', () {
-      final spring = IosPopoverMotion.present;
-      final start = IosPopoverMotion.presentDuration.inMicroseconds;
+      final spring = PopoverMotion.ios.present;
+      final start = PopoverMotion.ios.presentDuration.inMicroseconds;
       double at(double seconds) => spring.transform(seconds * 1e6 / start);
       final offset = [
         for (var t = 0.0; t < 0.05; t += 0.0001) t,
@@ -91,17 +92,70 @@ void main() {
     });
   });
 
+  test('picks the motion per shape', () {
+    expect(PopoverMotion.of(PopoverShape.triangle), isNull);
+    expect(PopoverMotion.of(PopoverShape.ios), same(PopoverMotion.ios));
+    expect(PopoverMotion.of(PopoverShape.macos), same(PopoverMotion.macos));
+    expect(PopoverMotion.ios.startScale, 0.01);
+    expect(PopoverMotion.ios.grows, isTrue);
+    expect(PopoverMotion.macos.startScale, 0);
+    expect(PopoverMotion.macos.grows, isFalse);
+  });
+
+  group('PopoverMotion.macos', () {
+    double at(SpringCurve curve, double seconds) => curve.transform(
+      seconds * Duration.microsecondsPerSecond / curve.duration.inMicroseconds,
+    );
+
+    // NSPopover recorded at 120 frames per second: 94.5% of its size 172 ms
+    // into opening, 39.5% left 100 ms into closing.
+    test('follows the recorded NSPopover', () {
+      expect(
+        at(PopoverMotion.macos.present, 0.172),
+        moreOrLessEquals(0.945, epsilon: 0.03),
+      );
+      expect(
+        1 - at(PopoverMotion.macos.dismiss, 0.1),
+        moreOrLessEquals(0.395, epsilon: 0.03),
+      );
+      expect(
+        _samples(PopoverMotion.macos.present).reduce((a, b) => a > b ? a : b),
+        moreOrLessEquals(1.015, epsilon: 0.002),
+      );
+    });
+
+    testWidgets('scales the whole popover without growing the outline', (
+      tester,
+    ) async {
+      await _open(tester);
+      expect(
+        _route(tester).transitionDuration,
+        const Duration(milliseconds: 440),
+      );
+      expect(
+        _route(tester).reverseTransitionDuration,
+        const Duration(milliseconds: 200),
+      );
+
+      await tester.pump(const Duration(milliseconds: 60));
+      final box = _box(tester);
+      expect(box.scale, inExclusiveRange(0, 1));
+      expect(box.reveal, 1);
+      expect(box.opacity, moreOrLessEquals(box.scale!));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
+  });
+
   group('on iOS', () {
     testWidgets('opens and closes with the measured durations', (tester) async {
       await _open(tester);
 
       expect(
         _route(tester).transitionDuration,
-        IosPopoverMotion.presentDuration,
+        PopoverMotion.ios.presentDuration,
       );
       expect(
         _route(tester).reverseTransitionDuration,
-        IosPopoverMotion.dismissDuration,
+        PopoverMotion.ios.dismissDuration,
       );
     }, variant: _ios);
 
@@ -156,28 +210,23 @@ void main() {
     }, variant: _ios);
   });
 
-  testWidgets(
-    'elsewhere scales linearly over 200 milliseconds',
-    (tester) async {
-      await _open(tester);
-      await tester.pump(const Duration(milliseconds: 50));
+  testWidgets('elsewhere scales linearly over 200 milliseconds', (
+    tester,
+  ) async {
+    await _open(tester);
+    await tester.pump(const Duration(milliseconds: 50));
 
-      expect(
-        _route(tester).transitionDuration,
-        const Duration(milliseconds: 200),
-      );
-      expect(
-        _route(tester).reverseTransitionDuration,
-        const Duration(milliseconds: 200),
-      );
-      expect(_box(tester).scale, moreOrLessEquals(0.25));
-      expect(_box(tester).reveal, 1);
-    },
-    variant: const TargetPlatformVariant({
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-    }),
-  );
+    expect(
+      _route(tester).transitionDuration,
+      const Duration(milliseconds: 200),
+    );
+    expect(
+      _route(tester).reverseTransitionDuration,
+      const Duration(milliseconds: 200),
+    );
+    expect(_box(tester).scale, moreOrLessEquals(0.25));
+    expect(_box(tester).reveal, 1);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
   test('a route without a reverse duration reverses as fast', () {
     final route = PopoverRoute<void>(

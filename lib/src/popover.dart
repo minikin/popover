@@ -45,11 +45,13 @@ import 'utils/popover_utils.dart';
 /// behind a popover.
 ///
 /// The `transitionDuration` argument is used to determine how long it takes
-/// for the route to arrive on or leave off the screen. With the iOS shape and
-/// [PopoverTransition.scale] it defaults to the springs of iOS 26: the
-/// popover scales up from the arrow tip and its outline grows over 494
-/// milliseconds, and it shrinks back over 516. Otherwise it defaults to a
-/// 200 millisecond fade. A duration passed in applies to both directions.
+/// for the route to arrive on or leave off the screen. With the `apple` shape
+/// and [PopoverTransition.scale] it defaults to the springs of iOS 26 and
+/// macOS 26. On iOS the popover scales up from the arrow tip while its
+/// outline grows over 494 milliseconds and shrinks back over 516. On macOS
+/// it scales up over 440 milliseconds and back over 200. Otherwise it
+/// defaults to a 200 millisecond fade. A duration passed in applies to both
+/// directions.
 ///
 /// The `radius` of popover's body.
 /// This argument defaults to 8 for [PopoverArrowStyle.triangle], and for
@@ -207,9 +209,10 @@ Future<T?> showPopover<T extends Object?>({
         PopoverShape.macos => _macosShadow,
       };
 
-  // iOS 26 opens a popover on one spring and closes it on a softer one.
-  final spring =
-      shape == PopoverShape.ios && transition == PopoverTransition.scale;
+  // iOS 26 and macOS 26 open a popover on one spring and close it on another.
+  final motion = transition == PopoverTransition.scale
+      ? PopoverMotion.of(shape)
+      : null;
   final fadesGlass =
       popoverTransitionBuilder == null &&
       backgroundColor == null &&
@@ -256,11 +259,9 @@ Future<T?> showPopover<T extends Object?>({
               ? const Color(0x80000000)
               : const Color(0x00000000)),
       transitionDuration:
-          transitionDuration ??
-          (spring ? IosPopoverMotion.presentDuration : _fadeDuration),
+          transitionDuration ?? (motion?.presentDuration ?? _fadeDuration),
       reverseTransitionDuration:
-          transitionDuration ??
-          (spring ? IosPopoverMotion.dismissDuration : _fadeDuration),
+          transitionDuration ?? (motion?.dismissDuration ?? _fadeDuration),
       settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
         if (popoverTransitionBuilder != null) {
@@ -270,8 +271,8 @@ Future<T?> showPopover<T extends Object?>({
             ? child
             : _FadeTransitionWidget(
                 animation: animation,
-                curve: spring ? IosPopoverMotion.present : Curves.easeOut,
-                reverseCurve: spring ? IosPopoverMotion.dismiss.flipped : null,
+                curve: motion?.present ?? Curves.easeOut,
+                reverseCurve: motion?.dismiss.flipped,
                 child: child,
               );
       },

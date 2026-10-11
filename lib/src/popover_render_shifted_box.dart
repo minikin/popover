@@ -125,7 +125,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   /// How far the outline of [PopoverShape.ios] has grown while it opens, from
-  /// 0 at [IosPopoverMotion.startHeight] to 1 at its full height.
+  /// 0 at [PopoverMotion.startHeight] to 1 at its full height.
   double get reveal => _reveal;
   set reveal(double value) {
     if (_reveal == value) return;
@@ -290,13 +290,13 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }
 
   /// The outline's frame while it grows: [reveal] of the way from
-  /// [IosPopoverMotion.startHeight] to the full height, keeping the arrow tip
+  /// [PopoverMotion.startHeight] to the full height, keeping the arrow tip
   /// in place, as UIKit grows the bounds of `_UIPopoverView` about it.
   @visibleForTesting
   Rect revealed(PopoverDirection direction, double tip) {
     final full = Offset.zero & size;
     if (reveal == 1) return full;
-    final start = math.min(IosPopoverMotion.startHeight, size.height);
+    final start = math.min(PopoverMotion.startHeight, size.height);
     final k = lerpDouble(start, size.height, reveal)! / size.height;
     final pivot = switch (direction) {
       PopoverDirection.bottom => 0.0,

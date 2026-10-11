@@ -66,12 +66,12 @@ class PopoverItem extends StatefulWidget {
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
 
-  /// The route animation through the fade or spring curve, when the item
-  /// fades its glass or springs.
+  /// The route animation through the spring or fade curve, when the item
+  /// springs or fades its glass.
   CurvedAnimation? _motion;
 
-  /// [_motion] for an iOS popover that scales in, null otherwise.
-  CurvedAnimation? _spring;
+  /// The springs of an iOS or macOS popover that scales in, null otherwise.
+  PopoverMotion? _nativeMotion;
 
   @override
   Widget build(BuildContext context) {
@@ -106,15 +106,16 @@ class _PopoverItemState extends State<PopoverItem> {
           child: AnimatedBuilder(
             animation: widget.animation,
             builder: (context, child) {
-              final spring = _spring?.value;
+              final motion = _nativeMotion;
+              final progress = _motion?.value;
               return PopoverContext(
                 attachRect: attachRect,
-                scale: spring != null
-                    ? lerpDouble(IosPopoverMotion.startScale, 1, spring)!
+                scale: motion != null
+                    ? lerpDouble(motion.startScale, 1, progress!)!
                     : widget.transition == PopoverTransition.scale
                     ? widget.animation.value
                     : 1,
-                reveal: spring ?? 1,
+                reveal: motion != null && motion.grows ? progress! : 1,
                 radius: widget.radius,
                 backgroundColor:
                     backgroundColor ??
@@ -150,17 +151,17 @@ class _PopoverItemState extends State<PopoverItem> {
     super.initState();
     _attachRect = _anchorRect() ?? Rect.zero;
     _followAnchor();
-    final spring =
-        widget.shape == PopoverShape.ios &&
-        widget.transition == PopoverTransition.scale;
-    if (spring || widget.fadesGlass) {
+    final motion = widget.transition == PopoverTransition.scale
+        ? PopoverMotion.of(widget.shape)
+        : null;
+    if (motion != null || widget.fadesGlass) {
       _motion = CurvedAnimation(
         parent: widget.animation,
-        curve: spring ? IosPopoverMotion.present : Curves.easeOut,
-        reverseCurve: spring ? IosPopoverMotion.dismiss.flipped : null,
+        curve: motion?.present ?? Curves.easeOut,
+        reverseCurve: motion?.dismiss.flipped,
       );
-      if (spring) _spring = _motion;
     }
+    _nativeMotion = motion;
   }
 
   @override

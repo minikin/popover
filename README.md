@@ -195,8 +195,11 @@ full height, on the spring UIKit uses, and closes on UIKit's softer closing
 spring. The springs are read from the animations UIKit attaches to a
 popover, so opening takes 494 ms and closing 516 ms. A `transitionDuration`
 you pass applies to both. While closing, iOS also squashes the glass
-vertically for the first few frames, which the popover does not. On macOS the
-popover keeps the fade and scale.
+vertically for the first few frames, which the popover does not.
+
+On macOS it moves like `NSPopover`: it scales up from the arrow tip and fades
+in on a spring over 440 ms, and shrinks back into the tip over 200 ms. These
+springs are fitted to `NSPopover` recorded at 120 frames per second.
 `PopoverTransition.other` turns the scaling off. `popoverTransitionBuilder`
 replaces the fade. Avoid `Opacity` and `FadeTransition` in it with the glass
 background: Impeller gives a backdrop filter inside an opacity layer nothing
