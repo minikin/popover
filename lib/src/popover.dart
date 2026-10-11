@@ -172,6 +172,73 @@ Future<T?> showPopover<T extends Object?>({
   bool allowClicksOnBackground = false,
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
 }) {
+  return Navigator.of(context, rootNavigator: true).push<T>(
+    popoverRoute<T>(
+      context: context,
+      bodyBuilder: bodyBuilder,
+      direction: direction,
+      transition: transition,
+      backgroundColor: backgroundColor,
+      brightness: brightness,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      radius: radius,
+      shadow: shadow,
+      arrowWidth: arrowWidth,
+      arrowHeight: arrowHeight,
+      arrowDxOffset: arrowDxOffset,
+      arrowDyOffset: arrowDyOffset,
+      contentDyOffset: contentDyOffset,
+      contentDxOffset: contentDxOffset,
+      barrierDismissible: barrierDismissible,
+      width: width,
+      height: height,
+      onPop: onPop,
+      requestFocus: requestFocus,
+      constraints: constraints,
+      routeSettings: routeSettings,
+      barrierLabel: barrierLabel,
+      semanticsLabel: semanticsLabel,
+      popoverTransitionBuilder: popoverTransitionBuilder,
+      key: key,
+      allowClicksOnBackground: allowClicksOnBackground,
+      arrowStyle: arrowStyle,
+    ),
+  );
+}
+
+/// Builds the route [showPopover] pushes, for [Popover] to push itself.
+PopoverRoute<T> popoverRoute<T extends Object?>({
+  required BuildContext context,
+  required WidgetBuilder bodyBuilder,
+  PopoverDirection direction = PopoverDirection.bottom,
+  PopoverTransition transition = PopoverTransition.scale,
+  Color? backgroundColor,
+  Brightness? brightness,
+  Color? barrierColor,
+  Duration? transitionDuration,
+  double? radius,
+  List<BoxShadow>? shadow,
+  double? arrowWidth,
+  double? arrowHeight,
+  double arrowDxOffset = 0,
+  double arrowDyOffset = 0,
+  double contentDyOffset = 0,
+  double contentDxOffset = 0,
+  bool barrierDismissible = true,
+  double? width,
+  double? height,
+  VoidCallback? onPop,
+  bool? requestFocus,
+  BoxConstraints? constraints,
+  RouteSettings? routeSettings,
+  String? barrierLabel,
+  String? semanticsLabel,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
+  Key? key,
+  bool allowClicksOnBackground = false,
+  PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
+}) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
             BoxConstraints.tightFor(width: width, height: height)
@@ -228,72 +295,70 @@ Future<T?> showPopover<T extends Object?>({
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
 
-  return navigator.push<T>(
-    PopoverRoute<T>(
-      allowClicksOnBackground: allowClicksOnBackground,
-      pageBuilder: (_, animation, __) {
-        return PopScope(
-          onPopInvokedWithResult: (didPop, _) => onPop?.call(),
-          child: PopoverItem(
-            transition: transition,
-            child: themes.wrap(
-              semanticsLabel == null
-                  ? Builder(builder: bodyBuilder)
-                  : Semantics(
-                      scopesRoute: true,
-                      namesRoute: true,
-                      explicitChildNodes: true,
-                      label: semanticsLabel,
-                      child: Builder(builder: bodyBuilder),
-                    ),
-            ),
-            context: context,
-            backgroundColor: backgroundColor,
-            brightness: resolvedBrightness,
-            direction: direction,
-            radius: cornerRadius,
-            boxShadow: boxShadow,
-            animation: animation,
-            arrowWidth: arrowSize.width,
-            arrowHeight: arrowSize.height,
-            shape: shape,
-            fadesGlass: fadesGlass,
-            constraints: constraints,
-            arrowDxOffset: arrowDxOffset,
-            arrowDyOffset: arrowDyOffset,
-            contentDyOffset: contentDyOffset,
-            contentDxOffset: contentDxOffset,
-            key: key,
+  return PopoverRoute<T>(
+    allowClicksOnBackground: allowClicksOnBackground,
+    pageBuilder: (_, animation, __) {
+      return PopScope(
+        onPopInvokedWithResult: (didPop, _) => onPop?.call(),
+        child: PopoverItem(
+          transition: transition,
+          child: themes.wrap(
+            semanticsLabel == null
+                ? Builder(builder: bodyBuilder)
+                : Semantics(
+                    scopesRoute: true,
+                    namesRoute: true,
+                    explicitChildNodes: true,
+                    label: semanticsLabel,
+                    child: Builder(builder: bodyBuilder),
+                  ),
           ),
-        );
-      },
-      requestFocus: requestFocus,
-      barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel ?? _defaultBarrierLabel,
-      barrierColor:
-          barrierColor ??
-          (shape == PopoverShape.triangle
-              ? const Color(0x80000000)
-              : const Color(0x00000000)),
-      transitionDuration:
-          transitionDuration ?? (motion?.presentDuration ?? _fadeDuration),
-      reverseTransitionDuration:
-          transitionDuration ?? (motion?.dismissDuration ?? _fadeDuration),
-      settings: routeSettings,
-      transitionBuilder: (builderContext, animation, _, child) {
-        if (popoverTransitionBuilder != null) {
-          return popoverTransitionBuilder(animation, child);
-        }
-        return fadesGlass
-            ? child
-            : _FadeTransitionWidget(
-                animation: animation,
-                curve: motion?.present ?? Curves.easeOut,
-                reverseCurve: motion?.dismiss.flipped,
-                child: child,
-              );
-      },
-    ),
+          context: context,
+          backgroundColor: backgroundColor,
+          brightness: resolvedBrightness,
+          direction: direction,
+          radius: cornerRadius,
+          boxShadow: boxShadow,
+          animation: animation,
+          arrowWidth: arrowSize.width,
+          arrowHeight: arrowSize.height,
+          shape: shape,
+          fadesGlass: fadesGlass,
+          constraints: constraints,
+          arrowDxOffset: arrowDxOffset,
+          arrowDyOffset: arrowDyOffset,
+          contentDyOffset: contentDyOffset,
+          contentDxOffset: contentDxOffset,
+          key: key,
+        ),
+      );
+    },
+    requestFocus: requestFocus,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: barrierLabel ?? _defaultBarrierLabel,
+    barrierColor:
+        barrierColor ??
+        (shape == PopoverShape.triangle
+            ? const Color(0x80000000)
+            : const Color(0x00000000)),
+    transitionDuration:
+        transitionDuration ?? (motion?.presentDuration ?? _fadeDuration),
+    reverseTransitionDuration:
+        transitionDuration ?? (motion?.dismissDuration ?? _fadeDuration),
+    settings: routeSettings,
+    transitionBuilder: (builderContext, animation, _, child) {
+      if (popoverTransitionBuilder != null) {
+        return popoverTransitionBuilder(animation, child);
+      }
+      return fadesGlass
+          ? child
+          : _FadeTransitionWidget(
+              animation: animation,
+              curve: motion?.present ?? Curves.easeOut,
+              reverseCurve: motion?.dismiss.flipped,
+              child: child,
+            );
+    },
   );
 }
 

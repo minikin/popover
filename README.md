@@ -70,6 +70,51 @@ class MenuButton extends StatelessWidget {
 user taps outside. `example/lib/main.dart` places nine buttons across the
 screen. Run it with `cd example && flutter run`.
 
+## Popover widget
+
+`Popover` keeps a popover in the widget tree. Its `child` is the anchor, and
+a `PopoverController` opens and closes it:
+
+```dart
+class ShareButton extends StatefulWidget {
+  const ShareButton({super.key});
+
+  @override
+  State<ShareButton> createState() => _ShareButtonState();
+}
+
+class _ShareButtonState extends State<ShareButton> {
+  final _controller = PopoverController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Popover(
+      controller: _controller,
+      semanticsLabel: 'Share',
+      content: (context) => const ShareMenu(),
+      child: TextButton(
+        onPressed: _controller.toggle,
+        child: const Text('Share'),
+      ),
+    );
+  }
+}
+```
+
+`show`, `hide` and `toggle` open and close it, and `isOpen` turns false when
+the user closes it with a tap outside, Esc or the back gesture. `onPop` runs
+whenever it pops. `Popover` takes the other arguments of `showPopover`, and
+they apply when it opens. A new `content` rebuilds an open popover. When
+`Popover` leaves the tree, its popover closes without the closing animation
+and `isOpen` stays true, so it opens again when a `Popover` with the same
+controller comes back.
+
 ## Material and Cupertino
 
 Flutter 3.47 moved Material and Cupertino into the
@@ -240,6 +285,39 @@ showPopover(
       ),
 );
 ```
+
+## Migrating from 0.4
+
+0.5.0 changes how the popover looks and behaves on iOS, iPadOS and macOS, and
+how its body is built everywhere.
+
+- The body is no longer wrapped in a `Material`. Wrap it in
+  `Material(type: MaterialType.transparency)` when it holds `InkWell`,
+  `ListTile`, `TextField` or other widgets that need one.
+- The body inherits `Theme`, `DefaultTextStyle` and `IconTheme` from
+  `context`. A `Material` around it resets the text style.
+- `barrierLabel` defaults to `'Dismiss'`. Pass a localized label if you need
+  one.
+- The popover is placed like a native one: it flips, slides and shrinks to
+  stay inside the safe area, and `width`, `height` and `constraints` are
+  capped by the room available.
+- On Apple platforms the defaults are native: the `apple` outline, Liquid
+  Glass, no dimming behind the popover and the native springs. Dark mode
+  follows the text color the body inherits.
+
+To keep the look of 0.4 everywhere, pass these:
+
+```dart
+showPopover(
+  context: context,
+  arrowStyle: PopoverArrowStyle.triangle,
+  backgroundColor: const Color(0xFFFFFFFF),
+  bodyBuilder: (context) => Material(child: MyBody()),
+);
+```
+
+With the `triangle` style the barrier still dims to `Color(0x80000000)` and
+the popover still fades and scales in over 200 ms.
 
 ## Contributing
 
