@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Stale Branches
-        uses: crs-k/stale-branches@v2.0.1
+        uses: crs-k/stale-branches@3110e0e4b52562b2e1bc1e1594c3fef76e766d1f # v2.0.1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           days-before-stale: 30

@@ -115,6 +115,11 @@ jobs:
           npx -y @puppeteer/browsers install "chromedriver@$version" --path "$RUNNER_TEMP"
           driver=$(find "$RUNNER_TEMP/chromedriver" -type f -name chromedriver | head -n 1)
           "$driver" --port=4444 &
+          # flutter drive fails fast when chromedriver is not listening yet.
+          for _ in $(seq 1 30); do
+            curl -sf http://localhost:4444/status >/dev/null && break
+            sleep 1
+          done
           flutter drive -d web-server --browser-name=chrome --headless $DRIVE_ARGS
 
       - name: Upload screenshots

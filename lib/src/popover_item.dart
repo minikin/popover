@@ -57,17 +57,18 @@ class _PopoverItemState extends State<PopoverItem> {
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context);
+    final padding = MediaQuery.paddingOf(context);
+    final insets = MediaQuery.viewInsetsOf(context);
+    final screen = MediaQuery.sizeOf(context);
     final obscured = EdgeInsets.fromLTRB(
-      math.max(media.padding.left, media.viewInsets.left),
-      math.max(media.padding.top, media.viewInsets.top),
-      math.max(media.padding.right, media.viewInsets.right),
-      math.max(media.padding.bottom, media.viewInsets.bottom),
+      math.max(padding.left, insets.left),
+      math.max(padding.top, insets.top),
+      math.max(padding.right, insets.right),
+      math.max(padding.bottom, insets.bottom),
     );
     final bounds =
-        (obscured +
-                PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
-            .deflateRect(Offset.zero & media.size);
+        (obscured + PopoverUtils.screenMargin(defaultTargetPlatform, screen))
+            .deflateRect(Offset.zero & screen);
     final attachRect = PopoverUtils.clampToBounds(_attachRect, bounds);
     final style = widget.style;
     final brightness =

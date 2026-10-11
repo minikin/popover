@@ -26,17 +26,7 @@ final class ResolvedPopoverStyle {
   });
 
   factory ResolvedPopoverStyle.of(PopoverStyle style, TargetPlatform platform) {
-    final apple = platform == TargetPlatform.macOS
-        ? PopoverShape.macos
-        : PopoverShape.ios;
-    final shape = switch (style.arrowStyle ?? PopoverArrowStyle.adaptive) {
-      PopoverArrowStyle.triangle => PopoverShape.triangle,
-      PopoverArrowStyle.apple => apple,
-      PopoverArrowStyle.adaptive =>
-        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS
-            ? apple
-            : PopoverShape.triangle,
-    };
+    final shape = _shape(style.arrowStyle, platform);
     final transition = style.transition ?? PopoverTransition.scale;
     // iOS 26 and macOS 26 open a popover on one spring and close it on
     // another.
@@ -46,42 +36,61 @@ final class ResolvedPopoverStyle {
     final duration = style.transitionDuration;
     return ResolvedPopoverStyle._(
       shape: shape,
-      arrowWidth:
-          style.arrowWidth ??
-          switch (shape) {
-            PopoverShape.triangle => 24,
-            PopoverShape.ios => 26,
-            PopoverShape.macos => 25.42,
-          },
+      arrowWidth: style.arrowWidth ?? _arrowWidth(shape),
       arrowHeight:
           style.arrowHeight ?? (shape == PopoverShape.triangle ? 12 : 13),
-      radius:
-          style.radius ??
-          switch (shape) {
-            PopoverShape.triangle => 8,
-            PopoverShape.ios => 34,
-            PopoverShape.macos => 20,
-          },
-      shadow:
-          style.shadow ??
-          switch (shape) {
-            PopoverShape.triangle => _triangleShadow,
-            PopoverShape.ios => _iosShadow,
-            PopoverShape.macos => _macosShadow,
-          },
+      radius: style.radius ?? _radius(shape),
+      shadow: style.shadow ?? _shadow(shape),
       backgroundColor: style.backgroundColor,
       brightness: style.brightness,
-      barrierColor:
-          style.barrierColor ??
-          (shape == PopoverShape.triangle
-              ? const Color(0x80000000)
-              : const Color(0x00000000)),
+      barrierColor: style.barrierColor ?? _barrierColor(shape),
       transition: transition,
       motion: motion,
       presentDuration: duration ?? motion?.presentDuration ?? _fadeDuration,
       dismissDuration: duration ?? motion?.dismissDuration ?? _fadeDuration,
     );
   }
+
+  static PopoverShape _shape(
+    PopoverArrowStyle? style,
+    TargetPlatform platform,
+  ) {
+    final apple = platform == TargetPlatform.macOS
+        ? PopoverShape.macos
+        : PopoverShape.ios;
+    return switch (style ?? PopoverArrowStyle.adaptive) {
+      PopoverArrowStyle.triangle => PopoverShape.triangle,
+      PopoverArrowStyle.apple => apple,
+      PopoverArrowStyle.adaptive =>
+        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS
+            ? apple
+            : PopoverShape.triangle,
+    };
+  }
+
+  static double _arrowWidth(PopoverShape shape) => switch (shape) {
+    PopoverShape.triangle => 24,
+    PopoverShape.ios => 26,
+    PopoverShape.macos => 25.42,
+  };
+
+  static double _radius(PopoverShape shape) => switch (shape) {
+    PopoverShape.triangle => 8,
+    PopoverShape.ios => 34,
+    PopoverShape.macos => 20,
+  };
+
+  static List<BoxShadow> _shadow(PopoverShape shape) => switch (shape) {
+    PopoverShape.triangle => _triangleShadow,
+    PopoverShape.ios => _iosShadow,
+    PopoverShape.macos => _macosShadow,
+  };
+
+  /// iOS and macOS do not dim the screen behind a popover.
+  static Color _barrierColor(PopoverShape shape) =>
+      shape == PopoverShape.triangle
+      ? const Color(0x80000000)
+      : const Color(0x00000000);
 
   final PopoverShape shape;
   final double arrowWidth;
