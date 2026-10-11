@@ -14,6 +14,21 @@ class PopoverExample extends StatefulWidget {
   State<PopoverExample> createState() => _PopoverExampleState();
 }
 
+ThemeData _theme(Brightness brightness) {
+  final background = brightness == Brightness.light
+      ? const Color(0xFFF7F7F8)
+      : const Color(0xFF111113);
+  return ThemeData(
+    brightness: brightness,
+    colorSchemeSeed: const Color(0xFF5E6AD2),
+    scaffoldBackgroundColor: background,
+    appBarTheme: AppBarTheme(
+      backgroundColor: background,
+      surfaceTintColor: Colors.transparent,
+    ),
+  );
+}
+
 class _PopoverExampleState extends State<PopoverExample> {
   var _tab = 0;
 
@@ -21,14 +36,8 @@ class _PopoverExampleState extends State<PopoverExample> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF5E6AD2),
-        scaffoldBackgroundColor: const Color(0xFFF7F7F8),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF7F7F8),
-          surfaceTintColor: Colors.transparent,
-        ),
-      ),
+      theme: _theme(Brightness.light),
+      darkTheme: _theme(Brightness.dark),
       home: Scaffold(
         body: IndexedStack(
           index: _tab,
@@ -129,7 +138,7 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         minimumSize: const Size(80, 40),
       ),
       onPressed: () => showPopover(
@@ -164,8 +173,12 @@ class ListItems extends StatelessWidget {
       itemBuilder: (context, index) => ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         tileColor: Color.lerp(
-          const Color(0xFFEEF0FC),
-          const Color(0xFFC9CDF3),
+          Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFEEF0FC)
+              : const Color(0xFF23263A),
+          Theme.of(context).brightness == Brightness.light
+              ? const Color(0xFFC9CDF3)
+              : const Color(0xFF3A3F6B),
           index / (_entries.length - 1),
         ),
         title: Text('Entry ${_entries[index]}'),
