@@ -4,3 +4,4 @@ dartdoc
 goldens
 xcworkspace
 xcassets
+Diagnosticable
