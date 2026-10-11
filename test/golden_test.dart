@@ -26,7 +26,9 @@ Future<void> _show(
   PopoverDirection direction = PopoverDirection.bottom,
   List<BoxShadow>? shadow,
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.triangle,
+  Brightness? brightness,
   Size body = const Size(160, 100),
+  Duration? openFor,
 }) async {
   tester.view
     ..physicalSize = size
@@ -43,6 +45,7 @@ Future<void> _show(
             direction: direction,
             shadow: shadow,
             arrowStyle: arrowStyle,
+            brightness: brightness,
             bodyBuilder: (_) => SizedBox(
               key: _body,
               width: body.width,
@@ -60,7 +63,39 @@ Future<void> _show(
     ),
   );
   await tester.tap(find.byKey(_launcher));
-  await tester.pumpAndSettle();
+  if (openFor == null) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(openFor);
+  }
+}
+
+/// Stripes behind the popover, so the goldens show what the glass blurs.
+Widget _stripedApp(WidgetBuilder launcherBuilder) => legacyApp(
+  (context) => CustomPaint(
+    painter: const _Stripes(),
+    child: Center(child: Builder(builder: launcherBuilder)),
+  ),
+);
+
+class _Stripes extends CustomPainter {
+  const _Stripes();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const colors = [Color(0xFF000000), Color(0xFFFFFFFF), Color(0xFFE53935)];
+    var i = 0;
+    for (var x = 0.0; x < size.width; x += 12, i++) {
+      canvas.drawRect(
+        Rect.fromLTWH(x, 0, 12, size.height),
+        Paint()..color = colors[i % colors.length],
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Stripes oldDelegate) => false;
 }
 
 void main() {
@@ -197,6 +232,51 @@ void main() {
         await expectLater(
           find.byKey(_screen),
           matchesGoldenFile('goldens/apple_tiny_body.png'),
+        );
+      });
+
+      for (final brightness in Brightness.values) {
+        for (final (shape, platform) in [
+          ('ios', TargetPlatform.iOS),
+          ('macos', TargetPlatform.macOS),
+        ]) {
+          final name = 'glass_${shape}_${brightness.name}';
+          testWidgets(name, (tester) async {
+            await _show(
+              tester,
+              app: _stripedApp,
+              arrowStyle: PopoverArrowStyle.apple,
+              brightness: brightness,
+            );
+
+            await expectLater(
+              find.byKey(_screen),
+              matchesGoldenFile('goldens/$name.png'),
+            );
+          }, variant: TargetPlatformVariant.only(platform));
+        }
+      }
+
+      testWidgets('glass_opening', (tester) async {
+        await _show(
+          tester,
+          app: _stripedApp,
+          arrowStyle: PopoverArrowStyle.apple,
+          openFor: const Duration(milliseconds: 100),
+        );
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/glass_opening.png'),
+        );
+      }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+      testWidgets('triangle_dark', (tester) async {
+        await _show(tester, app: _stripedApp, brightness: Brightness.dark);
+
+        await expectLater(
+          find.byKey(_screen),
+          matchesGoldenFile('goldens/triangle_dark.png'),
         );
       });
 

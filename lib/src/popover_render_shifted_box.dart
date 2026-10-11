@@ -2,6 +2,7 @@ import 'package:flutter/rendering.dart';
 
 import 'apple_popover_path.dart';
 import 'popover_direction.dart';
+import 'popover_glass.dart';
 import 'popover_path.dart';
 import 'popover_shape.dart';
 import 'utils/popover_utils.dart';
@@ -16,6 +17,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   double? _scale;
   double? _radius;
   PopoverShape _shape;
+  PopoverGlass? _glass;
+  double _opacity;
+  final _backdrop = LayerHandle<BackdropFilterLayer>();
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
@@ -28,7 +32,11 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     double? radius,
     PopoverDirection? direction,
     PopoverShape shape = PopoverShape.triangle,
+    PopoverGlass? glass,
+    double opacity = 1,
   }) : _shape = shape,
+       _glass = glass,
+       _opacity = opacity,
        super(child) {
     _attachRect = attachRect;
     _color = color;
@@ -43,6 +51,34 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     if (_shape == value) return;
     _shape = value;
     markNeedsPaint();
+  }
+
+  /// Replaces [color] when not null.
+  PopoverGlass? get glass => _glass;
+  set glass(PopoverGlass? value) {
+    if (_glass == value) return;
+    _glass = value;
+    if (value == null) _backdrop.layer = null;
+    markNeedsCompositingBitsUpdate();
+    markNeedsPaint();
+  }
+
+  /// Fades the glass, its shadows and the body, which an `Opacity` around a
+  /// backdrop filter cannot do on Impeller. Only used with [glass].
+  double get opacity => _opacity;
+  set opacity(double value) {
+    if (_opacity == value) return;
+    _opacity = value;
+    markNeedsPaint();
+  }
+
+  @override
+  bool get alwaysNeedsCompositing => _glass != null;
+
+  @override
+  void dispose() {
+    _backdrop.layer = null;
+    super.dispose();
   }
 
   Rect get attachRect => _attachRect;
@@ -103,6 +139,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     final _direction = _resolvedDirection;
     final bodyRect = childParentData.offset & child!.size;
     if (shape != PopoverShape.triangle) {
+      if (glass != null && opacity <= 0) return;
       _paintApple(context, offset, transform, _direction);
       return;
     }
@@ -206,7 +243,28 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
         tip + (vertical ? shift.dx : shift.dy),
       );
       context.pushTransform(needsCompositing, offset, transform, (context, _) {
-        context.canvas.drawPath(shadow, boxShadow.toPaint());
+        final canvas = context.canvas;
+        // Glass blurs what is behind it, so the shadow stays outside, as on
+        // iOS and macOS.
+        if (glass != null) {
+          canvas
+            ..save()
+            ..clipPath(
+              Path()
+                ..fillType = PathFillType.evenOdd
+                ..addRect(shadow.getBounds().inflate(boxShadow.blurSigma * 3))
+                ..addPath(path, offset),
+            );
+        }
+        final faded = glass == null
+            ? boxShadow
+            : boxShadow.copyWith(
+                color: boxShadow.color.withValues(
+                  alpha: boxShadow.color.a * opacity,
+                ),
+              );
+        canvas.drawPath(shadow, faded.toPaint());
+        if (glass != null) canvas.restore();
       });
     }
 
@@ -296,18 +354,45 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Matrix4 transform,
   ) {
     final bounds = (Offset.zero & size).expandToInclude(path.getBounds());
-    context.pushClipPath(needsCompositing, offset, bounds, path, (
+    // Scaled before it is clipped, so a glass backdrop, which fills the whole
+    // clip, grows with the body during the scale transition.
+    context.pushTransform(needsCompositing, offset, transform, (
       context,
       offset,
     ) {
-      context.pushTransform(needsCompositing, offset, transform, (
+      context.pushClipPath(needsCompositing, offset, bounds, path, (
         context,
         offset,
       ) {
-        final backgroundPaint = Paint();
-        backgroundPaint.color = color!;
-        context.canvas.drawRect(bounds.shift(offset), backgroundPaint);
-        super.paint(context, offset);
+        final glass = this.glass;
+        if (glass == null) {
+          context.canvas.drawRect(
+            bounds.shift(offset),
+            Paint()..color = color!,
+          );
+          super.paint(context, offset);
+          return;
+        }
+        _backdrop.layer = (_backdrop.layer ?? BackdropFilterLayer())
+          ..filter = glass.filter(opacity);
+        context.pushLayer(_backdrop.layer!, (context, offset) {
+          context.canvas.drawPath(
+            path.shift(offset),
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2
+              ..color = glass.rim.withValues(alpha: glass.rim.a * opacity),
+          );
+          if (opacity < 1) {
+            context.pushOpacity(
+              offset,
+              Color.getAlphaFromOpacity(opacity),
+              super.paint,
+            );
+          } else {
+            super.paint(context, offset);
+          }
+        }, offset);
       });
     });
   }

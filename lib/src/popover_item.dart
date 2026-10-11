@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 
 import '../popover.dart';
 import 'popover_context.dart';
+import 'popover_glass.dart';
 import 'popover_position_widget.dart';
+import 'popover_render_shifted_box.dart';
 import 'popover_shape.dart';
 import 'utils/build_context_extension.dart';
 import 'utils/popover_utils.dart';
@@ -13,6 +15,7 @@ import 'utils/popover_utils.dart';
 class PopoverItem extends StatefulWidget {
   final Widget child;
   final Color? backgroundColor;
+  final Brightness? brightness;
   final PopoverDirection? direction;
   final double? radius;
   final List<BoxShadow>? boxShadow;
@@ -28,6 +31,10 @@ class PopoverItem extends StatefulWidget {
   final double contentDxOffset;
   final PopoverTransition transition;
 
+  /// Fades the glass in the render object instead of in the route, see
+  /// [PopoverRenderShiftedBox.opacity].
+  final bool fadesGlass;
+
   const PopoverItem({
     required this.child,
     required this.context,
@@ -36,6 +43,7 @@ class PopoverItem extends StatefulWidget {
     required this.arrowHeight,
     this.shape = PopoverShape.triangle,
     this.backgroundColor,
+    this.brightness,
     this.direction,
     this.radius,
     this.boxShadow,
@@ -45,6 +53,7 @@ class PopoverItem extends StatefulWidget {
     this.arrowDyOffset = 0,
     this.contentDyOffset = 0,
     this.contentDxOffset = 0,
+    this.fadesGlass = false,
     super.key,
   });
 
@@ -54,6 +63,7 @@ class PopoverItem extends StatefulWidget {
 
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
+  CurvedAnimation? _fade;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +79,12 @@ class _PopoverItemState extends State<PopoverItem> {
                 PopoverUtils.screenMargin(defaultTargetPlatform, media.size))
             .deflateRect(Offset.zero & media.size);
     final attachRect = PopoverUtils.clampToBounds(_attachRect, bounds);
+    final brightness =
+        widget.brightness ?? MediaQuery.platformBrightnessOf(context);
+    final backgroundColor = widget.backgroundColor;
+    final glass = backgroundColor == null
+        ? PopoverGlass.of(widget.shape, brightness)
+        : null;
 
     return Stack(
       children: [
@@ -86,7 +102,13 @@ class _PopoverItemState extends State<PopoverItem> {
                 attachRect: attachRect,
                 animation: widget.animation,
                 radius: widget.radius,
-                backgroundColor: widget.backgroundColor,
+                backgroundColor:
+                    backgroundColor ??
+                    (brightness == Brightness.dark
+                        ? const Color(0xFF2C2C2E)
+                        : const Color(0xFFFFFFFF)),
+                glass: glass,
+                opacity: _fade?.value ?? 1,
                 boxShadow: widget.boxShadow,
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
@@ -115,6 +137,15 @@ class _PopoverItemState extends State<PopoverItem> {
     super.initState();
     _attachRect = _anchorRect() ?? Rect.zero;
     _followAnchor();
+    if (widget.fadesGlass) {
+      _fade = CurvedAnimation(parent: widget.animation, curve: Curves.easeOut);
+    }
+  }
+
+  @override
+  void dispose() {
+    _fade?.dispose();
+    super.dispose();
   }
 
   /// Re-places the popover after every frame in which the anchor moved, like

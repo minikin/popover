@@ -82,7 +82,8 @@ and works in a `MaterialApp` or a `CupertinoApp` from either source.
 The body is not wrapped in a `Material`. `InkWell`, `ListTile`, `TextField`,
 `Checkbox` and the other widgets that need one throw
 `No Material widget found` unless you wrap the body in the `Material` of your
-UI library, as the quick start does.
+UI library, as the quick start does. Use `MaterialType.transparency`, since an
+opaque `Material` covers the glass background.
 
 `showPopover` captures `Theme`, `DefaultTextStyle`, `IconTheme` and the other
 inherited themes at `context` and applies them to the body, as `showDialog`
@@ -116,6 +117,31 @@ iOS, iPadOS and macOS and `triangle` everywhere else, on the web by the
 host OS. `arrowWidth`,
 `arrowHeight`, `radius` and `shadow` override the defaults of either style, for
 example `radius: 13` for the corners of iOS before version 26.
+
+## Background and dark mode
+
+With the `apple` shape the default background is the Liquid Glass of iOS 26
+and macOS 26: the content behind the popover shows through, blurred and
+tinted, and a light rim runs along the outline. The blur, the tint and the rim
+are fitted to native popovers captured over 22 backgrounds in light and dark
+mode, and match them within a few levels of brightness on flat colors. Native
+glass also bends the light near the outline and adapts to a wide area behind
+it. The popover does neither, so fine detail such as text behind it blurs more
+evenly than on iOS. The `triangle` shape gets white, or `Color(0xFF2C2C2E)` in
+dark mode.
+
+Light or dark follows the text color the body inherits from `context`: dark
+text gets a light background, light text a dark one. So the body stays
+readable in an app that forces a light or a dark theme. Without an inherited
+text color it follows the system setting. `brightness` overrides both, and
+`backgroundColor` replaces the glass with a solid color. A `Material` around
+the body resets its text to the theme's `bodyMedium`, so pass `brightness`
+when you open the popover from a place with a different text color, such as
+an `AppBar` with a colored background.
+
+iOS and macOS do not dim the screen behind a popover, so the barrier is
+transparent with the `apple` shape and dims to `Color(0x80000000)` with the
+`triangle`.
 
 ## Placement
 
@@ -151,7 +177,7 @@ opens to the right or below.
 ## Dismissing
 
 A tap on the barrier closes the popover. `barrierDismissible: false` keeps it
-open, and `barrierColor` tints the barrier. With
+open, and `barrierColor` replaces the default tint of the barrier. With
 `allowClicksOnBackground: true`, taps pass through the barrier to the widgets
 behind it and `barrierDismissible` is ignored. `onPop` runs whenever the
 route pops.
@@ -164,7 +190,9 @@ keyboard stays up.
 The popover fades in over `transitionDuration`, 200 ms by default.
 `PopoverTransition.scale`, the default, also grows the body from the arrow.
 `PopoverTransition.other` turns the scaling off. `popoverTransitionBuilder`
-replaces the fade:
+replaces the fade. Avoid `Opacity` and `FadeTransition` in it with the glass
+background: Impeller gives a backdrop filter inside an opacity layer nothing
+to blur, so the glass shows as a flat tint until the fade ends.
 
 ```dart
 showPopover(
