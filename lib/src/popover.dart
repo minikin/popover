@@ -218,6 +218,9 @@ Future<T?> showPopover<T extends Object?>({
       backgroundColor == null &&
       shape != PopoverShape.triangle;
 
+  // Read once: the anchor may leave the tree while the popover is open.
+  final resolvedBrightness = brightness ?? _contrastWithText(context);
+
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
 
@@ -232,7 +235,7 @@ Future<T?> showPopover<T extends Object?>({
             child: themes.wrap(Builder(builder: bodyBuilder)),
             context: context,
             backgroundColor: backgroundColor,
-            brightness: brightness ?? _contrastWithText(context),
+            brightness: resolvedBrightness,
             direction: direction,
             radius: cornerRadius,
             boxShadow: boxShadow,
