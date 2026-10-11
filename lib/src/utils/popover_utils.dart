@@ -136,5 +136,7 @@ final class PopoverConstraints extends BoxConstraints {
   int get hashCode => Object.hash(super.hashCode, direction);
 }
 
+/// Builds the transition of a popover from the route [animation] and the
+/// popover [child], for `popoverTransitionBuilder`.
 typedef PopoverTransitionBuilder =
     Widget Function(Animation<double> animation, Widget child);

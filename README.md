@@ -168,7 +168,11 @@ showPopover(
 ```
 
 The style at the call is merged on top of the theme, so its non-null fields
-win. Popovers opened from inside a popover see the same theme.
+win. A null field keeps what is below it, so a field set in the theme cannot
+be cleared per call: a theme `backgroundColor` turns the glass off for every
+popover below it, and a theme `brightness` turns off the contrast with the
+text. `shadow: const []` removes the shadow. Popovers opened from inside a
+popover see the same theme.
 
 ## Arrow style
 

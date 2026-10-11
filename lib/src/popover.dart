@@ -127,7 +127,7 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
       : constraints;
 
   // Read once: the anchor may leave the tree while the popover is open.
-  final merged = PopoverTheme.of(context).merge(style);
+  final merged = PopoverTheme.read(context).merge(style);
   final resolved = ResolvedPopoverStyle.of(
     merged.brightness == null
         ? merged.copyWith(brightness: _contrastWithText(context))

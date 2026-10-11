@@ -286,6 +286,48 @@ void main() {
       expect(inBody.radius, 7);
     });
 
+    testWidgets('read finds the theme without depending on it', (tester) async {
+      final style = ValueNotifier(const PopoverStyle(radius: 1));
+      addTearDown(style.dispose);
+      var builds = 0;
+      late PopoverStyle read;
+      final reader = Builder(
+        builder: (context) {
+          builds++;
+          read = PopoverTheme.read(context);
+          return const SizedBox();
+        },
+      );
+      await tester.pumpWidget(
+        ValueListenableBuilder<PopoverStyle>(
+          valueListenable: style,
+          builder: (_, value, child) =>
+              PopoverTheme(data: value, child: child!),
+          child: reader,
+        ),
+      );
+      expect(read.radius, 1);
+
+      style.value = const PopoverStyle(radius: 2);
+      await tester.pump();
+
+      expect(builds, 1);
+    });
+
+    testWidgets('read is empty without a theme', (tester) async {
+      late PopoverStyle read;
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) {
+            read = PopoverTheme.read(context);
+            return const SizedBox();
+          },
+        ),
+      );
+
+      expect(read, const PopoverStyle());
+    });
+
     test('notifies only when the style changes', () {
       const a = PopoverTheme(data: PopoverStyle(radius: 1), child: SizedBox());
       const b = PopoverTheme(data: PopoverStyle(radius: 1), child: SizedBox());

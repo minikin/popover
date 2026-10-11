@@ -1,6 +1,6 @@
 ---
 name: popover-usage
-description: Use when the user shows a popover, a dropdown menu, a context panel or a tooltip-like bubble anchored to a widget with package:popover, or works with showPopover, Popover, PopoverController, PopoverDirection or PopoverArrowStyle.
+description: Use when the user shows a popover, a dropdown menu, a context panel or a tooltip-like bubble anchored to a widget with package:popover, or works with showPopover, Popover, PopoverController, PopoverStyle, PopoverTheme, PopoverDirection or PopoverArrowStyle.
 ---
 
 # Popover

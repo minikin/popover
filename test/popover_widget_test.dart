@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
+import 'package:popover/src/popover_context.dart';
+import 'package:popover/src/popover_render_shifted_box.dart';
 
 Future<void> _pump(
   WidgetTester tester,
@@ -209,6 +211,32 @@ void main() {
     other.hide();
     await tester.pumpAndSettle();
     expect(find.text('Hello'), findsNothing);
+  });
+
+  testWidgets('takes a style on top of the theme', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PopoverTheme(
+          data: const PopoverStyle(radius: 3, arrowHeight: 9),
+          child: Center(
+            child: Popover(
+              controller: controller,
+              style: const PopoverStyle(radius: 4),
+              content: (_) => const Text('Hello'),
+              child: const SizedBox(width: 80, height: 40),
+            ),
+          ),
+        ),
+      ),
+    );
+    controller.show();
+    await tester.pumpAndSettle();
+
+    final box = tester.renderObject<PopoverRenderShiftedBox>(
+      find.byType(PopoverContext),
+    );
+    expect(box.radius, 4);
+    expect(box.arrowHeight, 9);
   });
 
   test('notifies only on a change', () {

@@ -84,11 +84,16 @@ class PopoverStyle with Diagnosticable {
   ///
   /// When null, the Apple shapes with [PopoverTransition.scale] use the
   /// springs of iOS 26 and macOS 26: 494 milliseconds to open and 516 to
-  /// close on iOS, 440 and 200 on macOS. Everything else fades over 200
-  /// milliseconds. A duration passed in applies to both directions.
+  /// close on iOS, 440 and 200 on macOS. Everything else takes 200
+  /// milliseconds: the triangle fades and scales, and
+  /// [PopoverTransition.other] only fades. A duration passed in applies to
+  /// both directions.
   final Duration? transitionDuration;
 
   /// A copy with the given fields replaced.
+  ///
+  /// A null argument keeps the field, so a field cannot be reset to null
+  /// here. Build a new [PopoverStyle] for that.
   PopoverStyle copyWith({
     PopoverArrowStyle? arrowStyle,
     Color? backgroundColor,
@@ -115,7 +120,8 @@ class PopoverStyle with Diagnosticable {
     );
   }
 
-  /// This style with the non-null fields of [other] on top.
+  /// This style with the non-null fields of [other] on top. A null field in
+  /// [other] keeps the field of this style.
   PopoverStyle merge(PopoverStyle? other) {
     if (other == null) return this;
     return copyWith(
@@ -202,9 +208,16 @@ class PopoverTheme extends InheritedTheme {
 
   final PopoverStyle data;
 
-  /// The style of the closest [PopoverTheme], or an empty style.
+  /// The style of the closest [PopoverTheme], or an empty style. [context]
+  /// rebuilds when the theme changes.
   static PopoverStyle of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<PopoverTheme>()?.data ??
+      const PopoverStyle();
+
+  /// The style of the closest [PopoverTheme], or an empty style, without a
+  /// dependency on it.
+  static PopoverStyle read(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<PopoverTheme>()?.data ??
       const PopoverStyle();
 
   @override
