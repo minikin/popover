@@ -147,12 +147,14 @@ class Button extends StatelessWidget {
             const Material(type: MaterialType.transparency, child: ListItems()),
         onPop: () => debugPrint('Popover was popped'),
         direction: direction,
-        radius: 12,
-        barrierColor: const Color(0x14000000),
+        style: const PopoverStyle(
+          radius: 12,
+          barrierColor: Color(0x14000000),
+          arrowHeight: 15,
+          arrowWidth: 30,
+        ),
         width: 200,
         height: 360,
-        arrowHeight: 15,
-        arrowWidth: 30,
       ),
       child: const Text('Open'),
     );

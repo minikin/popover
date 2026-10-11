@@ -1,208 +1,100 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'popover_arrow_style.dart';
 import 'popover_direction.dart';
 import 'popover_item.dart';
-import 'popover_motion.dart';
 import 'popover_route.dart';
 import 'popover_shape.dart';
-import 'popover_transition.dart';
+import 'popover_style.dart';
+import 'popover_widget.dart';
+import 'resolved_popover_style.dart';
 import 'utils/popover_utils.dart';
 
-/// A popover is a transient view that appears above other content onscreen
-/// when you tap a control or in an area.
+/// Shows a popover with the body [bodyBuilder] builds, its arrow pointing at
+/// the widget of [context].
 ///
-/// Note that when [allowClicksOnBackground] is set to true,
-/// [barrierDismissible] is ignored (will behave as if it was set to false).
+/// Pass the context of the anchor, not of the page: wrap the anchor in a
+/// `Builder` or use `GlobalKey.currentContext`. The returned future completes
+/// with the value passed to `Navigator.pop`, or null when the user closes the
+/// popover by tapping outside or pressing Esc.
 ///
-/// This function allows for customization of aspects of the popover.
+/// [style] sets how the popover looks and moves. It is merged on top of the
+/// closest [PopoverTheme], and every field left null falls back to the
+/// native look of iOS 26 and macOS 26 on Apple platforms, a triangle
+/// elsewhere. See [PopoverStyle] for the defaults.
 ///
-/// `bodyBuilder` argument is builder which builds body/content of popover.
+/// [direction] is the preferred side. The popover opens on another side when
+/// it does not fit, the way iOS and macOS popovers do. [width], [height] and
+/// [constraints] size the body and are capped by the room on that side.
 ///
-/// The `direction` is the preferred side of the popover. It opens on another
-/// side when it does not fit, the way iOS and macOS popovers do.
-/// This argument defaults to `PopoverDirection.bottom`.
+/// [arrowDxOffset] and [arrowDyOffset] move the point the arrow aims at.
+/// [contentDxOffset] and [contentDyOffset] widen and heighten the anchor,
+/// which moves a popover that opens to the right or below.
 ///
-/// The `transition` is desired Popover's transition behavior.
-/// This argument defaults to `PopoverTransition.scale`.
+/// [barrierDismissible] lets a tap outside or Esc close the popover.
+/// [allowClicksOnBackground] passes taps through to the widgets behind and
+/// keeps the popover open, whatever [barrierDismissible] says.
+/// [requestFocus] set to false leaves focus where it is, so an open keyboard
+/// stays up.
 ///
-/// The `backgroundColor` is background [Color] of popover. When it is null,
-/// the default, iOS and macOS shapes get the Liquid Glass of iOS 26 and
-/// macOS 26: the content behind is blurred and tinted. The triangle gets
-/// `Color(0xFFFFFFFF)`, or `Color(0xFF2C2C2E)` when `brightness` is dark.
+/// [semanticsLabel] names the popover for screen readers, which announce it
+/// when it opens. [barrierLabel] labels the barrier and defaults to
+/// `'Dismiss'`. Pass a localized one, for example
+/// `MaterialLocalizations.of(context).modalBarrierDismissLabel`.
 ///
-/// The `brightness` picks the light or dark background. When it is null,
-/// the background contrasts with the text color the body inherits from
-/// `context`: light behind dark text, dark behind light text. Without an
-/// inherited text color it follows the system setting,
-/// [MediaQuery.platformBrightnessOf].
+/// [onPop] runs when the popover pops, however it was closed. It cannot
+/// cancel the dismissal. [popoverTransitionBuilder] replaces the default
+/// fade. Avoid `Opacity` in it with the glass background, since Impeller
+/// gives a backdrop filter inside an opacity layer nothing to blur.
 ///
-/// The `barrierColor` is barrier [Color] of screen when popover is presented.
-/// This argument defaults to `Color(0x80000000)` for
-/// [PopoverArrowStyle.triangle] and to transparent for
-/// [PopoverArrowStyle.apple], since iOS and macOS do not dim the screen
-/// behind a popover.
-///
-/// The `transitionDuration` argument is used to determine how long it takes
-/// for the route to arrive on or leave off the screen. With the `apple` shape
-/// and [PopoverTransition.scale] it defaults to the springs of iOS 26 and
-/// macOS 26. On iOS the popover scales up from the arrow tip while its
-/// outline grows over 494 milliseconds and shrinks back over 516. On macOS
-/// it scales up over 440 milliseconds and back over 200. Otherwise it
-/// defaults to a 200 millisecond fade. A duration passed in applies to both
-/// directions.
-///
-/// The `radius` of popover's body.
-/// This argument defaults to 8 for [PopoverArrowStyle.triangle], and for
-/// [PopoverArrowStyle.apple] to 34 on iOS and 20 on macOS, the corner radii
-/// of iOS 26 and macOS 26 popovers.
-///
-/// The `shadow` is [BoxShadow] of popover body.
-/// This argument defaults to
-/// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]` for
-/// [PopoverArrowStyle.triangle]. [PopoverArrowStyle.apple] uses the shadows
-/// measured from iOS 26 and macOS 26: a wide, soft one on iOS and a compact
-/// one offset downward on macOS.
-///
-/// The `arrowWidth` is width of arrow.
-/// This argument defaults to 24 for [PopoverArrowStyle.triangle], and for
-/// [PopoverArrowStyle.apple] to 26 on iOS and 25.42 on macOS.
-///
-/// The `arrowHeight` is height of arrow.
-/// This argument defaults to 12 for [PopoverArrowStyle.triangle] and 13 for
-/// [PopoverArrowStyle.apple].
-///
-/// The `arrowStyle` picks the shape of the arrow and the corners. It defaults
-/// to [PopoverArrowStyle.adaptive]: the native shape on iOS, iPadOS and
-/// macOS, a triangle elsewhere.
-///
-/// The `arrowDxOffset` offsets arrow position on X axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `arrowDyOffset` offsets arrow position on Y axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `contentDyOffset` offsets the popover body on Y axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `contentDxOffset` offsets the popover body on X axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `barrierDismissible` argument is used to determine whether this route
-/// can be dismissed by tapping the modal barrier or pressing Esc. This
-/// argument defaults to true.
-///
-/// The `width` is popover's body/content widget width.
-///
-/// The `height` is popover's body/content widget height.
-///
-/// `width`, `height` and `constraints` are capped by the room on the side the
-/// popover opens on. See the README for how the side is picked.
-///
-/// The `onPop` runs when the popover pops, by a barrier tap, a back gesture
-/// or `Navigator.pop`. It cannot cancel the dismissal.
-///
-/// The `constraints` is popover's constraints.
-///
-/// The `routeSettings` is data that might be useful in constructing a [Route].
-///
-/// The `semanticsLabel` names the popover for screen readers, which announce
-/// it when the popover opens, the way they announce the title of a dialog.
-///
-/// The `barrierLabel` is semantic label used for a dismissible barrier.
-/// This argument defaults to 'Dismiss'. Pass a localized string, for example
-/// `MaterialLocalizations.of(context).modalBarrierDismissLabel` or
-/// `CupertinoLocalizations.of(context).modalBarrierDismissLabel`.
-///
-/// The `requestFocus` controls whether the popover should request focus when
-/// presented. Set it to false to prevent dismissing any active keyboard.
-/// Defaults to [Navigator.requestFocus] if not provided
-///
-/// The `popoverTransitionBuilder` replaces the default fade. It receives the
-/// route animation and the popover and returns the widget to show.
-///
-/// The popover depends only on `package:flutter/widgets.dart`, so it works
-/// with `package:flutter/material.dart`, `package:flutter/cupertino.dart`,
-/// `package:material_ui` and `package:cupertino_ui`. The body is not wrapped
-/// in a `Material`. Wrap it in the `Material` of your UI library when it
-/// contains widgets that require one, such as `InkWell`, `ListTile` or
-/// `TextField`. Use `MaterialType.transparency`, since an opaque `Material`
-/// covers the glass background.
-/// Inherited themes such as `Theme`, `DefaultTextStyle` and `IconTheme` are
-/// captured from `context` and applied to the body.
-
+/// The popover depends only on `package:flutter/widgets.dart`. The body is
+/// not wrapped in a `Material`. Wrap it in
+/// `Material(type: MaterialType.transparency)` when it contains widgets that
+/// need one, such as `InkWell`, `ListTile` or `TextField`. Inherited themes
+/// such as `Theme`, `DefaultTextStyle`, `IconTheme` and [PopoverTheme] are
+/// captured from [context] and applied to the body.
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
+  PopoverStyle? style,
   PopoverDirection direction = PopoverDirection.bottom,
-  PopoverTransition transition = PopoverTransition.scale,
-  Color? backgroundColor,
-  Brightness? brightness,
-  Color? barrierColor,
-  Duration? transitionDuration,
-  double? radius,
-  List<BoxShadow>? shadow,
-  double? arrowWidth,
-  double? arrowHeight,
-  double arrowDxOffset = 0,
-  double arrowDyOffset = 0,
-  double contentDyOffset = 0,
-  double contentDxOffset = 0,
-  bool barrierDismissible = true,
   double? width,
   double? height,
-  VoidCallback? onPop,
-  bool? requestFocus,
-  @Deprecated(
-    'This argument is ignored. Implementation of [PopoverItem] was updated.'
-    'This feature was deprecated in v0.2.8',
-  )
-  bool Function()? isParentAlive,
   BoxConstraints? constraints,
-  RouteSettings? routeSettings,
+  double arrowDxOffset = 0,
+  double arrowDyOffset = 0,
+  double contentDxOffset = 0,
+  double contentDyOffset = 0,
+  bool barrierDismissible = true,
+  bool allowClicksOnBackground = false,
+  bool? requestFocus,
   String? barrierLabel,
   String? semanticsLabel,
+  VoidCallback? onPop,
+  RouteSettings? routeSettings,
   PopoverTransitionBuilder? popoverTransitionBuilder,
-  Key? key,
-  bool allowClicksOnBackground = false,
-  PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
 }) {
   return Navigator.of(context, rootNavigator: true).push<T>(
     popoverRoute<T>(
       context: context,
       bodyBuilder: bodyBuilder,
+      style: style,
       direction: direction,
-      transition: transition,
-      backgroundColor: backgroundColor,
-      brightness: brightness,
-      barrierColor: barrierColor,
-      transitionDuration: transitionDuration,
-      radius: radius,
-      shadow: shadow,
-      arrowWidth: arrowWidth,
-      arrowHeight: arrowHeight,
-      arrowDxOffset: arrowDxOffset,
-      arrowDyOffset: arrowDyOffset,
-      contentDyOffset: contentDyOffset,
-      contentDxOffset: contentDxOffset,
-      barrierDismissible: barrierDismissible,
       width: width,
       height: height,
-      onPop: onPop,
-      requestFocus: requestFocus,
       constraints: constraints,
-      routeSettings: routeSettings,
+      arrowDxOffset: arrowDxOffset,
+      arrowDyOffset: arrowDyOffset,
+      contentDxOffset: contentDxOffset,
+      contentDyOffset: contentDyOffset,
+      barrierDismissible: barrierDismissible,
+      allowClicksOnBackground: allowClicksOnBackground,
+      requestFocus: requestFocus,
       barrierLabel: barrierLabel,
       semanticsLabel: semanticsLabel,
+      onPop: onPop,
+      routeSettings: routeSettings,
       popoverTransitionBuilder: popoverTransitionBuilder,
-      key: key,
-      allowClicksOnBackground: allowClicksOnBackground,
-      arrowStyle: arrowStyle,
     ),
   );
 }
@@ -211,86 +103,41 @@ Future<T?> showPopover<T extends Object?>({
 PopoverRoute<T> popoverRoute<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
+  PopoverStyle? style,
   PopoverDirection direction = PopoverDirection.bottom,
-  PopoverTransition transition = PopoverTransition.scale,
-  Color? backgroundColor,
-  Brightness? brightness,
-  Color? barrierColor,
-  Duration? transitionDuration,
-  double? radius,
-  List<BoxShadow>? shadow,
-  double? arrowWidth,
-  double? arrowHeight,
-  double arrowDxOffset = 0,
-  double arrowDyOffset = 0,
-  double contentDyOffset = 0,
-  double contentDxOffset = 0,
-  bool barrierDismissible = true,
   double? width,
   double? height,
-  VoidCallback? onPop,
-  bool? requestFocus,
   BoxConstraints? constraints,
-  RouteSettings? routeSettings,
+  double arrowDxOffset = 0,
+  double arrowDyOffset = 0,
+  double contentDxOffset = 0,
+  double contentDyOffset = 0,
+  bool barrierDismissible = true,
+  bool allowClicksOnBackground = false,
+  bool? requestFocus,
   String? barrierLabel,
   String? semanticsLabel,
+  VoidCallback? onPop,
+  RouteSettings? routeSettings,
   PopoverTransitionBuilder? popoverTransitionBuilder,
-  Key? key,
-  bool allowClicksOnBackground = false,
-  PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
             BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
-  final platform = defaultTargetPlatform;
-  final apple = platform == TargetPlatform.macOS
-      ? PopoverShape.macos
-      : PopoverShape.ios;
-  final shape = switch (arrowStyle) {
-    PopoverArrowStyle.triangle => PopoverShape.triangle,
-    PopoverArrowStyle.apple => apple,
-    PopoverArrowStyle.adaptive =>
-      platform == TargetPlatform.iOS || platform == TargetPlatform.macOS
-          ? apple
-          : PopoverShape.triangle,
-  };
-  final arrowSize = Size(
-    arrowWidth ??
-        switch (shape) {
-          PopoverShape.triangle => 24,
-          PopoverShape.ios => 26,
-          PopoverShape.macos => 25.42,
-        },
-    arrowHeight ?? (shape == PopoverShape.triangle ? 12 : 13),
+  // Read once: the anchor may leave the tree while the popover is open.
+  final merged = PopoverTheme.read(context).merge(style);
+  final resolved = ResolvedPopoverStyle.of(
+    merged.brightness == null
+        ? merged.copyWith(brightness: _contrastWithText(context))
+        : merged,
+    defaultTargetPlatform,
   );
-  final cornerRadius =
-      radius ??
-      switch (shape) {
-        PopoverShape.triangle => 8,
-        PopoverShape.ios => 34,
-        PopoverShape.macos => 20,
-      };
-  final boxShadow =
-      shadow ??
-      switch (shape) {
-        PopoverShape.triangle => _triangleShadow,
-        PopoverShape.ios => _iosShadow,
-        PopoverShape.macos => _macosShadow,
-      };
-
-  // iOS 26 and macOS 26 open a popover on one spring and close it on another.
-  final motion = transition == PopoverTransition.scale
-      ? PopoverMotion.of(shape)
-      : null;
   final fadesGlass =
       popoverTransitionBuilder == null &&
-      backgroundColor == null &&
-      shape != PopoverShape.triangle;
-
-  // Read once: the anchor may leave the tree while the popover is open.
-  final resolvedBrightness = brightness ?? _contrastWithText(context);
+      resolved.backgroundColor == null &&
+      resolved.shape != PopoverShape.triangle;
 
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
@@ -301,7 +148,6 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
       return PopScope(
         onPopInvokedWithResult: (didPop, _) => onPop?.call(),
         child: PopoverItem(
-          transition: transition,
           child: themes.wrap(
             semanticsLabel == null
                 ? Builder(builder: bodyBuilder)
@@ -314,22 +160,15 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
                   ),
           ),
           context: context,
-          backgroundColor: backgroundColor,
-          brightness: resolvedBrightness,
+          style: resolved,
           direction: direction,
-          radius: cornerRadius,
-          boxShadow: boxShadow,
           animation: animation,
-          arrowWidth: arrowSize.width,
-          arrowHeight: arrowSize.height,
-          shape: shape,
           fadesGlass: fadesGlass,
           constraints: constraints,
           arrowDxOffset: arrowDxOffset,
           arrowDyOffset: arrowDyOffset,
           contentDyOffset: contentDyOffset,
           contentDxOffset: contentDxOffset,
-          key: key,
         ),
       );
     },
@@ -338,20 +177,15 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
     // neither may Esc or the accessibility dismiss action.
     barrierDismissible: barrierDismissible && !allowClicksOnBackground,
     barrierLabel: barrierLabel ?? _defaultBarrierLabel,
-    barrierColor:
-        barrierColor ??
-        (shape == PopoverShape.triangle
-            ? const Color(0x80000000)
-            : const Color(0x00000000)),
-    transitionDuration:
-        transitionDuration ?? (motion?.presentDuration ?? _fadeDuration),
-    reverseTransitionDuration:
-        transitionDuration ?? (motion?.dismissDuration ?? _fadeDuration),
+    barrierColor: resolved.barrierColor,
+    transitionDuration: resolved.presentDuration,
+    reverseTransitionDuration: resolved.dismissDuration,
     settings: routeSettings,
     transitionBuilder: (builderContext, animation, _, child) {
       if (popoverTransitionBuilder != null) {
         return popoverTransitionBuilder(animation, child);
       }
+      final motion = resolved.motion;
       return fadesGlass
           ? child
           : _FadeTransitionWidget(
@@ -366,8 +200,6 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
 
 const _defaultBarrierLabel = 'Dismiss';
 
-const _fadeDuration = Duration(milliseconds: 200);
-
 /// The background brightness that keeps the text the body inherits from
 /// [context] readable, or null when no text color is inherited.
 Brightness? _contrastWithText(BuildContext context) {
@@ -376,16 +208,6 @@ Brightness? _contrastWithText(BuildContext context) {
   final luminance = color.computeLuminance() + 0.05;
   return luminance * luminance > 0.15 ? Brightness.dark : Brightness.light;
 }
-
-const _triangleShadow = [BoxShadow(color: Color(0x1F000000), blurRadius: 5)];
-
-/// The wide, soft shadow of iOS 26 popovers, measured from a simulator.
-const _iosShadow = [BoxShadow(color: Color(0x6B000000), blurRadius: 210)];
-
-/// The shadow of macOS 26 popovers, measured from a screenshot of NSPopover.
-const _macosShadow = [
-  BoxShadow(color: Color(0x40000000), blurRadius: 12, offset: Offset(0, 3.6)),
-];
 
 class _FadeTransitionWidget extends StatefulWidget {
   const _FadeTransitionWidget({

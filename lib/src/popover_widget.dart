@@ -2,10 +2,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import 'popover.dart';
-import 'popover_arrow_style.dart';
 import 'popover_direction.dart';
 import 'popover_route.dart';
-import 'popover_transition.dart';
+import 'popover_style.dart';
 import 'utils/popover_utils.dart';
 
 /// Opens and closes a [Popover].
@@ -36,10 +35,9 @@ class PopoverController extends ChangeNotifier {
 /// Shows [content] in a popover anchored to [child] while [controller] is
 /// open.
 ///
-/// The other arguments are the ones of [showPopover], except its `key` and
-/// the deprecated `isParentAlive`. They apply when the popover opens, so a
-/// change to them shows the next time it opens. A new [content] rebuilds an
-/// open popover.
+/// The other arguments are the ones of [showPopover]. They apply when the
+/// popover opens, so a change to them shows the next time it opens. A new
+/// [content] rebuilds an open popover.
 ///
 /// When this widget leaves the tree, its popover closes at once, without the
 /// closing animation. [PopoverController.isOpen] stays true, so a [Popover]
@@ -62,17 +60,8 @@ class Popover extends StatefulWidget {
     required this.controller,
     required this.content,
     required this.child,
+    this.style,
     this.direction = PopoverDirection.bottom,
-    this.transition = PopoverTransition.scale,
-    this.arrowStyle = PopoverArrowStyle.adaptive,
-    this.backgroundColor,
-    this.brightness,
-    this.barrierColor,
-    this.transitionDuration,
-    this.radius,
-    this.shadow,
-    this.arrowWidth,
-    this.arrowHeight,
     this.arrowDxOffset = 0,
     this.arrowDyOffset = 0,
     this.contentDxOffset = 0,
@@ -103,17 +92,10 @@ class Popover extends StatefulWidget {
   /// in the tree.
   final VoidCallback? onPop;
 
+  /// How the popover looks and moves, merged on top of [PopoverTheme].
+  final PopoverStyle? style;
+
   final PopoverDirection direction;
-  final PopoverTransition transition;
-  final PopoverArrowStyle arrowStyle;
-  final Color? backgroundColor;
-  final Brightness? brightness;
-  final Color? barrierColor;
-  final Duration? transitionDuration;
-  final double? radius;
-  final List<BoxShadow>? shadow;
-  final double? arrowWidth;
-  final double? arrowHeight;
   final double arrowDxOffset;
   final double arrowDyOffset;
   final double contentDxOffset;
@@ -191,17 +173,8 @@ class _PopoverState extends State<Popover> {
     final route = popoverRoute<Object?>(
       context: context,
       bodyBuilder: (context) => widget.content(context),
+      style: widget.style,
       direction: widget.direction,
-      transition: widget.transition,
-      arrowStyle: widget.arrowStyle,
-      backgroundColor: widget.backgroundColor,
-      brightness: widget.brightness,
-      barrierColor: widget.barrierColor,
-      transitionDuration: widget.transitionDuration,
-      radius: widget.radius,
-      shadow: widget.shadow,
-      arrowWidth: widget.arrowWidth,
-      arrowHeight: widget.arrowHeight,
       arrowDxOffset: widget.arrowDxOffset,
       arrowDyOffset: widget.arrowDyOffset,
       contentDxOffset: widget.contentDxOffset,

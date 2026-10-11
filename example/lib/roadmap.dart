@@ -209,19 +209,21 @@ class _RoadmapPageState extends State<RoadmapPage> {
       context: context,
       width: width,
       direction: direction,
-      barrierColor: const Color(0x00000000),
+      style: PopoverStyle(
+        barrierColor: const Color(0x00000000),
+        shadow: native
+            ? null
+            : const [
+                BoxShadow(
+                  color: Color(0x1A000000),
+                  blurRadius: 24,
+                  offset: Offset(0, 8),
+                ),
+                BoxShadow(color: Color(0x2E000000), spreadRadius: 0.5),
+              ],
+      ),
       // The native shape brings its own shadow. The triangle gets a hairline
       // outline so its arrow shows on the white rows.
-      shadow: native
-          ? null
-          : const [
-              BoxShadow(
-                color: Color(0x1A000000),
-                blurRadius: 24,
-                offset: Offset(0, 8),
-              ),
-              BoxShadow(color: Color(0x2E000000), spreadRadius: 0.5),
-            ],
       bodyBuilder: (context) => Material(
         type: MaterialType.transparency,
         child: Padding(

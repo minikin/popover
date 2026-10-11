@@ -57,6 +57,7 @@ Future<PopoverRenderShiftedBox> _open(
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.adaptive,
   Color? textColor,
   bool settle = true,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
 }) async {
   tester.platformDispatcher.platformBrightnessTestValue = system;
   addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
@@ -71,10 +72,13 @@ Future<PopoverRenderShiftedBox> _open(
               behavior: HitTestBehavior.opaque,
               onTap: () => showPopover(
                 context: context,
-                brightness: brightness,
-                backgroundColor: backgroundColor,
-                barrierColor: barrierColor,
-                arrowStyle: arrowStyle,
+                style: PopoverStyle(
+                  brightness: brightness,
+                  backgroundColor: backgroundColor,
+                  barrierColor: barrierColor,
+                  arrowStyle: arrowStyle,
+                ),
+                popoverTransitionBuilder: popoverTransitionBuilder,
                 bodyBuilder: (_) => const SizedBox(width: 120, height: 80),
               ),
               child: const SizedBox(key: _launcher, width: 80, height: 40),
@@ -205,6 +209,31 @@ void main() {
         findsOneWidget,
       );
     }, variant: _ios);
+
+    testWidgets('leaves the triangle to the route fade', (tester) async {
+      final box = await _open(tester, settle: false);
+
+      expect(box.glass, isNull);
+      expect(box.opacity, 1);
+      expect(
+        find.ancestor(
+          of: find.byType(PopoverContext),
+          matching: find.byType(FadeTransition),
+        ),
+        findsOneWidget,
+      );
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('leaves the glass to a custom transition', (tester) async {
+      final box = await _open(
+        tester,
+        settle: false,
+        popoverTransitionBuilder: (animation, child) => child,
+      );
+
+      expect(box.glass, isNotNull);
+      expect(box.opacity, 1);
+    }, variant: _apple);
 
     testWidgets('paints nothing at an opacity of 0', (tester) async {
       final box = await _open(tester);

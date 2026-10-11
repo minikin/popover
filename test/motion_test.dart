@@ -23,9 +23,11 @@ Future<void> _open(
         behavior: HitTestBehavior.opaque,
         onTap: () => showPopover(
           context: context,
-          arrowStyle: PopoverArrowStyle.adaptive,
-          transition: transition,
-          transitionDuration: transitionDuration,
+          style: PopoverStyle(
+            arrowStyle: PopoverArrowStyle.adaptive,
+            transition: transition,
+            transitionDuration: transitionDuration,
+          ),
           direction: direction,
           bodyBuilder: (_) =>
               const SizedBox(key: _body, width: 160, height: 300),
