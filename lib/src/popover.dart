@@ -94,8 +94,8 @@ import 'utils/popover_utils.dart';
 /// This argument defaults to 0.
 ///
 /// The `barrierDismissible` argument is used to determine whether this route
-/// can be dismissed by tapping the modal barrier. This argument defaults
-/// to true.
+/// can be dismissed by tapping the modal barrier or pressing Esc. This
+/// argument defaults to true.
 ///
 /// The `width` is popover's body/content widget width.
 ///
@@ -240,6 +240,7 @@ Future<T?> showPopover<T extends Object?>({
               semanticsLabel == null
                   ? Builder(builder: bodyBuilder)
                   : Semantics(
+                      scopesRoute: true,
                       namesRoute: true,
                       explicitChildNodes: true,
                       label: semanticsLabel,

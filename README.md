@@ -187,14 +187,16 @@ keyboard stays up.
 
 ## Keyboard and accessibility
 
-Esc closes the popover on every platform, as it closes an `NSPopover`. While
+Esc closes the popover on every platform, as it closes an `NSPopover`, unless
+`barrierDismissible` is false. While
 the popover is open, Tab moves through its body only, and when it closes,
 focus goes back to the widget that had it. `requestFocus: false` leaves focus
 where it is.
 
-Screen readers see the popover and its barrier, not the screen behind it. The
-barrier comes last, labeled with `barrierLabel`, and closes the popover with a
-tap or the dismiss gesture. `semanticsLabel` names the popover, and VoiceOver
+Screen readers see the popover, not the screen behind it. On iOS, Android and
+macOS they also reach the barrier last, labeled with `barrierLabel`, which
+closes the popover with a tap or the dismiss gesture. Flutter leaves the
+barrier out of the semantics tree on Windows and Linux. `semanticsLabel` names the popover, and VoiceOver
 and TalkBack announce the name when it opens, as they announce the title of a
 dialog:
 
