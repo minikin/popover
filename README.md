@@ -70,6 +70,49 @@ class MenuButton extends StatelessWidget {
 user taps outside. `example/lib/main.dart` places nine buttons across the
 screen. Run it with `cd example && flutter run`.
 
+## Popover widget
+
+`Popover` keeps a popover in the widget tree. Its `child` is the anchor, and
+a `PopoverController` opens and closes it:
+
+```dart
+class ShareButton extends StatefulWidget {
+  const ShareButton({super.key});
+
+  @override
+  State<ShareButton> createState() => _ShareButtonState();
+}
+
+class _ShareButtonState extends State<ShareButton> {
+  final _controller = PopoverController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Popover(
+      controller: _controller,
+      semanticsLabel: 'Share',
+      content: (context) => const ShareMenu(),
+      child: TextButton(
+        onPressed: _controller.toggle,
+        child: const Text('Share'),
+      ),
+    );
+  }
+}
+```
+
+`show`, `hide` and `toggle` open and close it, and `isOpen` turns false when
+the user closes it with a tap outside, Esc or the back gesture. `onDismissed`
+runs after it closes. `Popover` takes the arguments of `showPopover`, and they
+apply when it opens. A new `content` rebuilds an open popover. When `Popover`
+leaves the tree, its popover closes.
+
 ## Material and Cupertino
 
 Flutter 3.47 moved Material and Cupertino into the
