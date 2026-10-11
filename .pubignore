@@ -81,6 +81,9 @@ coverage/
 
 # Not part of the published package
 .github/
+.mcp.json
+AGENTS.md
+CLAUDE.md
 tool/
 test/goldens/
 assets/popover.pxd/

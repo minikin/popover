@@ -4,6 +4,13 @@ version: 0.5.0
 homepage: https://github.com/minikin/popover
 repository: https://github.com/minikin/popover
 
+topics:
+  - popover
+  - tooltip
+  - menu
+  - ios
+  - macos
+
 screenshots:
   - description: The example app with open popovers on macOS, iPad, iPhone, Android, Windows, Linux and the web.
     path: assets/demo-light.webp
