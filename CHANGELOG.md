@@ -1,4 +1,4 @@
-## [0.5.0] - 10.10.2026
+## [0.5.0] - 11.10.2026
 
 - Breaking: the look of a popover moved into `PopoverStyle`, passed as `style:` to `showPopover` and `Popover`: `arrowStyle`, `backgroundColor`, `brightness`, `barrierColor`, `radius`, `shadow`, `arrowWidth`, `arrowHeight`, `transition` and `transitionDuration`. The new `PopoverTheme` sets a style for a whole subtree, and the style at the call wins over it. `showPopover` no longer takes `key` or the deprecated `isParentAlive`. `PopoverTransitionBuilder`, the type of `popoverTransitionBuilder`, is now exported. The README has a before and after.
 - Breaking: the popover depends only on `package:flutter/widgets.dart` and works with `package:flutter/material.dart`, `package:flutter/cupertino.dart`, `package:material_ui` and `package:cupertino_ui`. 0.4.0 threw `No MaterialLocalizations found` in a `CupertinoApp` ([#113](https://github.com/minikin/popover/pull/113)).(thanks [@livtanong](https://github.com/livtanong)).
