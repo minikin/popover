@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'popover.dart';
 import 'popover_arrow_style.dart';
 import 'popover_direction.dart';
+import 'popover_route.dart';
 import 'popover_transition.dart';
 import 'utils/popover_utils.dart';
 
@@ -35,9 +36,14 @@ class PopoverController extends ChangeNotifier {
 /// Shows [content] in a popover anchored to [child] while [controller] is
 /// open.
 ///
-/// The other arguments are the ones of [showPopover]. They apply when the
-/// popover opens, so a change to them shows the next time it opens. A new
-/// [content] rebuilds an open popover.
+/// The other arguments are the ones of [showPopover], except its `key` and
+/// the deprecated `isParentAlive`. They apply when the popover opens, so a
+/// change to them shows the next time it opens. A new [content] rebuilds an
+/// open popover.
+///
+/// When this widget leaves the tree, its popover closes at once, without the
+/// closing animation. [PopoverController.isOpen] stays true, so a [Popover]
+/// with the same controller opens again when it is inserted.
 ///
 /// ```dart
 /// final controller = PopoverController();
@@ -81,7 +87,7 @@ class Popover extends StatefulWidget {
     this.semanticsLabel,
     this.popoverTransitionBuilder,
     this.allowClicksOnBackground = false,
-    this.onDismissed,
+    this.onPop,
     super.key,
   });
 
@@ -93,8 +99,9 @@ class Popover extends StatefulWidget {
   /// The anchor the popover points at.
   final Widget child;
 
-  /// Runs after the popover closes, however it was closed.
-  final VoidCallback? onDismissed;
+  /// Runs when the popover pops, however it was closed, while this widget is
+  /// in the tree.
+  final VoidCallback? onPop;
 
   final PopoverDirection direction;
   final PopoverTransition transition;
@@ -127,9 +134,8 @@ class Popover extends StatefulWidget {
 }
 
 class _PopoverState extends State<Popover> {
-  /// The route of the open popover, known once its body first builds.
-  ModalRoute<Object?>? _route;
-  bool _open = false;
+  /// The open popover, null once it is closing or closed.
+  PopoverRoute<Object?>? _route;
 
   @override
   void initState() {
@@ -159,6 +165,7 @@ class _PopoverState extends State<Popover> {
     // The tree is locked while this state is disposed, and the closing
     // popover must not reach back to its unmounted anchor.
     final route = _route;
+    _route = null;
     if (route != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (route.isActive) route.navigator!.removeRoute(route);
@@ -168,7 +175,7 @@ class _PopoverState extends State<Popover> {
   }
 
   void _sync() {
-    if (widget.controller.isOpen == _open) return;
+    if (widget.controller.isOpen == (_route != null)) return;
     // A route cannot be pushed or popped while the tree builds.
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
@@ -181,13 +188,9 @@ class _PopoverState extends State<Popover> {
   }
 
   void _show() {
-    _open = true;
-    showPopover<Object?>(
+    final route = popoverRoute<Object?>(
       context: context,
-      bodyBuilder: (context) {
-        _route = ModalRoute.of(context);
-        return widget.content(context);
-      },
+      bodyBuilder: (context) => widget.content(context),
       direction: widget.direction,
       transition: widget.transition,
       arrowStyle: widget.arrowStyle,
@@ -213,16 +216,22 @@ class _PopoverState extends State<Popover> {
       semanticsLabel: widget.semanticsLabel,
       popoverTransitionBuilder: widget.popoverTransitionBuilder,
       allowClicksOnBackground: widget.allowClicksOnBackground,
-    ).whenComplete(() {
-      _route = null;
-      _open = false;
-      widget.onDismissed?.call();
-      if (mounted) widget.controller.hide();
+    );
+    _route = route;
+    Navigator.of(context, rootNavigator: true).push(route).whenComplete(() {
+      if (!mounted) return;
+      widget.onPop?.call();
+      // Closed by the user, not by [_close] or a newer popover.
+      if (_route == route) {
+        _route = null;
+        widget.controller.hide();
+      }
     });
   }
 
   void _close() {
     final route = _route;
+    _route = null;
     if (route == null || !route.isActive) return;
     final navigator = route.navigator!;
     if (route.isCurrent) {

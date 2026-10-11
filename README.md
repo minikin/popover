@@ -108,10 +108,12 @@ class _ShareButtonState extends State<ShareButton> {
 ```
 
 `show`, `hide` and `toggle` open and close it, and `isOpen` turns false when
-the user closes it with a tap outside, Esc or the back gesture. `onDismissed`
-runs after it closes. `Popover` takes the arguments of `showPopover`, and they
-apply when it opens. A new `content` rebuilds an open popover. When `Popover`
-leaves the tree, its popover closes.
+the user closes it with a tap outside, Esc or the back gesture. `onPop` runs
+whenever it pops. `Popover` takes the other arguments of `showPopover`, and
+they apply when it opens. A new `content` rebuilds an open popover. When
+`Popover` leaves the tree, its popover closes without the closing animation
+and `isOpen` stays true, so it opens again when a `Popover` with the same
+controller comes back.
 
 ## Material and Cupertino
 

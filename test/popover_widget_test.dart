@@ -7,7 +7,7 @@ Future<void> _pump(
   WidgetTester tester,
   PopoverController controller, {
   String content = 'Hello',
-  VoidCallback? onDismissed,
+  VoidCallback? onPop,
   bool show = true,
 }) async {
   await tester.pumpWidget(
@@ -17,7 +17,7 @@ Future<void> _pump(
           child: show
               ? Popover(
                   controller: controller,
-                  onDismissed: onDismissed,
+                  onPop: onPop,
                   content: (_) => Text(content),
                   child: const SizedBox(width: 80, height: 40),
                 )
@@ -43,9 +43,53 @@ void main() {
     expect(controller.isOpen, isTrue);
 
     controller.hide();
+    // Popped, so it animates out instead of vanishing.
+    await tester.pump();
+    expect(find.text('Hello'), findsOneWidget);
     await tester.pumpAndSettle();
     expect(find.text('Hello'), findsNothing);
     expect(controller.isOpen, isFalse);
+  });
+
+  testWidgets('opens again after it closed', (tester) async {
+    await _pump(tester, controller);
+    controller.show();
+    await tester.pumpAndSettle();
+    controller.hide();
+    await tester.pumpAndSettle();
+
+    controller.show();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hello'), findsOneWidget);
+  });
+
+  testWidgets('show then hide in one turn leaves it closed', (tester) async {
+    await _pump(tester, controller);
+
+    controller
+      ..show()
+      ..hide();
+    await tester.pumpAndSettle();
+    expect(find.text('Hello'), findsNothing);
+
+    controller.show();
+    await tester.pumpAndSettle();
+    expect(find.text('Hello'), findsOneWidget);
+  });
+
+  testWidgets('hide then show in one turn leaves it open', (tester) async {
+    await _pump(tester, controller);
+    controller.show();
+    await tester.pumpAndSettle();
+
+    controller
+      ..hide()
+      ..show();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hello'), findsOneWidget);
+    expect(controller.isOpen, isTrue);
   });
 
   testWidgets('toggle flips the popover', (tester) async {
@@ -75,7 +119,7 @@ void main() {
     tester,
   ) async {
     var dismissed = 0;
-    await _pump(tester, controller, onDismissed: () => dismissed++);
+    await _pump(tester, controller, onPop: () => dismissed++);
     controller.show();
     await tester.pumpAndSettle();
 
@@ -143,9 +187,11 @@ void main() {
 
     controller.hide();
     await tester.pumpAndSettle();
+    expect(find.text('Top'), findsOneWidget);
+    expect(controller.isOpen, isFalse);
+
     navigator.pop();
     await tester.pumpAndSettle();
-
     expect(find.text('Hello'), findsNothing);
     expect(find.byType(Popover), findsOneWidget);
   });
