@@ -101,6 +101,37 @@ void main() {
     });
   }
 
+  testWidgets('stays open and rebuilds after its anchor leaves the tree', (
+    tester,
+  ) async {
+    final shown = ValueNotifier(true);
+    addTearDown(shown.dispose);
+    await _open(
+      tester,
+      app: (anchor) => MaterialApp(
+        home: Scaffold(
+          body: ValueListenableBuilder<bool>(
+            valueListenable: shown,
+            builder: (_, value, _) => value
+                ? Center(child: SizedBox(width: 80, height: 40, child: anchor))
+                : const SizedBox(),
+          ),
+        ),
+      ),
+    );
+    final before = tester.getRect(find.byKey(_body));
+
+    final route = ModalRoute.of(tester.element(find.byKey(_body)))!;
+    shown.value = false;
+    await tester.pumpAndSettle();
+    route.changedExternalState();
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(_body), findsOneWidget);
+    expect(tester.getRect(find.byKey(_body)).size, before.size);
+  });
+
   testWidgets('re-places the popover when the window shrinks', (tester) async {
     await _open(
       tester,

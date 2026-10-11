@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'popover_arrow_style.dart';
 import 'popover_direction.dart';
 import 'popover_item.dart';
+import 'popover_motion.dart';
 import 'popover_route.dart';
 import 'popover_shape.dart';
 import 'popover_transition.dart';
@@ -44,8 +45,13 @@ import 'utils/popover_utils.dart';
 /// behind a popover.
 ///
 /// The `transitionDuration` argument is used to determine how long it takes
-/// for the route to arrive on or leave off the screen. This argument defaults
-/// to 200 milliseconds.
+/// for the route to arrive on or leave off the screen. With the `apple` shape
+/// and [PopoverTransition.scale] it defaults to the springs of iOS 26 and
+/// macOS 26. On iOS the popover scales up from the arrow tip while its
+/// outline grows over 494 milliseconds and shrinks back over 516. On macOS
+/// it scales up over 440 milliseconds and back over 200. Otherwise it
+/// defaults to a 200 millisecond fade. A duration passed in applies to both
+/// directions.
 ///
 /// The `radius` of popover's body.
 /// This argument defaults to 8 for [PopoverArrowStyle.triangle], and for
@@ -135,7 +141,7 @@ Future<T?> showPopover<T extends Object?>({
   Color? backgroundColor,
   Brightness? brightness,
   Color? barrierColor,
-  Duration transitionDuration = const Duration(milliseconds: 200),
+  Duration? transitionDuration,
   double? radius,
   List<BoxShadow>? shadow,
   double? arrowWidth,
@@ -203,10 +209,17 @@ Future<T?> showPopover<T extends Object?>({
         PopoverShape.macos => _macosShadow,
       };
 
+  // iOS 26 and macOS 26 open a popover on one spring and close it on another.
+  final motion = transition == PopoverTransition.scale
+      ? PopoverMotion.of(shape)
+      : null;
   final fadesGlass =
       popoverTransitionBuilder == null &&
       backgroundColor == null &&
       shape != PopoverShape.triangle;
+
+  // Read once: the anchor may leave the tree while the popover is open.
+  final resolvedBrightness = brightness ?? _contrastWithText(context);
 
   final navigator = Navigator.of(context, rootNavigator: true);
   final themes = InheritedTheme.capture(from: context, to: navigator.context);
@@ -222,7 +235,7 @@ Future<T?> showPopover<T extends Object?>({
             child: themes.wrap(Builder(builder: bodyBuilder)),
             context: context,
             backgroundColor: backgroundColor,
-            brightness: brightness ?? _contrastWithText(context),
+            brightness: resolvedBrightness,
             direction: direction,
             radius: cornerRadius,
             boxShadow: boxShadow,
@@ -248,7 +261,10 @@ Future<T?> showPopover<T extends Object?>({
           (shape == PopoverShape.triangle
               ? const Color(0x80000000)
               : const Color(0x00000000)),
-      transitionDuration: transitionDuration,
+      transitionDuration:
+          transitionDuration ?? (motion?.presentDuration ?? _fadeDuration),
+      reverseTransitionDuration:
+          transitionDuration ?? (motion?.dismissDuration ?? _fadeDuration),
       settings: routeSettings,
       transitionBuilder: (builderContext, animation, _, child) {
         if (popoverTransitionBuilder != null) {
@@ -256,13 +272,20 @@ Future<T?> showPopover<T extends Object?>({
         }
         return fadesGlass
             ? child
-            : _FadeTransitionWidget(child: child, animation: animation);
+            : _FadeTransitionWidget(
+                animation: animation,
+                curve: motion?.present ?? Curves.easeOut,
+                reverseCurve: motion?.dismiss.flipped,
+                child: child,
+              );
       },
     ),
   );
 }
 
 const _defaultBarrierLabel = 'Dismiss';
+
+const _fadeDuration = Duration(milliseconds: 200);
 
 /// The background brightness that keeps the text the body inherits from
 /// [context] readable, or null when no text color is inherited.
@@ -284,9 +307,16 @@ const _macosShadow = [
 ];
 
 class _FadeTransitionWidget extends StatefulWidget {
-  const _FadeTransitionWidget({required this.child, required this.animation});
+  const _FadeTransitionWidget({
+    required this.child,
+    required this.animation,
+    required this.curve,
+    this.reverseCurve,
+  });
   final Widget child;
   final Animation<double> animation;
+  final Curve curve;
+  final Curve? reverseCurve;
 
   @override
   State<_FadeTransitionWidget> createState() => _FadeTransitionWidgetState();
@@ -300,7 +330,8 @@ class _FadeTransitionWidgetState extends State<_FadeTransitionWidget> {
     super.initState();
     _animation = CurvedAnimation(
       parent: widget.animation,
-      curve: Curves.easeOut,
+      curve: widget.curve,
+      reverseCurve: widget.reverseCurve,
     );
   }
 

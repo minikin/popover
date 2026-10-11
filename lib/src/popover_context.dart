@@ -4,12 +4,11 @@ import 'popover_direction.dart';
 import 'popover_glass.dart';
 import 'popover_render_shifted_box.dart';
 import 'popover_shape.dart';
-import 'popover_transition.dart';
 
 final class PopoverContext extends SingleChildRenderObjectWidget {
-  final PopoverTransition transition;
-  final Animation<double> animation;
   final Rect attachRect;
+  final double scale;
+  final double reveal;
   final Color? backgroundColor;
   final List<BoxShadow>? boxShadow;
   final double? radius;
@@ -21,9 +20,9 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
   final double opacity;
 
   const PopoverContext({
-    required this.transition,
-    required this.animation,
     required this.attachRect,
+    this.scale = 1,
+    this.reveal = 1,
     required this.arrowHeight,
     this.shape = PopoverShape.triangle,
     this.glass,
@@ -42,7 +41,8 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       attachRect: attachRect,
       color: backgroundColor,
       boxShadow: boxShadow,
-      scale: animation.value,
+      scale: scale,
+      reveal: reveal,
       direction: direction,
       radius: radius,
       arrowWidth: arrowWidth,
@@ -62,7 +62,8 @@ final class PopoverContext extends SingleChildRenderObjectWidget {
       ..attachRect = attachRect
       ..color = backgroundColor
       ..boxShadow = boxShadow
-      ..scale = transition == PopoverTransition.scale ? animation.value : 1.0
+      ..scale = scale
+      ..reveal = reveal
       ..direction = direction
       ..radius = radius
       ..arrowWidth = arrowWidth

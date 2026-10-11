@@ -1,8 +1,13 @@
+import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 import 'apple_popover_path.dart';
 import 'popover_direction.dart';
 import 'popover_glass.dart';
+import 'popover_motion.dart';
 import 'popover_path.dart';
 import 'popover_shape.dart';
 import 'utils/popover_utils.dart';
@@ -15,6 +20,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   Color? _color;
   List<BoxShadow>? _boxShadow;
   double? _scale;
+  double _reveal;
   double? _radius;
   PopoverShape _shape;
   PopoverGlass? _glass;
@@ -29,6 +35,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Color? color,
     List<BoxShadow>? boxShadow,
     double? scale,
+    double reveal = 1,
     double? radius,
     PopoverDirection? direction,
     PopoverShape shape = PopoverShape.triangle,
@@ -37,6 +44,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   }) : _shape = shape,
        _glass = glass,
        _opacity = opacity,
+       _reveal = reveal,
        super(child) {
     _attachRect = attachRect;
     _color = color;
@@ -114,6 +122,15 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     if (_radius == value) return;
     _radius = value;
     markNeedsLayout();
+  }
+
+  /// How far the outline of [PopoverShape.ios] has grown while it opens, from
+  /// 0 at [PopoverMotion.startHeight] to 1 at its full height.
+  double get reveal => _reveal;
+  set reveal(double value) {
+    if (_reveal == value) return;
+    _reveal = value;
+    markNeedsPaint();
   }
 
   double? get scale => _scale;
@@ -227,7 +244,8 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
         radius: radius ?? 0,
       ).toPath(frame: frame, direction: direction, tip: tip),
     };
-    final path = outline(Offset.zero & size, tip);
+    final body = revealed(direction, tip);
+    final path = outline(body, tip);
 
     _transform(transform, switch (direction) {
       PopoverDirection.bottom => Offset(tip, 0),
@@ -239,7 +257,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
       final shift = offset + boxShadow.offset;
       final shadow = outline(
-        (Offset.zero & size).inflate(boxShadow.spreadRadius).shift(shift),
+        body.inflate(boxShadow.spreadRadius).shift(shift),
         tip + (vertical ? shift.dx : shift.dy),
       );
       context.pushTransform(needsCompositing, offset, transform, (context, _) {
@@ -269,6 +287,28 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     }
 
     _pushClipPath(context, offset, path, transform);
+  }
+
+  /// The outline's frame while it grows: [reveal] of the way from
+  /// [PopoverMotion.startHeight] to the full height, keeping the arrow tip
+  /// in place, as UIKit grows the bounds of `_UIPopoverView` about it.
+  @visibleForTesting
+  Rect revealed(PopoverDirection direction, double tip) {
+    final full = Offset.zero & size;
+    if (reveal == 1) return full;
+    final start = math.min(PopoverMotion.startHeight, size.height);
+    final k = lerpDouble(start, size.height, reveal)! / size.height;
+    final pivot = switch (direction) {
+      PopoverDirection.bottom => 0.0,
+      PopoverDirection.top => size.height,
+      PopoverDirection.left || PopoverDirection.right => tip,
+    };
+    return Rect.fromLTRB(
+      0,
+      pivot - pivot * k,
+      size.width,
+      pivot + (size.height - pivot) * k,
+    );
   }
 
   /// Where the arrow base starts along a body side of [extent] so the arrow
