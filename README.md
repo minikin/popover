@@ -286,6 +286,39 @@ showPopover(
 );
 ```
 
+## Migrating from 0.4
+
+0.5.0 changes how the popover looks and behaves on iOS, iPadOS and macOS, and
+how its body is built everywhere.
+
+- The body is no longer wrapped in a `Material`. Wrap it in
+  `Material(type: MaterialType.transparency)` when it holds `InkWell`,
+  `ListTile`, `TextField` or other widgets that need one.
+- The body inherits `Theme`, `DefaultTextStyle` and `IconTheme` from
+  `context`. A `Material` around it resets the text style.
+- `barrierLabel` defaults to `'Dismiss'`. Pass a localized label if you need
+  one.
+- The popover is placed like a native one: it flips, slides and shrinks to
+  stay inside the safe area, and `width`, `height` and `constraints` are
+  capped by the room available.
+- On Apple platforms the defaults are native: the `apple` outline, Liquid
+  Glass, no dimming behind the popover and the native springs. Dark mode
+  follows the text color the body inherits.
+
+To keep the look of 0.4 everywhere, pass these:
+
+```dart
+showPopover(
+  context: context,
+  arrowStyle: PopoverArrowStyle.triangle,
+  backgroundColor: const Color(0xFFFFFFFF),
+  bodyBuilder: (context) => Material(child: MyBody()),
+);
+```
+
+With the `triangle` style the barrier still dims to `Color(0x80000000)` and
+the popover still fades and scales in over 200 ms.
+
 ## Contributing
 
 The project accepts pull requests, not issues. Open a PR with a fix or a
