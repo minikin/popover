@@ -10,6 +10,7 @@ Future<void> _open(
   WidgetTester tester, {
   String? semanticsLabel,
   bool? requestFocus,
+  WidgetBuilder? body,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -22,16 +23,24 @@ Future<void> _open(
                 context: context,
                 semanticsLabel: semanticsLabel,
                 requestFocus: requestFocus,
-                bodyBuilder: (_) => Material(
-                  type: MaterialType.transparency,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextButton(onPressed: () {}, child: const Text('One')),
-                      TextButton(onPressed: () {}, child: const Text('Two')),
-                    ],
-                  ),
-                ),
+                bodyBuilder:
+                    body ??
+                    (_) => Material(
+                      type: MaterialType.transparency,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('One'),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('Two'),
+                          ),
+                        ],
+                      ),
+                    ),
               ),
               child: const Text('Open'),
             ),
@@ -134,8 +143,7 @@ void main() {
       final popover = tester.getSemantics(find.text('One')).parent!;
       final barrier = tester.getSemantics(find.bySemanticsLabel('Dismiss'));
       final keys = [
-        for (final node in [popover, barrier])
-          _sortKey(node),
+        for (final node in [popover, barrier]) _sortKey(node),
       ];
       expect(keys[0]!.compareTo(keys[1]!), lessThan(0));
       handle.dispose();
@@ -153,6 +161,29 @@ void main() {
         find.semantics.descendant(
           of: find.semantics.byLabel('Share'),
           matching: find.semantics.byLabel('One'),
+        ),
+        findsOne,
+      );
+      handle.dispose();
+    });
+
+    testWidgets('keep the name apart from plain text in the body', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await _open(
+        tester,
+        semanticsLabel: 'Share',
+        body: (_) => const Text('Hello'),
+      );
+
+      final name = tester.getSemantics(find.bySemanticsLabel('Share'));
+      expect(name.label, 'Share');
+      expect(name.getSemanticsData().flagsCollection.scopesRoute, isTrue);
+      expect(
+        find.semantics.descendant(
+          of: find.semantics.byLabel('Share'),
+          matching: find.semantics.byLabel('Hello'),
         ),
         findsOne,
       );
