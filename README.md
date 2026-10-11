@@ -185,6 +185,29 @@ route pops.
 `requestFocus: false` stops the popover from taking focus, so an open
 keyboard stays up.
 
+## Keyboard and accessibility
+
+Esc closes the popover on every platform, as it closes an `NSPopover`, unless
+`barrierDismissible` is false. While
+the popover is open, Tab moves through its body only, and when it closes,
+focus goes back to the widget that had it. `requestFocus: false` leaves focus
+where it is.
+
+Screen readers see the popover, not the screen behind it. On iOS, Android and
+macOS they also reach the barrier last, labeled with `barrierLabel`, which
+closes the popover with a tap or the dismiss gesture. Flutter leaves the
+barrier out of the semantics tree on Windows and Linux. `semanticsLabel` names the popover, and VoiceOver
+and TalkBack announce the name when it opens, as they announce the title of a
+dialog:
+
+```dart
+showPopover(
+  context: context,
+  semanticsLabel: 'Share',
+  bodyBuilder: (context) => const ShareMenu(),
+);
+```
+
 ## Animation
 
 The popover fades in over `transitionDuration`, 200 ms by default.
