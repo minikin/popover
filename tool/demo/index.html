@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>popover demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0b0f;
+    --bg-top: #0c0d13;
+    --bg-bottom: #07080b;
+    --text: #f5f6f8;
+    --muted: #8b90a0;
+    --strong: #d6d9e4;
+    --accent: #5e6ad2;
+    --ring: rgba(255, 255, 255, 0.08);
+    --chip-bg: rgba(255, 255, 255, 0.05);
+    --chip-text: #c3c7d4;
+    --grid: rgba(255, 255, 255, 0.03);
+    --glow-a: rgba(94, 106, 210, 0.30);
+    --glow-b: rgba(94, 106, 210, 0.22);
+    --h1-top: #ffffff;
+    --h1-bottom: #b7bcf1;
+    --window-ring: rgba(255, 255, 255, 0.08);
+    --frame: #111216;
+    --frame-ring: rgba(255, 255, 255, 0.16);
+    --shadow-back: 0 24px 48px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.3);
+    --shadow-front: 0 40px 70px rgba(0, 0, 0, 0.6), 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7fa;
+    --bg-top: #fbfbfd;
+    --bg-bottom: #eef0f5;
+    --text: #0f1117;
+    --muted: #5c6271;
+    --strong: #1f2330;
+    --ring: rgba(15, 17, 23, 0.08);
+    --chip-bg: rgba(15, 17, 23, 0.04);
+    --chip-text: #3a3f4c;
+    --grid: rgba(15, 17, 23, 0.045);
+    --glow-a: rgba(94, 106, 210, 0.20);
+    --glow-b: rgba(94, 106, 210, 0.14);
+    --h1-top: #0f1117;
+    --h1-bottom: #4d57b8;
+    --window-ring: rgba(15, 17, 23, 0.12);
+    --frame: #1a1b20;
+    --frame-ring: rgba(15, 17, 23, 0.25);
+    --shadow-back: 0 20px 40px rgba(20, 24, 50, 0.16), 0 3px 8px rgba(20, 24, 50, 0.10);
+    --shadow-front: 0 32px 60px rgba(20, 24, 50, 0.22), 0 8px 16px rgba(20, 24, 50, 0.12);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1600px; height: 1000px; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, sans-serif;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glow {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(1100px 520px at 70% 0%, var(--glow-a), transparent 65%),
+      radial-gradient(1300px 400px at 50% 108%, var(--glow-b), transparent 70%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 55%, var(--bg-bottom) 100%);
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 10%, #000 20%, transparent 75%);
+  }
+
+  /* Header */
+  header { position: absolute; left: 72px; right: 72px; top: 52px; display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 14px 6px 10px; border-radius: 999px;
+    border: 1px solid var(--ring); background: var(--chip-bg);
+    color: var(--muted); font-size: 18px; font-weight: 500;
+  }
+  .pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .pill b { color: var(--text); font-weight: 600; }
+  h1 {
+    margin-top: 18px; margin-bottom: -0.14em; padding-bottom: 0.14em; font-size: 58px; line-height: 1.08; font-weight: 700; letter-spacing: -0.045em; white-space: nowrap;
+    background: linear-gradient(180deg, var(--h1-top) 20%, var(--h1-bottom));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { font-size: 21px; line-height: 1.4; color: var(--muted); letter-spacing: -0.01em; max-width: 620px; padding-bottom: 4px; text-align: right; text-wrap: balance; }
+  .sub b { color: var(--strong); font-weight: 500; }
+
+  /* Device rows */
+  .row {
+    position: absolute; left: 0; right: 0;
+    display: flex; justify-content: center; align-items: flex-end; gap: 28px;
+    padding: 0 48px;
+  }
+  .row-a { top: 220px; height: 400px; }
+  .row-b { bottom: 48px; }
+  .device { position: relative; flex: none; }
+  .device .tag {
+    position: absolute; left: 0; right: 0; top: -36px; text-align: center;
+    font-size: 20px; font-weight: 500; color: var(--chip-text); letter-spacing: -0.005em;
+  }
+  .device .tag span {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 3px 12px; border-radius: 999px;
+    background: var(--chip-bg); border: 1px solid var(--ring);
+  }
+  .device .tag span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .device img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: right top; }
+
+  .window { border-radius: 10px; background: #fff; outline: 1px solid var(--window-ring); box-shadow: var(--shadow-back); }
+  .window .bar { border-radius: 10px 10px 0 0; }
+  .window .shot { overflow: hidden; border-radius: 0 0 10px 10px; aspect-ratio: 16 / 9; }
+  .browser .shot { aspect-ratio: 1600 / 881; }
+  .bar { height: 34px; display: flex; align-items: center; font-size: 13px; color: #3c3c43; }
+
+  .mac { box-shadow: var(--shadow-front); }
+  .mac .bar { background: #ececec; justify-content: center; position: relative; border-bottom: 1px solid #d9d9d9; height: 36px; font-size: 14px; }
+  .mac .lights { position: absolute; left: 14px; display: flex; gap: 8px; }
+  .mac .lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .mac .shot { aspect-ratio: 4 / 3; }
+
+  .win .bar { background: #f3f3f3; justify-content: space-between; padding-left: 14px; }
+  .win .controls { display: flex; height: 100%; }
+  .win .controls i { width: 46px; display: grid; place-items: center; font-style: normal; font-size: 13px; color: #555; }
+
+  .gnome .bar { background: #ebebeb; justify-content: center; position: relative; height: 38px; font-weight: 600; border-bottom: 1px solid #d6d6d6; }
+  .gnome .close { position: absolute; right: 10px; width: 22px; height: 22px; border-radius: 50%; background: #dadada; display: grid; place-items: center; font-size: 11px; }
+
+  .browser .bar { background: #dee1e6; gap: 10px; padding: 0 12px; height: 38px; }
+  .browser .url { flex: 1; height: 26px; border-radius: 13px; background: #fff; display: flex; align-items: center; padding-left: 12px; color: #5f6368; }
+  .browser .dots { display: flex; gap: 6px; }
+  .browser .dots i { width: 10px; height: 10px; border-radius: 50%; background: #b7bbc1; display: block; }
+
+  /* Tablet */
+  .tablet { width: 280px; padding: 11px; border-radius: 26px; background: var(--frame); box-shadow: var(--shadow-front), inset 0 1px 0 rgba(255, 255, 255, 0.10); outline: 1px solid var(--frame-ring); }
+  .tablet .shot { border-radius: 16px; overflow: hidden; aspect-ratio: 834 / 1210; background: #fff; }
+
+  /* Phones: metal edge band > black bezel > screen */
+  .phone { padding: 3px; }
+  .phone .bezel { background: #070708; overflow: hidden; }
+  .phone .shot { position: relative; overflow: hidden; background: #fff; }
+  .phone .btn { position: absolute; width: 3px; border-radius: 2px; }
+
+  .iphone { width: 192px; border-radius: 34px;
+    background: linear-gradient(135deg, #c9c7c2 0%, #8e8c87 18%, #e3e1dc 32%, #9a9893 50%, #d9d7d2 68%, #87857f 84%, #c4c2bd 100%);
+    box-shadow: var(--shadow-front), inset 0 0 0 1px rgba(255, 255, 255, 0.35); }
+  .iphone .bezel { padding: 6px; border-radius: 31px; }
+  .iphone .shot { border-radius: 23px; aspect-ratio: 1206 / 2622; }
+  .iphone .island { position: absolute; top: 10px; left: 50%; width: 34%; height: 18px; transform: translateX(-50%); background: #000; border-radius: 10px; z-index: 1; }
+  .iphone .btn { background: linear-gradient(90deg, #a3a19c, #d6d4cf, #8a8883); }
+  .iphone .btn.action { left: -2px; top: 84px; height: 16px; }
+  .iphone .btn.vol-up { left: -2px; top: 116px; height: 34px; }
+  .iphone .btn.vol-dn { left: -2px; top: 158px; height: 34px; }
+  .iphone .btn.power { right: -2px; top: 134px; height: 56px; }
+
+  .pixel { width: 189px; border-radius: 24px;
+    background: linear-gradient(135deg, #5c5f66 0%, #40434a 25%, #6b6e75 50%, #3b3e45 75%, #585b62 100%);
+    box-shadow: var(--shadow-front), inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
+  .pixel .bezel { padding: 7px; border-radius: 21px; }
+  .pixel .shot { border-radius: 14px; aspect-ratio: 1080 / 2400; }
+  .pixel .hole { position: absolute; top: 10px; left: 50%; width: 10px; height: 10px; transform: translateX(-50%); background: #000; border-radius: 50%; z-index: 1; box-shadow: inset 0 0 0 2px #15161a; }
+  .pixel .btn { background: linear-gradient(90deg, #4b4e55, #7c7f86, #44474e); }
+  .pixel .btn.power { right: -2px; top: 114px; height: 30px; }
+  .pixel .btn.vol { right: -2px; top: 160px; height: 56px; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="grid"></div>
+
+  <header>
+    <div>
+      <div class="pill"><i></i><b>popover</b> for Flutter</div>
+      <h1>One popover, every platform</h1>
+    </div>
+    <p class="sub">Flips, slides and shrinks to stay on screen, the way <b>iOS</b> and <b>macOS</b> popovers do.</p>
+  </header>
+
+  <main class="row row-a">
+    <div class="device window mac" style="width: 480px;" data-shot="macOS">
+      <div class="tag"><span>macOS</span></div>
+      <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>Popover Example</div>
+      <div class="shot"><img alt="macOS"></div>
+    </div>
+
+    <div class="device tablet" data-shot="iOS_tablet">
+      <div class="tag"><span>iPad</span></div>
+      <div class="shot"><img alt="iPad"></div>
+    </div>
+
+    <div class="device phone iphone" data-shot="iOS_phone">
+      <div class="tag"><span>iPhone</span></div>
+      <span class="btn action"></span><span class="btn vol-up"></span><span class="btn vol-dn"></span><span class="btn power"></span>
+      <div class="bezel"><div class="shot"><span class="island"></span><img alt="iPhone"></div></div>
+    </div>
+
+    <div class="device phone pixel" data-shot="android_phone">
+      <div class="tag"><span>Android</span></div>
+      <span class="btn power"></span><span class="btn vol"></span>
+      <div class="bezel"><div class="shot"><span class="hole"></span><img alt="Android"></div></div>
+    </div>
+  </main>
+
+  <main class="row row-b">
+    <div class="device window win" style="width: 430px;" data-shot="windows">
+      <div class="tag"><span>Windows</span></div>
+      <div class="bar"><span>Popover Example</span><span class="controls"><i>&#x2500;</i><i>&#x25A1;</i><i>&#x2715;</i></span></div>
+      <div class="shot"><img alt="Windows"></div>
+    </div>
+
+    <div class="device window gnome" style="width: 430px;" data-shot="linux">
+      <div class="tag"><span>Linux</span></div>
+      <div class="bar">Popover Example<span class="close">&#x2715;</span></div>
+      <div class="shot"><img alt="Linux"></div>
+    </div>
+
+    <div class="device window browser" style="width: 430px;" data-shot="web">
+      <div class="tag"><span>Web</span></div>
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">localhost:8080</span></div>
+      <div class="shot"><img alt="Web"></div>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const dir = params.get('shots') || 'shots';
+    if (params.get('theme') === 'light') document.documentElement.dataset.theme = 'light';
+    for (const device of document.querySelectorAll('[data-shot]')) {
+      const img = device.querySelector('img');
+      img.onerror = () => device.remove();
+      img.src = `${dir}/${device.dataset.shot}_demo.png`;
+    }
+  </script>
+</body>
+</html>
