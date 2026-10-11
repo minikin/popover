@@ -123,4 +123,6 @@ jobs:
           path: shards
 
       - name: Check the threshold
-        run: python3 tool/ci/mutation_shards.py total shards
+        env:
+          PLANNED: ${{ needs.plan.outputs.shards }}
+        run: python3 tool/ci/mutation_shards.py total shards "$PLANNED"

@@ -334,7 +334,9 @@ PopoverRoute<T> popoverRoute<T extends Object?>({
       );
     },
     requestFocus: requestFocus,
-    barrierDismissible: barrierDismissible,
+    // Taps reach the widgets behind, so the barrier must not close it, and
+    // neither may Esc or the accessibility dismiss action.
+    barrierDismissible: barrierDismissible && !allowClicksOnBackground,
     barrierLabel: barrierLabel ?? _defaultBarrierLabel,
     barrierColor:
         barrierColor ??

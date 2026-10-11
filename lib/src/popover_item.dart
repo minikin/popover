@@ -185,15 +185,14 @@ class _PopoverItemState extends State<PopoverItem> {
 
   Rect? _anchorRect() {
     if (!widget.context.mounted) return null;
-    final offset = BuildContextExtension.getWidgetLocalToGlobal(widget.context);
-    final bounds = BuildContextExtension.getWidgetBounds(widget.context);
-    if (offset == null || bounds == null) return null;
+    final anchor = globalRectOf(widget.context);
+    if (anchor == null) return null;
 
     return Rect.fromLTWH(
-      offset.dx + widget.arrowDxOffset,
-      offset.dy + widget.arrowDyOffset,
-      bounds.width + widget.contentDxOffset,
-      bounds.height + widget.contentDyOffset,
+      anchor.left + widget.arrowDxOffset,
+      anchor.top + widget.arrowDyOffset,
+      anchor.width + widget.contentDxOffset,
+      anchor.height + widget.contentDyOffset,
     );
   }
 }

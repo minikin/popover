@@ -233,7 +233,7 @@ keyboard stays up.
 ## Keyboard and accessibility
 
 Esc closes the popover on every platform, as it closes an `NSPopover`, unless
-`barrierDismissible` is false. While
+`barrierDismissible` is false or `allowClicksOnBackground` is true. While
 the popover is open, Tab moves through its body only, and when it closes,
 focus goes back to the widget that had it. `requestFocus: false` leaves focus
 where it is.
