@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import '../popover.dart';
 import 'popover_context.dart';
 import 'popover_glass.dart';
+import 'popover_motion.dart';
 import 'popover_position_widget.dart';
 import 'popover_render_shifted_box.dart';
 import 'popover_shape.dart';
@@ -63,7 +65,13 @@ class PopoverItem extends StatefulWidget {
 
 class _PopoverItemState extends State<PopoverItem> {
   late Rect _attachRect;
-  CurvedAnimation? _fade;
+
+  /// The route animation through the fade or spring curve, when the item
+  /// fades its glass or springs.
+  CurvedAnimation? _motion;
+
+  /// [_motion] for an iOS popover that scales in, null otherwise.
+  CurvedAnimation? _spring;
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +106,15 @@ class _PopoverItemState extends State<PopoverItem> {
           child: AnimatedBuilder(
             animation: widget.animation,
             builder: (context, child) {
+              final spring = _spring?.value;
               return PopoverContext(
                 attachRect: attachRect,
-                animation: widget.animation,
+                scale: spring != null
+                    ? lerpDouble(IosPopoverMotion.startScale, 1, spring)!
+                    : widget.transition == PopoverTransition.scale
+                    ? widget.animation.value
+                    : 1,
+                reveal: spring ?? 1,
                 radius: widget.radius,
                 backgroundColor:
                     backgroundColor ??
@@ -108,13 +122,12 @@ class _PopoverItemState extends State<PopoverItem> {
                         ? const Color(0xFF2C2C2E)
                         : const Color(0xFFFFFFFF)),
                 glass: glass,
-                opacity: _fade?.value ?? 1,
+                opacity: widget.fadesGlass ? _motion!.value : 1,
                 boxShadow: widget.boxShadow,
                 direction: widget.direction,
                 arrowWidth: widget.arrowWidth,
                 arrowHeight: widget.arrowHeight,
                 shape: widget.shape,
-                transition: widget.transition,
                 child: child,
               );
             },
@@ -137,14 +150,22 @@ class _PopoverItemState extends State<PopoverItem> {
     super.initState();
     _attachRect = _anchorRect() ?? Rect.zero;
     _followAnchor();
-    if (widget.fadesGlass) {
-      _fade = CurvedAnimation(parent: widget.animation, curve: Curves.easeOut);
+    final spring =
+        widget.shape == PopoverShape.ios &&
+        widget.transition == PopoverTransition.scale;
+    if (spring || widget.fadesGlass) {
+      _motion = CurvedAnimation(
+        parent: widget.animation,
+        curve: spring ? IosPopoverMotion.present : Curves.easeOut,
+        reverseCurve: spring ? IosPopoverMotion.dismiss.flipped : null,
+      );
+      if (spring) _spring = _motion;
     }
   }
 
   @override
   void dispose() {
-    _fade?.dispose();
+    _motion?.dispose();
     super.dispose();
   }
 

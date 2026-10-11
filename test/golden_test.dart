@@ -27,6 +27,7 @@ Future<void> _show(
   List<BoxShadow>? shadow,
   PopoverArrowStyle arrowStyle = PopoverArrowStyle.triangle,
   Brightness? brightness,
+  Color? backgroundColor,
   Size body = const Size(160, 100),
   Duration? openFor,
 }) async {
@@ -46,6 +47,7 @@ Future<void> _show(
             shadow: shadow,
             arrowStyle: arrowStyle,
             brightness: brightness,
+            backgroundColor: backgroundColor,
             bodyBuilder: (_) => SizedBox(
               key: _body,
               width: body.width,
@@ -270,6 +272,32 @@ void main() {
           matchesGoldenFile('goldens/glass_opening.png'),
         );
       }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+      // The outline grows about the arrow tip, so the tip stays on the
+      // anchor while the popover opens.
+      for (final MapEntry(key: direction, value: alignment)
+          in _awayFromSide.entries) {
+        final name = 'ios_opening_${direction.name}';
+        testWidgets(name, (tester) async {
+          await _show(
+            tester,
+            app: (launcher) => legacyApp(
+              launcher,
+              alignment: Alignment(-alignment.x * 0.5, -alignment.y * 0.5),
+            ),
+            direction: direction,
+            arrowStyle: PopoverArrowStyle.apple,
+            backgroundColor: const Color(0xFFFFFFFF),
+            body: const Size(160, 240),
+            openFor: const Duration(milliseconds: 60),
+          );
+
+          await expectLater(
+            find.byKey(_screen),
+            matchesGoldenFile('goldens/$name.png'),
+          );
+        }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+      }
 
       testWidgets('triangle_dark', (tester) async {
         await _show(tester, app: _stripedApp, brightness: Brightness.dark);
