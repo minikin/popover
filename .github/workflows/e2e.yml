@@ -1,0 +1,269 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DRIVE_ARGS: --driver test_driver/integration_test.dart --target integration_test/popover_test.dart
+
+jobs:
+  apple:
+    name: E2E ${{ matrix.target }}
+    runs-on: macos-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [iPhone, iPad, macOS]
+    defaults:
+      run:
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Pick the simulator
+        if: matrix.target != 'macOS'
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          python3 - >> "$GITHUB_ENV" <<'EOF'
+          import json, os, re, subprocess
+          pattern = {"iPhone": r"iPhone \d+ Pro$", "iPad": r"iPad Pro 11-inch"}[
+              os.environ["TARGET"]]
+          listing = json.loads(subprocess.check_output(
+              ["xcrun", "simctl", "list", "devices", "available", "-j"]))
+          def version(runtime):
+              return tuple(int(n) for n in re.findall(r"\d+", runtime.split(".iOS-")[1]))
+          runtimes = sorted(
+              (r for r in listing["devices"] if ".iOS-" in r),
+              key=version, reverse=True)
+          for runtime in runtimes:
+              for device in listing["devices"][runtime]:
+                  if re.match(pattern, device["name"]):
+                      print(f"DEVICE={device['udid']}")
+                      raise SystemExit
+          raise SystemExit(f"no simulator matches {pattern}")
+          EOF
+
+      # Boots while Flutter installs, drive_simulator.sh waits for it.
+      - name: Start the simulator
+        if: matrix.target != 'macOS'
+        run: xcrun simctl boot "$DEVICE" 2>/dev/null || true
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Simulator
+        if: matrix.target != 'macOS'
+        timeout-minutes: 30
+        run: ../tool/ci/drive_simulator.sh "$DEVICE"
+
+      - name: macOS
+        if: matrix.target == 'macOS'
+        timeout-minutes: 20
+        run: flutter drive -d macos $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-${{ matrix.target }}
+          path: example/build/screenshots
+
+  web:
+    name: E2E web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Chrome
+        run: |
+          version=$(google-chrome --version | grep -oE '[0-9]+(\.[0-9]+){3}')
+          npx -y @puppeteer/browsers install "chromedriver@$version" --path "$RUNNER_TEMP"
+          driver=$(find "$RUNNER_TEMP/chromedriver" -type f -name chromedriver | head -n 1)
+          "$driver" --port=4444 &
+          flutter drive -d web-server --browser-name=chrome --headless $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-web
+          path: example/build/screenshots
+
+  android:
+    name: E2E Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        working-directory: example
+        run: flutter pub get
+
+      - name: Android emulator
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          ram-size: 4096M
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: example
+          script: flutter drive -d emulator-5554 --no-enable-impeller $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-android
+          path: example/build/screenshots
+
+  windows:
+    name: E2E Windows
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Windows
+        run: flutter drive -d windows $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-windows
+          path: example/build/screenshots
+
+  linux:
+    name: E2E Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Linux build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev xvfb
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: "stable"
+          flutter-version: "3.47.4"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Linux
+        run: xvfb-run -a -s "-screen 0 1600x1200x24" flutter drive -d linux $DRIVE_ARGS
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-screenshots-linux
+          path: example/build/screenshots
+
+  demo:
+    name: Demo image
+    needs: [apple, web, android, windows, linux]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: e2e-screenshots-*
+          merge-multiple: true
+          path: screenshots
+
+      - name: Install cwebp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Render
+        run: |
+          tool/demo/render.sh screenshots demo-dark.webp dark
+          tool/demo/render.sh screenshots demo-light.webp light
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: popover-demo
+          path: demo-*.webp
