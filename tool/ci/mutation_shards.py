@@ -10,10 +10,11 @@
         With a base ref, only the chunks that touch lines changed since that
         ref are mutated.
 
-    python3 tool/ci/mutation_shards.py total <results dir>
+    python3 tool/ci/mutation_shards.py total <results dir> [<shards>]
         Sums the "Total tests" and "Undetected Mutations" lines of every
         *.log in <results dir> and fails below the threshold in
-        mutation_test.xml.
+        mutation_test.xml. With the JSON list of planned shards it also fails
+        when a planned shard left no log with a total.
 """
 
 import glob
@@ -133,14 +134,23 @@ def write(out, shard, files):
         xml.write(config_with("".join(files), threshold=0))
 
 
-def total(results):
+def total(results, planned=None):
     tests = undetected = 0
+    reported = set()
     for log in glob.glob(os.path.join(results, "**", "*.log"), recursive=True):
         with open(log) as text:
             content = text.read()
-        tests += sum(int(n) for n in re.findall(r"Total tests: (\d+)", content))
+        counts = [int(n) for n in re.findall(r"Total tests: (\d+)", content)]
+        if counts:
+            shard = re.search(r"shard_(\d+)\.log$", log)
+            if shard:
+                reported.add(int(shard.group(1)))
+        tests += sum(counts)
         undetected += sum(
             int(n) for n in re.findall(r"Undetected Mutations: (\d+)", content))
+    missing = sorted(set(json.loads(planned or "[]")) - reported)
+    if missing:
+        sys.exit(f"no mutation totals from shards {missing}")
     with open(CONFIG) as config:
         threshold = float(re.search(r'failure="(\d+)"', config.read()).group(1))
     if not tests:
@@ -158,6 +168,6 @@ if __name__ == "__main__":
     if command == "plan":
         plan(sys.argv[2], *sys.argv[3:4])
     elif command == "total":
-        total(sys.argv[2])
+        total(sys.argv[2], *sys.argv[3:4])
     else:
         sys.exit(__doc__)

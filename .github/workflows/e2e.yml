@@ -45,8 +45,11 @@ jobs:
               os.environ["TARGET"]]
           listing = json.loads(subprocess.check_output(
               ["xcrun", "simctl", "list", "devices", "available", "-j"]))
+          def version(runtime):
+              return tuple(int(n) for n in re.findall(r"\d+", runtime.split(".iOS-")[1]))
           runtimes = sorted(
-              (r for r in listing["devices"] if ".iOS-" in r), reverse=True)
+              (r for r in listing["devices"] if ".iOS-" in r),
+              key=version, reverse=True)
           for runtime in runtimes:
               for device in listing["devices"][runtime]:
                   if re.match(pattern, device["name"]):

@@ -7,25 +7,33 @@ import 'utils/popover_utils.dart';
 final class PopoverPositionRenderObject extends RenderShiftedBox {
   late Rect _attachRect;
   late Rect _bounds;
-  double arrowHeight;
+  double _arrowHeight;
   BoxConstraints? _additionalConstraints;
   PopoverDirection? _direction;
   TargetPlatform _platform;
 
   PopoverPositionRenderObject({
-    required this.arrowHeight,
+    required double arrowHeight,
     required Rect attachRect,
     required Rect bounds,
     RenderBox? child,
     BoxConstraints? constraints,
     PopoverDirection? direction,
     TargetPlatform platform = TargetPlatform.iOS,
-  }) : _platform = platform,
+  }) : _arrowHeight = arrowHeight,
+       _platform = platform,
        super(child) {
     _attachRect = attachRect;
     _bounds = bounds;
     _additionalConstraints = constraints;
     _direction = direction;
+  }
+
+  double get arrowHeight => _arrowHeight;
+  set arrowHeight(double value) {
+    if (_arrowHeight == value) return;
+    _arrowHeight = value;
+    markNeedsLayout();
   }
 
   BoxConstraints? get additionalConstraints => _additionalConstraints;

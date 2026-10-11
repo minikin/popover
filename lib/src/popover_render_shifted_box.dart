@@ -14,8 +14,8 @@ import 'utils/popover_utils.dart';
 
 final class PopoverRenderShiftedBox extends RenderShiftedBox {
   late Rect _attachRect;
-  double? arrowWidth;
-  double arrowHeight;
+  double? _arrowWidth;
+  double _arrowHeight;
   PopoverDirection? _direction;
   Color? _color;
   List<BoxShadow>? _boxShadow;
@@ -29,8 +29,8 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
-    required this.arrowHeight,
-    this.arrowWidth,
+    required double arrowHeight,
+    double? arrowWidth,
     RenderBox? child,
     Color? color,
     List<BoxShadow>? boxShadow,
@@ -41,7 +41,9 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     PopoverShape shape = PopoverShape.triangle,
     PopoverGlass? glass,
     double opacity = 1,
-  }) : _shape = shape,
+  }) : _arrowHeight = arrowHeight,
+       _arrowWidth = arrowWidth,
+       _shape = shape,
        _glass = glass,
        _opacity = opacity,
        _reveal = reveal,
@@ -89,6 +91,20 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     super.dispose();
   }
 
+  double? get arrowWidth => _arrowWidth;
+  set arrowWidth(double? value) {
+    if (_arrowWidth == value) return;
+    _arrowWidth = value;
+    markNeedsPaint();
+  }
+
+  double get arrowHeight => _arrowHeight;
+  set arrowHeight(double value) {
+    if (_arrowHeight == value) return;
+    _arrowHeight = value;
+    markNeedsLayout();
+  }
+
   Rect get attachRect => _attachRect;
   set attachRect(Rect value) {
     if (_attachRect == value) return;
@@ -98,16 +114,16 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   List<BoxShadow>? get boxShadow => _boxShadow;
   set boxShadow(List<BoxShadow>? value) {
-    if (_boxShadow == value) return;
+    if (listEquals(_boxShadow, value)) return;
     _boxShadow = value;
-    markNeedsLayout();
+    markNeedsPaint();
   }
 
   Color? get color => _color;
   set color(Color? value) {
     if (_color == value) return;
     _color = value;
-    markNeedsLayout();
+    markNeedsPaint();
   }
 
   PopoverDirection? get direction => _direction;
@@ -121,7 +137,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   set radius(double? value) {
     if (_radius == value) return;
     _radius = value;
-    markNeedsLayout();
+    markNeedsPaint();
   }
 
   /// How far the outline of [PopoverShape.ios] has grown while it opens, from
@@ -295,7 +311,7 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
   @visibleForTesting
   Rect revealed(PopoverDirection direction, double tip) {
     final full = Offset.zero & size;
-    if (reveal == 1) return full;
+    if (reveal == 1 || size.height <= 0) return full;
     final start = math.min(PopoverMotion.startHeight, size.height);
     final k = lerpDouble(start, size.height, reveal)! / size.height;
     final pivot = switch (direction) {
