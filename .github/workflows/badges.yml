@@ -1,0 +1,77 @@
+name: Badges
+
+on:
+  workflow_run:
+    workflows: ["On Pull Request"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: badges
+
+jobs:
+  render:
+    name: Render badges
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Collect values
+        id: values
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(curl -fsS https://pub.dev/api/packages/popover | jq -r .latest.version)
+          read -r run conclusion < <(gh run list --repo "$GITHUB_REPOSITORY" \
+            --workflow on_pull_request.yml --branch main --event push \
+            --status completed --limit 20 --json databaseId,conclusion \
+            --jq '[.[] | select(.conclusion == "success" or .conclusion == "failure")][0] | "\(.databaseId) \(.conclusion)"')
+          ci=$([ "$conclusion" = success ] && echo passing || echo failing)
+          coverage=""
+          if gh run download "$run" --repo "$GITHUB_REPOSITORY" -n coverage -D lcov; then
+            coverage=$(awk -F: '/^LF:/ { found += $2 } /^LH:/ { hit += $2 }
+              END { if (found) printf "%.1f", 100 * hit / found }' lcov/lcov.info)
+          fi
+          echo "version=$version ci=$ci coverage=$coverage (run $run)"
+          {
+            echo "version=$version"
+            echo "ci=$ci"
+            echo "coverage=$coverage"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Render
+        env:
+          VERSION: ${{ steps.values.outputs.version }}
+          CI_STATUS: ${{ steps.values.outputs.ci }}
+          COVERAGE: ${{ steps.values.outputs.coverage }}
+        run: |
+          mkdir out
+          if git fetch --depth 1 origin badges; then
+            git archive FETCH_HEAD | tar -x -C out
+          fi
+          python3 tool/badges/render.py out "$VERSION" "$CI_STATUS" $COVERAGE
+
+      # A fresh orphan commit on every run keeps the branch out of the stale
+      # branch cleanup.
+      - name: Push to the badges branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        working-directory: out
+        run: |
+          git init -q -b badges
+          git add .
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Update badges"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" badges
