@@ -9,8 +9,8 @@ package get `skills/popover-usage/SKILL.md` instead.
   Linux.
 - `./tool/update_goldens.sh` renders `test/goldens/` in Docker, like CI. Run
   it after any change that moves pixels and look at the diff.
-- `flutter analyze` must report no issues. `dart format lib test example` before a
-  commit.
+- `flutter analyze` must report no issues. `dart format lib test example`
+  before a commit.
 - `dart run mutation_test -o build/mutation-test-report mutation_test.xml`
   runs the mutation test over `lib/`. CI fails below 75% and, on a pull request,
   mutates only the chunks of about 10 lines around changed lines, so cover
