@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Runs the example's integration test on an iOS simulator. On fresh CI
 # simulators the app sometimes launches before the system is ready and the VM
-# service never comes up. Each drive gets 6 minutes, and only a timed-out drive
-# (SIGALRM, exit 142) is retried, after a clean reboot. Run from example/.
+# service never comes up. Each drive gets 6 minutes in its own process group,
+# and only a timed-out drive (exit 142) is retried, after the whole group is
+# stopped and the simulator rebooted. Run from example/.
 set -u
 device=$1
 
@@ -18,7 +19,21 @@ boot() {
 }
 
 drive() {
-  perl -e 'alarm shift; exec @ARGV' 360 flutter drive -d "$device" \
+  perl -e '
+    my $seconds = shift;
+    setpgrp(0, 0);
+    my $pid = fork // die "fork: $!";
+    unless ($pid) { exec @ARGV or die "exec: $!" }
+    $SIG{ALRM} = sub {
+      $SIG{TERM} = "IGNORE";
+      kill "TERM", -$$;
+      sleep 5;
+      exit 142;
+    };
+    alarm $seconds;
+    waitpid $pid, 0;
+    exit($? & 127 ? 128 + ($? & 127) : $? >> 8);
+  ' 360 flutter drive -d "$device" \
     --driver test_driver/integration_test.dart \
     --target integration_test/popover_test.dart
 }
