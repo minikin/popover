@@ -7,10 +7,9 @@
   <a href="https://github.com/minikin/popover/blob/main/LICENSE"><img src="https://raw.githubusercontent.com/minikin/popover/badges/license.svg" alt="license"></a>
 </p>
 
-> A popover is a transient view that appears above other content when people
-> click or tap a control or interactive area.
->
-> Apple, [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/popovers)
+<p align="center">
+  <a href="https://developer.apple.com/design/human-interface-guidelines/popovers"><img src="https://raw.githubusercontent.com/minikin/popover/main/assets/hig-quote.svg" alt="A popover is a transient view that appears above other content when people click or tap a control or interactive area. Apple Human Interface Guidelines"></a>
+</p>
 
 <p align="center">
   <picture>
