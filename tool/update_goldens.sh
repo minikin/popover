@@ -3,8 +3,11 @@
 # repository so the host's .dart_tool stays untouched.
 set -eu
 cd "$(dirname "$0")/.."
-docker build --platform linux/amd64 -t popover-goldens tool/goldens
+flutter=$(sed -n 's/.*"flutter": *"\(.*\)".*/\1/p' .fvmrc)
+docker build --platform linux/amd64 --build-arg FLUTTER_VERSION="$flutter" \
+  -t popover-goldens tool/goldens
 docker run --rm --platform linux/amd64 -v "$PWD":/src popover-goldens sh -c '
+  set -e
   mkdir /work && cd /src
   tar cf - --exclude=build --exclude=.dart_tool --exclude=.git . | tar xf - -C /work
   cd /work

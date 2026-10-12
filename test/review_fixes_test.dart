@@ -95,6 +95,24 @@ void main() {
     expect(box.debugNeedsPaint, isFalse);
   });
 
+  testWidgets(
+    'a popover without shadows pushes no shadow layer',
+    (tester) async {
+      await _open(tester);
+      final box = _box(tester);
+      final layers = tester.layers.whereType<TransformLayer>().length;
+
+      box.boxShadow = const [];
+      await tester.pump();
+
+      expect(tester.layers.whereType<TransformLayer>(), hasLength(layers - 1));
+    },
+    variant: const TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
   testWidgets('a popover with no height keeps its outline while it grows', (
     tester,
   ) async {

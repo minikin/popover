@@ -1,40 +1,24 @@
 import 'dart:ui' show ImageFilter;
 
-import 'package:cupertino_ui/cupertino_ui.dart' as cui;
-import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' as legacy;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart' as mui;
 import 'package:popover/popover.dart';
 import 'package:popover/src/popover_context.dart';
 import 'package:popover/src/popover_glass.dart';
 import 'package:popover/src/popover_render_shifted_box.dart';
 import 'package:popover/src/popover_shape.dart';
 
+import 'helpers/apps.dart';
+
 const _launcher = Key('launcher');
 
 typedef _ThemedApp = Widget Function(Brightness theme, Widget home);
 
 final _apps = <String, _ThemedApp>{
-  'flutter/material': (theme, home) => legacy.MaterialApp(
-    theme: legacy.ThemeData(brightness: theme),
-    home: legacy.Scaffold(body: home),
-  ),
-  'material_ui': (theme, home) => mui.MaterialApp(
-    theme: mui.ThemeData(brightness: theme),
-    home: mui.Scaffold(body: home),
-  ),
-  'flutter/cupertino': (theme, home) => cupertino.CupertinoApp(
-    theme: cupertino.CupertinoThemeData(brightness: theme),
-    home: cupertino.CupertinoPageScaffold(child: home),
-  ),
-  'cupertino_ui': (theme, home) => cui.CupertinoApp(
-    theme: cui.CupertinoThemeData(brightness: theme),
-    home: cui.CupertinoPageScaffold(child: home),
-  ),
+  for (final MapEntry(key: name, value: app) in appsByLibrary.entries)
+    name: (theme, home) => app((_) => home, brightness: theme),
 };
 
 Widget _bareApp(Brightness _, Widget home) => WidgetsApp(

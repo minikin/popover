@@ -1,5 +1,5 @@
 FROM ubuntu:24.04
-ARG FLUTTER_VERSION=3.47.4
+ARG FLUTTER_VERSION
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git curl unzip xz-utils ca-certificates \
     && rm -rf /var/lib/apt/lists/*

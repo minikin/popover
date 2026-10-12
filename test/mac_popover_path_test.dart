@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
 import 'package:popover/src/apple_popover_path.dart';
 
+import 'helpers/numbers.dart';
+
 // Mask paths of NSPopover frames, dumped from macOS 26.7. AppKit starts the
 // path elsewhere than MacPopoverPath does, so the test compares the outlines,
 // not the elements.
@@ -14,9 +16,7 @@ const _fixture = 'test/fixtures/appkit_popover_paths.txt';
 Path _parse(List<String> elements) {
   final path = Path();
   for (final element in elements) {
-    final n = RegExp(
-      r'-?\d+\.\d+',
-    ).allMatches(element).map((m) => double.parse(m.group(0)!)).toList();
+    final n = numbersIn(element);
     switch (element[0]) {
       case 'M':
         path.moveTo(n[0], n[1]);
