@@ -8,6 +8,10 @@
 </p>
 
 <p align="center">
+  <a href="https://developer.apple.com/design/human-interface-guidelines/popovers"><img src="https://raw.githubusercontent.com/minikin/popover/main/assets/hig-quote.svg" alt="A popover is a transient view that appears above other content when people click or tap a control or interactive area. Apple Human Interface Guidelines"></a>
+</p>
+
+<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/minikin/popover/main/assets/demo-dark.webp">
     <img src="https://raw.githubusercontent.com/minikin/popover/main/assets/demo-light.webp" alt="The example app with open popovers on macOS, iPad, iPhone, Android, Windows, Linux and the web" />
