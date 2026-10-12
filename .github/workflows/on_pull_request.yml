@@ -7,16 +7,20 @@ on:
     branches:
       - "*"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
+          flutter-version: "3.47.4"
 
       - name: Install dependencies
         run: flutter pub get
@@ -31,12 +35,12 @@ jobs:
         run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
 
       - name: Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v1.1.1
+        uses: VeryGoodOpenSource/very_good_coverage@03275e99cea6981679254681dbdb65b52155b88c # v1.1.1
         with:
           path: coverage/lcov.info
           min_coverage: 90
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 # v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

@@ -1,16 +1,16 @@
-# example
+# Popover example
 
-A new Flutter project.
+Two tabs. Roadmap is an issue list with a Share menu, a filter menu and a
+status picker on every issue. It is the screen in the README demo image.
+Playground has nine buttons across the screen and a direction switcher, to see
+how the popover flips, slides and shrinks near the edges. Run it from this
+directory:
 
-## Getting Started
+```bash
+flutter run
+```
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`integration_test/popover_test.dart` opens every Playground button, taps an
+item, rotates phones and tablets and takes the demo screenshot. CONTRIBUTING.md
+in the repository root shows how to run it, and `tool/demo/render.sh` turns the
+screenshots into the demo image.
