@@ -1,10 +1,10 @@
 # Popover
 
 <p align="center">
-  <a href="https://pub.dev/packages/popover"><img src="https://raw.githubusercontent.com/minikin/popover/badges/pub.svg" alt="pub"></a>
-  <a href="https://github.com/minikin/popover/actions/workflows/on_pull_request.yml"><img src="https://raw.githubusercontent.com/minikin/popover/badges/ci.svg" alt="CI"></a>
-  <a href="https://codecov.io/gh/minikin/popover"><img src="https://raw.githubusercontent.com/minikin/popover/badges/coverage.svg" alt="coverage"></a>
-  <a href="https://github.com/minikin/popover/blob/main/LICENSE"><img src="https://raw.githubusercontent.com/minikin/popover/badges/license.svg" alt="license"></a>
+  <a href="https://pub.dev/packages/popover"><img src="https://minikin.github.io/popover/pub.svg" alt="pub"></a>
+  <a href="https://github.com/minikin/popover/actions/workflows/on_pull_request.yml"><img src="https://minikin.github.io/popover/ci.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/minikin/popover"><img src="https://minikin.github.io/popover/coverage.svg" alt="coverage"></a>
+  <a href="https://github.com/minikin/popover/blob/main/LICENSE"><img src="https://minikin.github.io/popover/license.svg" alt="license"></a>
 </p>
 
 <p align="center">
