@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.5.1] - 12.10.2026
 
 - Text between the grays `Color(0xFF858585)` and `Color(0xFF9D9D9D)` in luminance, such as `#8E8E93`, `#999999` or the iOS system blue `#0A84FF`, now gets the dark background by default instead of the light one. The switch moved from a luminance of 0.34 to 0.23, where the text has the same contrast against both backgrounds. `#999999` text was 2.9:1 on the white triangle and is 4.9:1 on the dark one.
 
