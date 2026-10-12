@@ -1,4 +1,4 @@
-## [0.5.0] - 11.10.2026
+## [0.5.0] - 12.10.2026
 
 - Breaking: the minimum versions are Flutter 3.47.0 and Dart 3.13.0, up from Flutter 3.35.0 and Dart 3.9.0.
 - Breaking: the look of a popover moved into `PopoverStyle`, passed as `style:` to `showPopover` and `Popover`: `arrowStyle`, `backgroundColor`, `brightness`, `barrierColor`, `radius`, `shadow`, `arrowWidth`, `arrowHeight`, `transition` and `transitionDuration`. The new `PopoverTheme` sets a style for a whole subtree, and the style at the call wins over it. `showPopover` no longer takes `key` or the deprecated `isParentAlive`. `PopoverTransitionBuilder`, the type of `popoverTransitionBuilder`, is now exported. The README has a before and after.
