@@ -60,9 +60,9 @@ class _RoadmapPageState extends State<RoadmapPage> {
             builder: (context) => OutlinedButton.icon(
               key: filterAnchor,
               style: OutlinedButton.styleFrom(
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.surfaceContainerLowest,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerLowest,
               ),
               onPressed: () => _showFilters(context),
               icon: const Icon(Icons.filter_list, size: 18),

@@ -12,7 +12,7 @@ import 'utils/popover_utils.dart';
 /// [isOpen] also turns false when the user closes the popover, by tapping the
 /// barrier, pressing Esc or going back.
 class PopoverController extends ChangeNotifier {
-  PopoverController({bool isOpen = false}) : _isOpen = isOpen;
+  PopoverController({this._isOpen = false});
 
   bool _isOpen;
 

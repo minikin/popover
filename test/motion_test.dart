@@ -72,9 +72,8 @@ void main() {
         moreOrLessEquals(1.0151, epsilon: 0.001),
       );
       expect(
-        _samples(
-          PopoverMotion.ios.dismiss.flipped,
-        ).reduce((a, b) => a < b ? a : b),
+        _samples(PopoverMotion.ios.dismiss.flipped)
+            .reduce((a, b) => a < b ? a : b),
         moreOrLessEquals(-0.0063, epsilon: 0.001),
       );
     });
@@ -85,9 +84,8 @@ void main() {
       final spring = PopoverMotion.ios.present;
       final start = PopoverMotion.ios.presentDuration.inMicroseconds;
       double at(double seconds) => spring.transform(seconds * 1e6 / start);
-      final offset = [
-        for (var t = 0.0; t < 0.05; t += 0.0001) t,
-      ].firstWhere((t) => at(t) >= 0.0011);
+      final offset = [for (var t = 0.0; t < 0.05; t += 0.0001) t]
+          .firstWhere((t) => at(t) >= 0.0011);
 
       expect(at(offset + 0.0821), moreOrLessEquals(0.5152, epsilon: 0.03));
       expect(at(offset + 0.1821), moreOrLessEquals(0.9479, epsilon: 0.03));

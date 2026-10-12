@@ -36,25 +36,19 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
 
   PopoverRenderShiftedBox({
     required Rect attachRect,
-    required double arrowHeight,
-    double? arrowWidth,
+    required this._arrowHeight,
+    this._arrowWidth,
     RenderBox? child,
     Color? color,
     List<BoxShadow>? boxShadow,
     double? scale,
-    double reveal = 1,
+    this._reveal = 1,
     double? radius,
     PopoverDirection? direction,
-    PopoverShape shape = PopoverShape.triangle,
-    PopoverGlass? glass,
-    double opacity = 1,
-  }) : _arrowHeight = arrowHeight,
-       _arrowWidth = arrowWidth,
-       _shape = shape,
-       _glass = glass,
-       _opacity = opacity,
-       _reveal = reveal,
-       super(child) {
+    this._shape = PopoverShape.triangle,
+    this._glass,
+    this._opacity = 1,
+  }) : super(child) {
     _attachRect = attachRect;
     _color = color;
     _boxShadow = boxShadow;
