@@ -1,9 +1,11 @@
 # Popover
 
-[![pub](https://raw.githubusercontent.com/minikin/popover/badges/pub.svg)](https://pub.dev/packages/popover)
-[![CI](https://raw.githubusercontent.com/minikin/popover/badges/ci.svg)](https://github.com/minikin/popover/actions/workflows/on_pull_request.yml)
-[![coverage](https://raw.githubusercontent.com/minikin/popover/badges/coverage.svg)](https://codecov.io/gh/minikin/popover)
-[![license](https://raw.githubusercontent.com/minikin/popover/badges/license.svg)](LICENSE)
+<p align="center">
+  <a href="https://pub.dev/packages/popover"><img src="https://raw.githubusercontent.com/minikin/popover/badges/pub.svg" alt="pub"></a>
+  <a href="https://github.com/minikin/popover/actions/workflows/on_pull_request.yml"><img src="https://raw.githubusercontent.com/minikin/popover/badges/ci.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/minikin/popover"><img src="https://raw.githubusercontent.com/minikin/popover/badges/coverage.svg" alt="coverage"></a>
+  <a href="https://github.com/minikin/popover/blob/main/LICENSE"><img src="https://raw.githubusercontent.com/minikin/popover/badges/license.svg" alt="license"></a>
+</p>
 
 <p align="center">
   <picture>
