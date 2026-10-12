@@ -1,9 +1,9 @@
 # Popover
 
-[![pub](https://img.shields.io/pub/v/popover.svg)](https://pub.dev/packages/popover)
-[![CI](https://github.com/minikin/popover/workflows/On%20Pull%20Request/badge.svg)](https://github.com/minikin/popover/actions)
-[![coverage](https://codecov.io/gh/minikin/popover/branch/main/graph/badge.svg?token=CHT3D24SOQ)](https://codecov.io/gh/minikin/popover)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![pub](https://raw.githubusercontent.com/minikin/popover/badges/pub.svg)](https://pub.dev/packages/popover)
+[![CI](https://raw.githubusercontent.com/minikin/popover/badges/ci.svg)](https://github.com/minikin/popover/actions/workflows/on_pull_request.yml)
+[![coverage](https://raw.githubusercontent.com/minikin/popover/badges/coverage.svg)](https://codecov.io/gh/minikin/popover)
+[![license](https://raw.githubusercontent.com/minikin/popover/badges/license.svg)](LICENSE)
 
 <p align="center">
   <picture>
