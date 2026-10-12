@@ -15,12 +15,15 @@ void main() {
     await tester.pumpWidget(
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
-          return InkWell(
-            onTap: () {
-              didDelete = true;
-              Navigator.pop(context);
-            },
-            child: const Text('Delete'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                didDelete = true;
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
           );
         },
       ),
@@ -102,11 +105,14 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
           didOpenDialog = true;
-          return InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Text('This should not happen'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Text('This should not happen'),
+            ),
           );
         },
       ),
@@ -146,11 +152,14 @@ void main() {
       createAppWithButtonThatLaunchesDialog(
         dialogBuilder: (context) {
           didOpenDialog = true;
-          return InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Text('This should happen'),
+          return Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Text('This should happen'),
+            ),
           );
         },
       ),
@@ -367,8 +376,7 @@ void main() {
 
     showPopover(
       context: context,
-      arrowWidth: 30.0,
-      arrowHeight: 15.0,
+      style: const PopoverStyle(arrowWidth: 30.0, arrowHeight: 15.0),
       bodyBuilder: (context) {
         return const Center(child: Text('Custom Arrow'));
       },
@@ -464,14 +472,16 @@ void main() {
     showPopover(
       context: context,
       direction: PopoverDirection.top,
-      transition: PopoverTransition.scale,
-      backgroundColor: Colors.blue,
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 300),
-      radius: 16.0,
-      shadow: const [BoxShadow(color: Colors.grey, blurRadius: 10)],
-      arrowWidth: 32.0,
-      arrowHeight: 16.0,
+      style: const PopoverStyle(
+        transition: PopoverTransition.scale,
+        backgroundColor: Colors.blue,
+        barrierColor: Colors.black54,
+        transitionDuration: Duration(milliseconds: 300),
+        radius: 16.0,
+        shadow: [BoxShadow(color: Colors.grey, blurRadius: 10)],
+        arrowWidth: 32.0,
+        arrowHeight: 16.0,
+      ),
       barrierDismissible: true,
       bodyBuilder: (context) {
         return const Center(child: Text('Fully Customized'));
