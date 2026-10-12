@@ -1,175 +1,225 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'popover_direction.dart';
 import 'popover_item.dart';
 import 'popover_route.dart';
-import 'popover_transition.dart';
+import 'popover_shape.dart';
+import 'popover_style.dart';
+import 'popover_widget.dart';
+import 'resolved_popover_style.dart';
 import 'utils/popover_utils.dart';
 
-/// A popover is a transient view that appears above other content onscreen
-/// when you tap a control or in an area.
+/// Shows a popover with the body [bodyBuilder] builds, its arrow pointing at
+/// the widget of [context].
 ///
-/// Note that when [allowClicksOnBackground] is set to true,
-/// [barrierDismissible] is ignored (will behave as if it was set to false).
+/// Pass the context of the anchor, not of the page: wrap the anchor in a
+/// `Builder` or use `GlobalKey.currentContext`. The returned future completes
+/// with the value passed to `Navigator.pop`, or null when the user closes the
+/// popover by tapping outside or pressing Esc.
 ///
-/// This function allows for customization of aspects of the dialog popup.
+/// [style] sets how the popover looks and moves. It is merged on top of the
+/// closest [PopoverTheme], and every field left null falls back to the
+/// native look of iOS 26 and macOS 26 on Apple platforms, a triangle
+/// elsewhere. See [PopoverStyle] for the defaults.
 ///
-/// `bodyBuilder` argument is  builder which builds body/content of popover.
+/// [direction] is the preferred side. The popover opens on another side when
+/// it does not fit, the way iOS and macOS popovers do. [width], [height] and
+/// [constraints] size the body and are capped by the room on that side.
 ///
-/// The `direction` is desired Popover's direction behavior.
-/// This argument defaults to `PopoverDirection.bottom`.
+/// [arrowDxOffset] and [arrowDyOffset] move the point the arrow aims at.
+/// [contentDxOffset] and [contentDyOffset] widen and heighten the anchor,
+/// which moves a popover that opens to the right or below.
 ///
-/// The `transition` is desired Popover's transition behavior.
-/// This argument defaults to `PopoverTransition.scale`.
+/// [barrierDismissible] lets a tap outside or Esc close the popover.
+/// [allowClicksOnBackground] passes taps through to the widgets behind and
+/// keeps the popover open, whatever [barrierDismissible] says.
+/// [requestFocus] set to false leaves focus where it is, so an open keyboard
+/// stays up.
 ///
-/// The `backgroundColor` is background [Color] of popover.
-/// This argument defaults to `Color(0x8FFFFFFFF)`.
+/// [semanticsLabel] names the popover for screen readers, which announce it
+/// when it opens. [barrierLabel] labels the barrier and defaults to
+/// `'Dismiss'`. Pass a localized one, for example
+/// `MaterialLocalizations.of(context).modalBarrierDismissLabel`.
 ///
-/// The `barrierColor` is barrier [Color] of screen when popover is presented.
-/// This argument defaults to `Color(0x80000000)`.
+/// [onPop] runs when the popover pops, however it was closed. It cannot
+/// cancel the dismissal. [popoverTransitionBuilder] replaces the default
+/// fade. Avoid `Opacity` in it with the glass background, since Impeller
+/// gives a backdrop filter inside an opacity layer nothing to blur.
 ///
-/// The `transitionDuration` argument is used to determine how long it takes
-/// for the route to arrive on or leave off the screen. This argument defaults
-/// to 200 milliseconds.
-///
-/// The `radius` of popover's body.
-/// This argument defaults to 8.
-///
-/// The `shadow`  is [BoxShadow] of popover body.
-/// This argument defaults to
-/// `[BoxShadow(color: Color(0x1F000000), blurRadius: 5)]`.
-///
-/// The `arrowWidth` is width of arrow.
-/// This argument defaults to 24.
-///
-/// The `arrowHeight` is height of arrow.
-/// This argument defaults to 12.
-///
-/// The `arrowDxOffset` offsets arrow position on X axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `arrowDyOffset` offsets arrow position on Y axis.
-/// It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The`contentDyOffset` offsets [Popover]s content
-/// position on Y axis. It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The`contentDxOffset` offsets [Popover]s content
-/// position on X axis. It can be positive or negative number.
-/// This argument defaults to 0.
-///
-/// The `barrierDismissible` argument is used to determine whether this route
-/// can be dismissed by tapping the modal barrier. This argument defaults
-/// to true.
-///
-/// The `width` is popover's body/content widget width.
-///
-/// The` height` is popover's body/content widget height.
-///
-/// The `onPop` called to veto attempts by the user to dismiss the popover.
-///
-/// The `constraints` is popover's constraints.
-///
-/// The `routeSettings` is data that might be useful in constructing a [Route].
-///
-/// The `barrierLabel` is semantic label used for a dismissible barrier.
-///
-/// The `requestFocus` controls whether the popover should request focus when
-/// presented. Set it to false to prevent dismissing any active keyboard.
-/// Defaults to [Navigator.requestFocus] if not provided
-///
-///The `popoverBuilder` is used for transition builder
-
+/// The popover depends only on `package:flutter/widgets.dart`. The body is
+/// not wrapped in a `Material`. Wrap it in
+/// `Material(type: MaterialType.transparency)` when it contains widgets that
+/// need one, such as `InkWell`, `ListTile` or `TextField`. Inherited themes
+/// such as `Theme`, `DefaultTextStyle`, `IconTheme` and [PopoverTheme] are
+/// captured from [context] and applied to the body.
 Future<T?> showPopover<T extends Object?>({
   required BuildContext context,
   required WidgetBuilder bodyBuilder,
+  PopoverStyle? style,
   PopoverDirection direction = PopoverDirection.bottom,
-  PopoverTransition transition = PopoverTransition.scale,
-  Color backgroundColor = const Color(0x8FFFFFFFF),
-  Color barrierColor = const Color(0x80000000),
-  Duration transitionDuration = const Duration(milliseconds: 200),
-  double radius = 8,
-  List<BoxShadow> shadow = const [
-    BoxShadow(color: Color(0x1F000000), blurRadius: 5),
-  ],
-  double arrowWidth = 24,
-  double arrowHeight = 12,
-  double arrowDxOffset = 0,
-  double arrowDyOffset = 0,
-  double contentDyOffset = 0,
-  double contentDxOffset = 0,
-  bool barrierDismissible = true,
   double? width,
   double? height,
-  VoidCallback? onPop,
-  bool? requestFocus,
-  @Deprecated(
-    'This argument is ignored. Implementation of [PopoverItem] was updated.'
-    'This feature was deprecated in v0.2.8',
-  )
-  bool Function()? isParentAlive,
   BoxConstraints? constraints,
-  RouteSettings? routeSettings,
-  String? barrierLabel,
-  PopoverTransitionBuilder? popoverTransitionBuilder,
-  Key? key,
+  double arrowDxOffset = 0,
+  double arrowDyOffset = 0,
+  double contentDxOffset = 0,
+  double contentDyOffset = 0,
+  bool barrierDismissible = true,
   bool allowClicksOnBackground = false,
+  bool? requestFocus,
+  String? barrierLabel,
+  String? semanticsLabel,
+  VoidCallback? onPop,
+  RouteSettings? routeSettings,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
+}) {
+  return Navigator.of(context, rootNavigator: true).push<T>(
+    popoverRoute<T>(
+      context: context,
+      bodyBuilder: bodyBuilder,
+      style: style,
+      direction: direction,
+      width: width,
+      height: height,
+      constraints: constraints,
+      arrowDxOffset: arrowDxOffset,
+      arrowDyOffset: arrowDyOffset,
+      contentDxOffset: contentDxOffset,
+      contentDyOffset: contentDyOffset,
+      barrierDismissible: barrierDismissible,
+      allowClicksOnBackground: allowClicksOnBackground,
+      requestFocus: requestFocus,
+      barrierLabel: barrierLabel,
+      semanticsLabel: semanticsLabel,
+      onPop: onPop,
+      routeSettings: routeSettings,
+      popoverTransitionBuilder: popoverTransitionBuilder,
+    ),
+  );
+}
+
+/// Builds the route [showPopover] pushes, for [Popover] to push itself.
+PopoverRoute<T> popoverRoute<T extends Object?>({
+  required BuildContext context,
+  required WidgetBuilder bodyBuilder,
+  PopoverStyle? style,
+  PopoverDirection direction = PopoverDirection.bottom,
+  double? width,
+  double? height,
+  BoxConstraints? constraints,
+  double arrowDxOffset = 0,
+  double arrowDyOffset = 0,
+  double contentDxOffset = 0,
+  double contentDyOffset = 0,
+  bool barrierDismissible = true,
+  bool allowClicksOnBackground = false,
+  bool? requestFocus,
+  String? barrierLabel,
+  String? semanticsLabel,
+  VoidCallback? onPop,
+  RouteSettings? routeSettings,
+  PopoverTransitionBuilder? popoverTransitionBuilder,
 }) {
   constraints = (width != null || height != null)
       ? constraints?.tighten(width: width, height: height) ??
             BoxConstraints.tightFor(width: width, height: height)
       : constraints;
 
-  return Navigator.of(context, rootNavigator: true).push<T>(
-    PopoverRoute<T>(
-      allowClicksOnBackground: allowClicksOnBackground,
-      pageBuilder: (_, animation, __) {
-        return PopScope(
-          onPopInvokedWithResult: (didPop, _) => onPop?.call(),
-          child: PopoverItem(
-            transition: transition,
-            child: Builder(builder: bodyBuilder),
-            context: context,
-            backgroundColor: backgroundColor,
-            direction: direction,
-            radius: radius,
-            boxShadow: shadow,
-            animation: animation,
-            arrowWidth: arrowWidth,
-            arrowHeight: arrowHeight,
-            constraints: constraints,
-            arrowDxOffset: arrowDxOffset,
-            arrowDyOffset: arrowDyOffset,
-            contentDyOffset: contentDyOffset,
-            contentDxOffset: contentDxOffset,
-            key: key,
+  // Read once: the anchor may leave the tree while the popover is open.
+  final merged = PopoverTheme.read(context).merge(style);
+  final resolved = ResolvedPopoverStyle.of(
+    merged.brightness == null
+        ? merged.copyWith(brightness: _contrastWithText(context))
+        : merged,
+    defaultTargetPlatform,
+  );
+  final fadesGlass =
+      popoverTransitionBuilder == null &&
+      resolved.backgroundColor == null &&
+      resolved.shape != PopoverShape.triangle;
+
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final themes = InheritedTheme.capture(from: context, to: navigator.context);
+
+  return PopoverRoute<T>(
+    allowClicksOnBackground: allowClicksOnBackground,
+    pageBuilder: (_, animation, __) {
+      return PopScope(
+        onPopInvokedWithResult: (didPop, _) => onPop?.call(),
+        child: PopoverItem(
+          child: themes.wrap(
+            semanticsLabel == null
+                ? Builder(builder: bodyBuilder)
+                : Semantics(
+                    scopesRoute: true,
+                    namesRoute: true,
+                    explicitChildNodes: true,
+                    label: semanticsLabel,
+                    child: Builder(builder: bodyBuilder),
+                  ),
           ),
-        );
-      },
-      requestFocus: requestFocus,
-      barrierDismissible: barrierDismissible,
-      barrierLabel:
-          barrierLabel ??
-          MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: barrierColor,
-      transitionDuration: transitionDuration,
-      settings: routeSettings,
-      transitionBuilder: (builderContext, animation, _, child) {
-        return popoverTransitionBuilder == null
-            ? _FadeTransitionWidget(child: child, animation: animation)
-            : popoverTransitionBuilder(animation, child);
-      },
-    ),
+          context: context,
+          style: resolved,
+          direction: direction,
+          animation: animation,
+          fadesGlass: fadesGlass,
+          constraints: constraints,
+          arrowDxOffset: arrowDxOffset,
+          arrowDyOffset: arrowDyOffset,
+          contentDyOffset: contentDyOffset,
+          contentDxOffset: contentDxOffset,
+        ),
+      );
+    },
+    requestFocus: requestFocus,
+    // Taps reach the widgets behind, so the barrier must not close it, and
+    // neither may Esc or the accessibility dismiss action.
+    barrierDismissible: barrierDismissible && !allowClicksOnBackground,
+    barrierLabel: barrierLabel ?? _defaultBarrierLabel,
+    barrierColor: resolved.barrierColor,
+    transitionDuration: resolved.presentDuration,
+    reverseTransitionDuration: resolved.dismissDuration,
+    settings: routeSettings,
+    transitionBuilder: (builderContext, animation, _, child) {
+      if (popoverTransitionBuilder != null) {
+        return popoverTransitionBuilder(animation, child);
+      }
+      final motion = resolved.motion;
+      return fadesGlass
+          ? child
+          : _FadeTransitionWidget(
+              animation: animation,
+              curve: motion?.present ?? Curves.easeOut,
+              reverseCurve: motion?.dismiss.flipped,
+              child: child,
+            );
+    },
   );
 }
 
+const _defaultBarrierLabel = 'Dismiss';
+
+/// The background brightness that keeps the text the body inherits from
+/// [context] readable, or null when no text color is inherited.
+Brightness? _contrastWithText(BuildContext context) {
+  final color = DefaultTextStyle.of(context).style.color;
+  if (color == null) return null;
+  final luminance = color.computeLuminance() + 0.05;
+  return luminance * luminance > 0.15 ? Brightness.dark : Brightness.light;
+}
+
 class _FadeTransitionWidget extends StatefulWidget {
-  const _FadeTransitionWidget({required this.child, required this.animation});
+  const _FadeTransitionWidget({
+    required this.child,
+    required this.animation,
+    required this.curve,
+    this.reverseCurve,
+  });
   final Widget child;
   final Animation<double> animation;
+  final Curve curve;
+  final Curve? reverseCurve;
 
   @override
   State<_FadeTransitionWidget> createState() => _FadeTransitionWidgetState();
@@ -183,7 +233,8 @@ class _FadeTransitionWidgetState extends State<_FadeTransitionWidget> {
     super.initState();
     _animation = CurvedAnimation(
       parent: widget.animation,
-      curve: Curves.easeOut,
+      curve: widget.curve,
+      reverseCurve: widget.reverseCurve,
     );
   }
 
