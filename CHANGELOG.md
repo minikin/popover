@@ -1,3 +1,7 @@
+## [Unreleased]
+
+- Text between the grays `Color(0xFF858585)` and `Color(0xFF9D9D9D)` in luminance, such as `#8E8E93`, `#999999` or the iOS system blue `#0A84FF`, now gets the dark background by default instead of the light one. The switch moved from a luminance of 0.34 to 0.23, where the text has the same contrast against both backgrounds. `#999999` text was 2.9:1 on the white triangle and is 4.9:1 on the dark one.
+
 ## [0.5.0] - 12.10.2026
 
 - Breaking: the minimum versions are Flutter 3.47.0 and Dart 3.13.0, up from Flutter 3.35.0 and Dart 3.9.0.

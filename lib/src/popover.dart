@@ -206,8 +206,19 @@ Brightness? _contrastWithText(BuildContext context) {
   final color = DefaultTextStyle.of(context).style.color;
   if (color == null) return null;
   final luminance = color.computeLuminance() + 0.05;
-  return luminance * luminance > 0.15 ? Brightness.dark : Brightness.light;
+  return luminance * luminance > _equalContrast
+      ? Brightness.dark
+      : Brightness.light;
 }
+
+/// The squared WCAG contrast term `(L + 0.05)²` of a text color that has the
+/// same contrast against the light and the dark background: the product of
+/// their `L + 0.05`.
+///
+/// For the triangle, white and `0xFF2C2C2E`, it is 0.079. For the glass, the
+/// light glass over black and the dark glass over white, the least contrasting
+/// backdrops, it is 0.074 on iOS and 0.084 on macOS.
+const _equalContrast = 0.08;
 
 class _FadeTransitionWidget extends StatefulWidget {
   const _FadeTransitionWidget({

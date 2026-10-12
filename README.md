@@ -211,8 +211,9 @@ evenly than on iOS. The `triangle` shape gets white, or `Color(0xFF2C2C2E)` in
 dark mode.
 
 Light or dark follows the text color the body inherits from `context`: dark
-text gets a light background, light text a dark one. So the body stays
-readable in an app that forces a light or a dark theme. Without an inherited
+text gets a light background, light text a dark one, with the switch at the
+gray `Color(0xFF858585)`, where both backgrounds give the same contrast. So the
+body stays readable in an app that forces a light or a dark theme. Without an inherited
 text color it follows the system setting. `brightness` overrides both, and
 `backgroundColor` replaces the glass with a solid color. A `Material` around
 the body resets its text to the theme's `bodyMedium`, so pass `brightness`

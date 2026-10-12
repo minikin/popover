@@ -268,8 +268,8 @@ void main() {
     }, variant: _apple);
 
     for (final (text, expected) in [
-      (const Color(0xFF767676), Brightness.light),
-      (const Color(0xFFA0A0A0), Brightness.dark),
+      (const Color(0xFF848484), Brightness.light),
+      (const Color(0xFF858585), Brightness.dark),
     ]) {
       testWidgets('is ${expected.name} behind $text text', (tester) async {
         final box = await _open(
