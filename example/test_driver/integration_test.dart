@@ -11,9 +11,8 @@ Future<void> main() {
           (data?['screenshots'] ?? <String, dynamic>{}) as Map<String, dynamic>;
       final dir = Directory('build/screenshots')..createSync(recursive: true);
       for (final MapEntry(key: name, value: png) in screenshots.entries) {
-        File(
-          '${dir.path}/$name.png',
-        ).writeAsBytesSync(base64Decode(png as String));
+        File('${dir.path}/$name.png')
+            .writeAsBytesSync(base64Decode(png as String));
       }
     },
   );
