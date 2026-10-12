@@ -20,8 +20,12 @@ jobs:
     name: Render badges
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -57,21 +61,13 @@ jobs:
           COVERAGE: ${{ steps.values.outputs.coverage }}
         run: |
           mkdir out
-          if git fetch --depth 1 origin badges; then
-            git archive FETCH_HEAD | tar -x -C out
-          fi
+          curl -fsS -o out/coverage.svg https://minikin.github.io/popover/coverage.svg ||
+            rm -f out/coverage.svg
           python3 tool/badges/render.py out "$VERSION" "$CI_STATUS" $COVERAGE
 
-      # A fresh orphan commit on every run keeps the branch out of the stale
-      # branch cleanup.
-      - name: Push to the badges branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-        working-directory: out
-        run: |
-          git init -q -b badges
-          git add .
-          git -c user.name="github-actions[bot]" \
-            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -qm "Update badges"
-          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" badges
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: out
+
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
