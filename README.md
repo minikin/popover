@@ -24,7 +24,7 @@ web, and depends only on `package:flutter/widgets.dart`.
 flutter pub add popover
 ```
 
-Dart 3.9 and Flutter 3.35 or newer.
+Dart 3.13 and Flutter 3.47 or newer.
 
 ## Quick start
 

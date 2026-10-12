@@ -4,8 +4,10 @@ import 'package:flutter/material.dart' as legacy;
 import 'package:flutter/widgets.dart';
 import 'package:material_ui/material_ui.dart' as mui;
 
-typedef AppBuilder =
-    Widget Function(WidgetBuilder launcherBuilder, {Brightness? brightness});
+typedef AppBuilder = Widget Function(
+  WidgetBuilder launcherBuilder, {
+  Brightness? brightness,
+});
 
 const appsByLibrary = <String, AppBuilder>{
   'flutter/material': legacyApp,

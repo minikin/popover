@@ -13,16 +13,14 @@ final class PopoverPositionRenderObject extends RenderShiftedBox {
   TargetPlatform _platform;
 
   PopoverPositionRenderObject({
-    required double arrowHeight,
+    required this._arrowHeight,
     required Rect attachRect,
     required Rect bounds,
     RenderBox? child,
     BoxConstraints? constraints,
     PopoverDirection? direction,
-    TargetPlatform platform = TargetPlatform.iOS,
-  }) : _arrowHeight = arrowHeight,
-       _platform = platform,
-       super(child) {
+    this._platform = TargetPlatform.iOS,
+  }) : super(child) {
     _attachRect = attachRect;
     _bounds = bounds;
     _additionalConstraints = constraints;

@@ -1,5 +1,6 @@
 ## [0.5.0] - 11.10.2026
 
+- Breaking: the minimum versions are Flutter 3.47.0 and Dart 3.13.0, up from Flutter 3.35.0 and Dart 3.9.0.
 - Breaking: the look of a popover moved into `PopoverStyle`, passed as `style:` to `showPopover` and `Popover`: `arrowStyle`, `backgroundColor`, `brightness`, `barrierColor`, `radius`, `shadow`, `arrowWidth`, `arrowHeight`, `transition` and `transitionDuration`. The new `PopoverTheme` sets a style for a whole subtree, and the style at the call wins over it. `showPopover` no longer takes `key` or the deprecated `isParentAlive`. `PopoverTransitionBuilder`, the type of `popoverTransitionBuilder`, is now exported. The README has a before and after.
 - Breaking: the popover depends only on `package:flutter/widgets.dart` and works with `package:flutter/material.dart`, `package:flutter/cupertino.dart`, `package:material_ui` and `package:cupertino_ui`. 0.4.0 threw `No MaterialLocalizations found` in a `CupertinoApp` ([#113](https://github.com/minikin/popover/pull/113)).(thanks [@livtanong](https://github.com/livtanong)).
   - The body is no longer wrapped in a `Material`. Wrap it in the `Material` of your UI library if it contains Material widgets that require one, such as `InkWell`, `ListTile`, `TextField`, `Checkbox` or `Switch`, with `MaterialType.transparency` so the glass background shows.
@@ -29,7 +30,7 @@
 - Added a package skill, `skills/popover-usage/SKILL.md`, which `dart run skills@ get` installs for coding agents, and pub.dev topics.
 - Added the `Popover` widget and `PopoverController`, which keep a popover in the widget tree with its anchor as `child`. `show`, `hide` and `toggle` open and close it, and the controller follows when the user closes it.
 - Added `semanticsLabel`, which names the popover for screen readers. Tests now cover Esc closing the popover, Tab staying inside it, focus going back to where it was, and screen readers seeing only the popover and its barrier.
-- Added a `Mutation Test` CI workflow over `lib/` that fails below the 75% threshold in `mutation_test.xml`. It runs in parallel shards and, on a pull request, mutates only the changed declarations. Developing the package now needs Flutter 3.47+ because `material_ui` and `cupertino_ui` require it. The minimum Flutter version for apps is unchanged.
+- Added a `Mutation Test` CI workflow over `lib/` that fails below the 75% threshold in `mutation_test.xml`. It runs in parallel shards and, on a pull request, mutates only the changed declarations.
 - Added golden tests, rendered on Linux, and an `E2E` CI workflow that runs the example's integration test on iPhone, iPad, macOS, Windows and Linux, in Chrome and on an Android emulator, with screenshots and rotation.
 - Rebuilt the example app with a Roadmap tab, an issue list with a Share menu, and a Playground tab with a direction switcher. The `E2E` workflow renders a demo image of the example on every platform.
 
