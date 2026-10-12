@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:popover/popover.dart';
 import 'package:popover/src/apple_popover_path.dart';
 
+import 'helpers/numbers.dart';
+
 // Mask paths of UIPopoverPresentationController popovers, dumped from an
 // iOS 26 simulator (iPhone 17 Pro) with CGPath.applyWithBlock.
 const _fixture = 'test/fixtures/uikit_popover_paths.txt';
@@ -35,10 +37,6 @@ final class _Recorder implements PopoverPathSink {
   void close() => elements.add('Z');
 }
 
-List<double> _numbers(String element) => RegExp(
-  r'-?\d+\.\d+',
-).allMatches(element).map((match) => double.parse(match.group(0)!)).toList();
-
 void main() {
   final lines = File(_fixture).readAsLinesSync();
   for (var i = 0; i < lines.length; i++) {
@@ -66,8 +64,8 @@ void main() {
       for (var k = 0; k < expected.length; k++) {
         final actual = recorder.elements[k];
         expect(actual[0], expected[k][0], reason: 'element $k: $actual');
-        final a = _numbers(actual);
-        final e = _numbers(expected[k]);
+        final a = numbersIn(actual);
+        final e = numbersIn(expected[k]);
         expect(a, hasLength(e.length), reason: 'element $k');
         for (var c = 0; c < e.length; c++) {
           expect(

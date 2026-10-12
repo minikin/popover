@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches:
-      - "*"
+      - "**"
   workflow_dispatch:
 
 permissions:
@@ -66,7 +66,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies
@@ -103,7 +103,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies
@@ -114,12 +114,14 @@ jobs:
           version=$(google-chrome --version | grep -oE '[0-9]+(\.[0-9]+){3}')
           npx -y @puppeteer/browsers install "chromedriver@$version" --path "$RUNNER_TEMP"
           driver=$(find "$RUNNER_TEMP/chromedriver" -type f -name chromedriver | head -n 1)
+          [ -n "$driver" ] || { echo "chromedriver $version not installed"; exit 1; }
           "$driver" --port=4444 &
           # flutter drive fails fast when chromedriver is not listening yet.
           for _ in $(seq 1 30); do
             curl -sf http://localhost:4444/status >/dev/null && break
             sleep 1
           done
+          curl -sf http://localhost:4444/status >/dev/null || { echo "chromedriver did not start"; exit 1; }
           flutter drive -d web-server --browser-name=chrome --headless $DRIVE_ARGS
 
       - name: Upload screenshots
@@ -152,7 +154,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies
@@ -194,7 +196,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies
@@ -229,7 +231,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies

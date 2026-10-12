@@ -21,9 +21,10 @@ A PR with a working fix or a minimal reproduction in the example app is always w
    `mutation_test.xml`. Run it locally with
    `dart run mutation_test -o build/mutation-test-report mutation_test.xml`.
    In CI, `tool/ci/mutation_shards.py` counts the mutants and packs them into up
-   to ten parallel shards of about 50 each, and the threshold applies to their
-   sum. On a pull request only the declarations that contain changed lines in
-   `lib/` are mutated, on `main` all of `lib/`. A pull request without changes
+   to twenty parallel shards of about 50 each, and the threshold applies to
+   their sum. It cuts `lib/` into chunks of at least 10 lines that end after a
+   declaration. On a pull request only the chunks with changed lines are
+   mutated, on `main` all of `lib/`. A pull request without changes
    in `lib/` runs no shards.
 
    Golden tests in `test/golden_test.dart` run only on Linux, because text and

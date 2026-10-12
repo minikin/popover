@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches:
-      - "*"
+      - "**"
 
 permissions:
   contents: read
@@ -30,13 +30,13 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies
         run: flutter pub get
 
-      # Pull requests mutate only the methods they change, main all of lib/.
+      # Pull requests mutate only the chunks they change, main all of lib/.
       - name: Plan shards
         id: plan
         env:
@@ -70,7 +70,7 @@ jobs:
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: "stable"
-          flutter-version: "3.47.4"
+          flutter-version-file: .fvmrc
           cache: true
 
       - name: Install dependencies

@@ -12,8 +12,9 @@ package get `skills/popover-usage/SKILL.md` instead.
 - `flutter analyze` must report no issues. `dart format lib test` before a
   commit.
 - `dart run mutation_test -o build/mutation-test-report mutation_test.xml`
-  runs the mutation test over `lib/`. CI fails below 75% and mutates only the
-  changed declarations on a pull request, so cover new branches with tests.
+  runs the mutation test over `lib/`. CI fails below 75% and, on a pull request,
+  mutates only the chunks of about 10 lines around changed lines, so cover
+  new branches with tests.
 - `cd example && flutter drive --driver test_driver/integration_test.dart
   --target integration_test/popover_test.dart` runs the E2E test on a device.
 

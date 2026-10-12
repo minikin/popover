@@ -283,26 +283,18 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     });
 
     final vertical = PopoverUtils.isVertical(direction);
-    _shadowLayer.layer = context.pushTransform(
-      needsCompositing,
-      offset,
-      transform,
-      (context, _) {
-        for (final boxShadow in boxShadow ?? const <BoxShadow>[]) {
-          final shift = offset + boxShadow.offset;
-          _paintAppleShadow(
-            context.canvas,
-            boxShadow,
-            outline(
-              body.inflate(boxShadow.spreadRadius).shift(shift),
-              tip + (vertical ? shift.dx : shift.dy),
-            ),
-            path.shift(offset),
-          );
-        }
-      },
-      oldLayer: _shadowLayer.layer,
-    );
+    _pushShadows(context, offset, transform, (canvas, boxShadow) {
+      final shift = offset + boxShadow.offset;
+      _paintAppleShadow(
+        canvas,
+        boxShadow,
+        outline(
+          body.inflate(boxShadow.spreadRadius).shift(shift),
+          tip + (vertical ? shift.dx : shift.dy),
+        ),
+        path.shift(offset),
+      );
+    });
 
     _pushClipPath(context, offset, path, transform);
   }
@@ -447,23 +439,36 @@ final class PopoverRenderShiftedBox extends RenderShiftedBox {
     Rect arrowRect,
     Rect bodyRect,
   ) {
+    _pushShadows(context, offset, transform, (canvas, boxShadow) {
+      Rect place(Rect rect) => rect
+          .shift(offset)
+          .shift(boxShadow.offset)
+          .inflate(boxShadow.spreadRadius);
+      canvas.drawPath(
+        PopoverPath(radius!).draw(direction, place(arrowRect), place(bodyRect)),
+        boxShadow.toPaint(),
+      );
+    });
+  }
+
+  void _pushShadows(
+    PaintingContext context,
+    Offset offset,
+    Matrix4 transform,
+    void Function(Canvas canvas, BoxShadow boxShadow) paint,
+  ) {
     final shadows = boxShadow ?? const <BoxShadow>[];
+    if (shadows.isEmpty) {
+      _shadowLayer.layer = null;
+      return;
+    }
     _shadowLayer.layer = context.pushTransform(
       needsCompositing,
       offset,
       transform,
       (context, _) {
         for (final boxShadow in shadows) {
-          Rect place(Rect rect) => rect
-              .shift(offset)
-              .shift(boxShadow.offset)
-              .inflate(boxShadow.spreadRadius);
-          context.canvas.drawPath(
-            PopoverPath(
-              radius!,
-            ).draw(direction, place(arrowRect), place(bodyRect)),
-            boxShadow.toPaint(),
-          );
+          paint(context.canvas, boxShadow);
         }
       },
       oldLayer: _shadowLayer.layer,

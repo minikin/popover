@@ -27,20 +27,27 @@ import tempfile
 
 CHUNK = 10
 PER_SHARD = 50
-MAX_SHARDS = 10
+MAX_SHARDS = 20
 CONFIG = "mutation_test.xml"
+
+
+TYPE = re.compile(r"^(\w+ )*(class|mixin|enum|extension)\b")
 
 
 def chunks():
     """Chunks of at least CHUNK lines that end after a class member or a
-    top-level declaration, so no mutation, some of which match across lines,
-    spans two chunks."""
+    top-level declaration. A few rules match across declarations, and their
+    mutants span two chunks and are not run. plan reports how many."""
     for path in sorted(glob.glob("lib/**/*.dart", recursive=True)):
         with open(path) as source:
             lines = source.read().splitlines()
         begin = 1
+        in_type = False
         for number, line in enumerate(lines, start=1):
-            ends = line.rstrip() in ("}", "  }", "};", "  };")
+            if line and not line[0].isspace() and line[0] not in "}/@":
+                in_type = bool(TYPE.match(line))
+            text = line.rstrip()
+            ends = text in ("}", "};") or in_type and text in ("  }", "  };")
             if number - begin + 1 >= CHUNK and ends:
                 yield path, begin, number
                 begin = number + 1
@@ -63,7 +70,7 @@ def file_xml(path, begin, end):
 
 def changed_lines(base):
     """Line numbers in lib/ added or changed since [base], by file. A deletion
-    counts as a change of the line after it."""
+    counts as a change of the lines before and after it."""
     diff = subprocess.run(
         ["git", "diff", "--unified=0", f"{base}...HEAD", "--", "lib/"],
         capture_output=True, text=True, check=True,
@@ -75,8 +82,8 @@ def changed_lines(base):
         hunk = re.match(r"@@ -\S+ \+(\d+)(?:,(\d+))? @@", line)
         if hunk and path:
             start, count = int(hunk.group(1)), int(hunk.group(2) or 1)
-            changed.setdefault(path, set()).update(
-                range(start, start + max(count, 1)))
+            lines = range(start, start + count) if count else (start, start + 1)
+            changed.setdefault(path, set()).update(lines)
     return changed
 
 
@@ -126,7 +133,18 @@ def plan(out, base=None):
             used.append(shard)
     print(f"{total} mutants in {len(used)} shards of about {round(target)}",
           file=sys.stderr)
+    if not base:
+        print(f"{dry_run(CONFIG) - total} more span two chunks and are skipped",
+              file=sys.stderr)
     print(json.dumps(used))
+
+
+def dry_run(*configs):
+    result = subprocess.run(
+        ["dart", "run", "mutation_test", "--dry", "-f", "none", *configs],
+        capture_output=True, text=True, check=False,
+    )
+    return sum(int(n) for n in re.findall(r" : (\d+) mutations", result.stdout))
 
 
 def write(out, shard, files):
